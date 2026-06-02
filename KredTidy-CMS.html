@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KredTidy CMS</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root, [data-theme="dark-green"] {
+  --bg: #0a0a0a;
+  --card-bg: #141414;
+  --card-bg-alt: #1a1a1a;
+  --border: #222;
+  --border-2: #2a2a2a;
+  --border-3: #333;
+  --accent: #20ff20;
+  --accent-light: rgba(32,255,32,0.12);
+  --text: #e0e0e0;
+  --text-body: #ccc;
+  --text-sec: #aaa;
+  --text-tert: #888;
+  --text-dim: #666;
+  --text-muted: #555;
+  --text-quote: #999;
+  --modal-bg: #111;
+  --img-bg: #1a1a1a;
+  --modimg-bg: #0a0a0a;
+  --btn-bg: #141414;
+  --btn-color: #aaa;
+  --toggle-bg: #333;
+  --toggle-border: #444;
+  --toggle-dot: #888;
+  --meta-bg: #1a1a1a;
+  --meta-border: #2a2a2a;
+  --meta-color: #888;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+  --admin-bg: #0d0d0d;
+  --danger: #ff4444;
+  --danger-hover: #ff6666;
+  --input-bg: #1a1a1a;
+  --input-border: #333;
+  --input-focus: #20ff20;
+}
+
+[data-theme="light"] {
+  --bg: #f5f5f5;
+  --card-bg: #fff;
+  --card-bg-alt: #f0f0f0;
+  --border: #ddd;
+  --border-2: #e0e0e0;
+  --border-3: #ccc;
+  --accent: #111;
+  --accent-light: rgba(0,0,0,0.06);
+  --text: #222;
+  --text-body: #333;
+  --text-sec: #666;
+  --text-tert: #888;
+  --text-dim: #999;
+  --text-muted: #aaa;
+  --text-quote: #777;
+  --modal-bg: #fff;
+  --img-bg: #eee;
+  --modimg-bg: #f0f0f0;
+  --btn-bg: #f0f0f0;
+  --btn-color: #555;
+  --toggle-bg: #ddd;
+  --toggle-border: #ccc;
+  --toggle-dot: #999;
+  --meta-bg: #f0f0f0;
+  --meta-border: #ddd;
+  --meta-color: #666;
+  --text-inverse: #fff;
+  --play-bg: rgba(0,0,0,0.5);
+  --play-border: #fff;
+  --admin-bg: #fafafa;
+  --danger: #cc0000;
+  --danger-hover: #ee0000;
+  --input-bg: #fff;
+  --input-border: #ddd;
+  --input-focus: #111;
+}
+
+[data-theme="dark-blue"] {
+  --bg: #060d17;
+  --card-bg: #0d1a2d;
+  --card-bg-alt: #122540;
+  --border: #1a3350;
+  --border-2: #204060;
+  --border-3: #255080;
+  --accent: #40a0ff;
+  --accent-light: rgba(64,160,255,0.12);
+  --text: #d8e6f4;
+  --text-body: #b8d0e8;
+  --text-sec: #88a8c8;
+  --text-tert: #6a8aab;
+  --text-dim: #557390;
+  --text-muted: #446080;
+  --text-quote: #7a9ab8;
+  --modal-bg: #0d1a2d;
+  --img-bg: #122540;
+  --modimg-bg: #060d17;
+  --btn-bg: #0d1a2d;
+  --btn-color: #88a8c8;
+  --toggle-bg: #1a3350;
+  --toggle-border: #204060;
+  --toggle-dot: #6a8aab;
+  --meta-bg: #122540;
+  --meta-border: #204060;
+  --meta-color: #6a8aab;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+  --admin-bg: #08111f;
+  --danger: #ff5555;
+  --danger-hover: #ff7777;
+  --input-bg: #0d1a2d;
+  --input-border: #1a3350;
+  --input-focus: #40a0ff;
+}
+
+[data-theme="light-blue"] {
+  --bg: #f0f5fa;
+  --card-bg: #fff;
+  --card-bg-alt: #e8f0f8;
+  --border: #d0dae8;
+  --border-2: #c5d3e5;
+  --border-3: #b0c0d8;
+  --accent: #2a70cc;
+  --accent-light: rgba(42,112,204,0.1);
+  --text: #1a2a3a;
+  --text-body: #2a3a4a;
+  --text-sec: #556880;
+  --text-tert: #778899;
+  --text-dim: #8899aa;
+  --text-muted: #99aabb;
+  --text-quote: #667788;
+  --modal-bg: #fff;
+  --img-bg: #e8f0f8;
+  --modimg-bg: #f0f5fa;
+  --btn-bg: #e8f0f8;
+  --btn-color: #556880;
+  --toggle-bg: #d0dae8;
+  --toggle-border: #c5d3e5;
+  --toggle-dot: #8899aa;
+  --meta-bg: #e8f0f8;
+  --meta-border: #d0dae8;
+  --meta-color: #556880;
+  --text-inverse: #fff;
+  --play-bg: rgba(0,0,0,0.5);
+  --play-border: #fff;
+  --admin-bg: #e8f0f8;
+  --danger: #cc2222;
+  --danger-hover: #ee3333;
+  --input-bg: #fff;
+  --input-border: #d0dae8;
+  --input-focus: #2a70cc;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+.header {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 16px;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.header .desc { color: var(--text-tert); margin-top: 4px; font-size: 0.95rem; }
+.header .total { color: var(--text-muted); font-size: 0.85rem; margin-top: 2px; }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--text-tert);
+  cursor: pointer;
+}
+
+.theme-select {
+  padding: 4px 8px;
+  border: 1px solid var(--border-3);
+  border-radius: 5px;
+  background: var(--card-bg);
+  color: var(--text-sec);
+  font-size: 0.78rem;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.theme-select:focus { border-color: var(--accent); }
+
+.controls input[type="checkbox"] {
+  appearance: none;
+  width: 36px; height: 20px;
+  border-radius: 10px;
+  background: var(--toggle-bg);
+  border: 1px solid var(--toggle-border);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.controls input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--toggle-dot);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.controls input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.controls input[type="checkbox"]:checked::after {
+  transform: translateX(16px);
+  background: var(--text-inverse);
+}
+
+.controls .mode-label { font-size: 0.8rem; color: var(--text-dim); }
+.controls .mode-label .active { color: var(--accent); font-weight: 600; }
+
+.admin-btn {
+  padding: 4px 12px; border: 1px solid var(--border-3);
+  border-radius: 5px; background: var(--card-bg);
+  color: var(--text-sec); cursor: pointer;
+  font-size: 0.78rem; transition: all 0.15s;
+  font-family: inherit;
+}
+.admin-btn:hover { border-color: var(--accent); color: var(--accent); }
+.admin-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+.import-btn {
+  padding: 4px 12px; border: 1px solid var(--border-3);
+  border-radius: 5px; background: var(--card-bg);
+  color: var(--text-sec); cursor: pointer;
+  font-size: 0.78rem; transition: all 0.15s;
+  font-family: inherit;
+}
+.import-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.grid {
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+}
+
+#sentinel {
+  position: absolute;
+  width: 100%; height: 1px;
+  left: 0;
+  pointer-events: none;
+}
+
+.tile {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.tile:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 12px var(--accent-light);
+}
+
+.tile-img {
+  width: 100%;
+  display: block;
+  background: var(--img-bg);
+}
+
+.tile-media-wrap { position: relative; line-height: 0; }
+
+.tile-play {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px; height: 48px;
+  background: var(--play-bg);
+  border: 2px solid var(--play-border);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tile-play::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 55%;
+  transform: translate(-50%, -50%);
+  border-left: 14px solid var(--play-border);
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+}
+
+.tile-body { padding: 12px 14px 14px; }
+
+.tile-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tile-text {
+  font-size: 0.82rem;
+  color: var(--text-sec);
+  margin-top: 6px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tile-text p { margin-bottom: 4px; }
+
+.tile-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.tile-date { color: var(--text-muted); }
+
+.tile-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+
+.tile-tag {
+  font-size: 0.68rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--card-bg-alt);
+  color: var(--text-dim);
+  border: 1px solid var(--border-2);
+}
+
+.tile-permalink {
+  position: absolute;
+  bottom: 8px; right: 8px;
+  background: var(--play-bg);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.65rem;
+  padding: 3px 7px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.tile:hover .tile-permalink { opacity: 1; }
+
+.tile .tile-inner {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  position: relative;
+}
+
+.tile-edit-btn {
+  position: absolute;
+  top: 6px; right: 6px;
+  background: var(--play-bg);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.tile:hover .tile-edit-btn { opacity: 1; }
+
+.text-only .grid { margin: 0; max-width: none; padding: 0 24px 24px; }
+.text-only .grid .tile {
+  position: static; width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid var(--border); border-radius: 0;
+  padding: 14px 4px 12px; overflow: visible;
+  font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; line-height: 1.5; cursor: pointer;
+}
+.text-only .grid .tile:hover { border-color: var(--accent); box-shadow: none; background: var(--card-bg); }
+.text-only .tile-media-wrap, .text-only .tile-img { display: none; }
+.text-only .tile-body { padding: 0; }
+.text-only .tile-title { display: inline; font-size: 0.85rem; color: var(--accent); font-weight: 600; -webkit-line-clamp: unset; }
+.text-only .tile-meta { display: inline; margin-top: 0; font-size: 0.72rem; }
+.text-only .tile-meta::before { content: " "; }
+.text-only .tile-date { color: var(--text-dim); }
+.text-only .tile-text { display: block; margin-top: 4px; font-size: 0.78rem; color: var(--text-sec); -webkit-line-clamp: 3; }
+.text-only .tile-tags { margin-top: 4px; }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 1400px;
+  margin: 24px auto 48px;
+  padding: 0 24px;
+  flex-wrap: wrap;
+}
+
+.pagination button,
+.pagination .page-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border-3);
+  border-radius: 6px;
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.pagination button:hover:not(:disabled),
+.pagination .page-btn:hover:not(.current) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pagination button:disabled { opacity: 0.3; cursor: default; }
+
+.pagination .page-btn.current {
+  background: var(--accent);
+  color: var(--text-inverse);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.loading { text-align: center; padding: 80px 24px; color: var(--text-muted); }
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 24px;
+  border: 2px solid var(--border-3);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty { text-align: center; padding: 80px 24px; color: var(--text-muted); font-size: 0.95rem; }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.modal-overlay.open { opacity: 1; visibility: visible; }
+
+.modal-content {
+  background: var(--modal-bg);
+  border: 1px solid var(--border-3);
+  border-radius: 12px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 32px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px; right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.15s;
+  line-height: 1;
+}
+
+.modal-close:hover { color: var(--accent); }
+
+.modal-head { margin-bottom: 20px; padding-right: 32px; }
+
+.modal-head .modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.3;
+}
+
+.modal-head .modal-date { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+.modal-head .modal-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  font-size: 0.78rem;
+}
+
+.modal-head .modal-meta span {
+  background: var(--meta-bg);
+  border: 1px solid var(--meta-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--meta-color);
+}
+
+.modal-img {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 20px;
+  border-radius: 6px;
+  background: var(--modimg-bg);
+}
+
+.modal-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+.modal-body p { margin-bottom: 12px; }
+.modal-body ul, .modal-body ol { margin: 8px 0 12px 24px; }
+.modal-body li { margin-bottom: 4px; }
+.modal-body a { color: var(--accent); }
+.modal-body img { max-width: 100%; border-radius: 6px; margin: 8px 0; }
+.modal-body blockquote {
+  border-left: 2px solid var(--border-3);
+  margin: 12px 0;
+  padding-left: 16px;
+  color: var(--text-quote);
+}
+.modal-body h1, .modal-body h2, .modal-body h3 { color: var(--text); margin: 16px 0 8px; }
+.modal-body hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.modal-body iframe {
+  max-width: 100%;
+  aspect-ratio: 16/9;
+  height: auto;
+  border: none;
+  border-radius: 6px;
+  margin: 8px 0;
+  display: block;
+}
+
+.modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.modal-tags span {
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--meta-bg);
+  border: 1px solid var(--meta-border);
+  color: var(--meta-color);
+}
+
+.modal-footer {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.modal-footer button {
+  font-size: 0.82rem;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.modal-footer button:hover { background: var(--accent); color: var(--text-inverse); }
+
+.modal-footer button.danger { border-color: var(--danger); color: var(--danger); }
+.modal-footer button.danger:hover { background: var(--danger); color: #fff; }
+
+@media (max-width: 800px) {
+  .modal-content { padding: 24px 20px; }
+  .modal-head .modal-title { font-size: 1.1rem; }
+  .header { padding: 24px 16px 12px; }
+  .header h1 { font-size: 1.4rem; }
+}
+
+/* Terminal styles */
+.term-btn {
+  padding: 4px 12px; border: 1px solid var(--border-3);
+  border-radius: 5px; background: var(--card-bg);
+  color: var(--text-sec); cursor: pointer;
+  font-size: 0.78rem; font-family: "SF Mono", Consolas, monospace;
+  transition: all 0.15s;
+}
+.term-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.toverlay { position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.92); display:none; align-items:center; justify-content:center; padding:8px; }
+.toverlay.open { display:flex; }
+
+.twindow { width:100%; max-width:960px; height:85vh; height:85dvh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
+
+.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; }
+.ttbar span { flex:1; }
+.ttbar .tclose { background:none; border:none; color:#666; cursor:pointer; font-size:1.2rem; line-height:1; padding:0 4px; }
+.ttbar .tclose:hover { color:#ff5f57; }
+
+.tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
+.tbody .to { margin-bottom:2px; }
+.tbody .tdim { color:#4a4; }
+.tbody .tbold { color:#20ff20; font-weight:bold; }
+.tbody .terr { color:#ff4444; }
+.tbody .twarn { color:#ffaa00; }
+
+.tinput { display:flex; align-items:center; background:#0c0c0c; border-top:1px solid #2a2a2a; padding:8px 16px; }
+.tinput span { color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
+.tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
+.tinput input::placeholder { color:#3a3; }
+
+@media (max-width: 800px) {
+  .toverlay { padding:0; }
+  .twindow { max-width:none; border-radius:0; }
+}
+
+/* Admin panel sidebar */
+.admin-panel {
+  position: fixed;
+  top: 0; right: 0;
+  width: 420px; max-width: 100vw;
+  height: 100vh;
+  background: var(--admin-bg);
+  border-left: 1px solid var(--border-3);
+  z-index: 900;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-panel.open { transform: translateX(0); }
+
+.admin-panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.admin-panel-header button {
+  background: none; border: none;
+  color: var(--text-dim); font-size: 1.3rem;
+  cursor: pointer; line-height: 1; padding: 0 4px;
+}
+.admin-panel-header button:hover { color: var(--accent); }
+
+.admin-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.admin-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.admin-section h3 {
+  font-size: 0.85rem;
+  color: var(--text-sec);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.form-group { margin-bottom: 12px; }
+
+.form-group label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-tert);
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--input-focus);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row .form-group { flex: 1; }
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-actions button {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  transition: all 0.15s;
+}
+
+.admin-actions button:hover { background: var(--accent); color: var(--text-inverse); }
+
+.admin-actions button.primary {
+  background: var(--accent);
+  color: var(--text-inverse);
+  border: 1px solid var(--accent);
+  font-weight: 600;
+}
+.admin-actions button.primary:hover { opacity: 0.85; }
+
+.admin-actions button.danger-btn {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.admin-actions button.danger-btn:hover { background: var(--danger); color: #fff; }
+
+.admin-posts-list {
+  margin-top: 8px;
+}
+
+.admin-post-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.admin-post-item:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admin-post-item .item-actions { display: flex; gap: 4px; }
+
+.admin-post-item .item-actions button {
+  background: none; border: 1px solid var(--border-3);
+  color: var(--text-dim); font-size: 0.7rem; padding: 3px 8px;
+  border-radius: 4px; cursor: pointer; font-family: inherit;
+}
+.admin-post-item .item-actions button:hover { border-color: var(--accent); color: var(--accent); }
+.admin-post-item .item-actions button.del:hover { border-color: var(--danger); color: var(--danger); }
+
+.filter-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8px 24px 0;
+}
+.filter-bar.show { display: flex; }
+.filter-bar .filter-label { font-size: 0.82rem; color: var(--accent); }
+.filter-bar .filter-clear {
+  background: none; border: 1px solid var(--accent); color: var(--accent);
+  border-radius: 4px; padding: 2px 10px; cursor: pointer; font-size: 0.78rem;
+  font-family: inherit; transition: all 0.15s;
+}
+.filter-bar .filter-clear:hover { background: var(--accent); color: var(--text-inverse); }
+
+/* Thumbnail mode */
+.thumb-mode .tile { cursor: pointer; overflow: hidden; }
+.thumb-mode .tile-media-wrap { line-height: 0; }
+.thumb-mode .tile-img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: var(--img-bg); }
+.thumb-mode .tile-body { display: none; }
+.thumb-mode .tile-edit-btn { opacity: 0; position: absolute; top: 4px; right: 4px; z-index: 5; background: var(--play-bg); border: 1px solid var(--accent); color: var(--accent); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; cursor: pointer; transition: opacity 0.2s; }
+.thumb-mode .tile:hover .tile-edit-btn { opacity: 1; }
+.thumb-mode .tile .tile-title { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 24px 8px 6px; display: block; -webkit-line-clamp: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.thumb-mode .tile:hover { border-color: var(--accent); box-shadow: 0 2px 12px var(--accent-light); }
+
+/* Column slider */
+.col-slider { display: inline-flex; align-items: center; gap: 4px; }
+.col-slider input[type="range"] { width: 60px; height: 4px; appearance: none; background: var(--toggle-bg); border-radius: 2px; outline: none; }
+.col-slider input[type="range"]::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; border: none; }
+.col-slider span { font-size: 0.7rem; color: var(--text-dim); min-width: 20px; text-align: center; }
+
+/* Multi-image gallery in form */
+.img-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.img-gallery .img-thumb { position: relative; width: 80px; height: 80px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-2); background: var(--img-bg); flex-shrink: 0; }
+.img-gallery .img-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.img-gallery .img-thumb .del-thumb { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: rgba(0,0,0,0.7); border: none; color: var(--danger); font-size: 0.7rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; }
+.img-gallery .img-add-btn { width: 80px; height: 80px; border: 2px dashed var(--border-3); border-radius: 6px; background: transparent; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+.img-gallery .img-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Modal image gallery */
+.modal-gallery { display: flex; flex-direction: column; gap: 8px; margin: 0 auto 16px; }
+.modal-gallery img { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 6px; background: var(--modimg-bg); display: block; }
+
+/* Mobile improvements */
+@media (max-width: 600px) {
+  .controls { gap: 8px; }
+  .controls label { font-size: 0.75rem; }
+  .admin-panel { width: 100vw; }
+  .admin-panel-body { padding: 14px; }
+  .form-row { flex-direction: column; gap: 0; }
+  .modal-content { padding: 16px; }
+  .header { padding: 16px 12px 10px; }
+  .header h1 { font-size: 1.2rem; }
+  .grid { padding: 0 12px 12px; }
+  .filter-bar { padding: 6px 12px 0; }
+  .filter-bar .filter-label { font-size: 0.75rem; }
+  .col-slider input[type="range"] { width: 40px; }
+  .img-gallery .img-thumb, .img-gallery .img-add-btn { width: 64px; height: 64px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>KredTidy CMS</h1>
+  <div class="desc">Offline Blog Content Manager</div>
+  <div class="total" id="total"></div>
+  <div class="controls">
+    <label>
+      <input type="checkbox" id="modeToggle" checked>
+      <span class="mode-label">Infinite scroll <span class="active" id="modeDisplay">on</span></span>
+    </label>
+    <label>
+      <input type="checkbox" id="textOnlyToggle">
+      <span class="mode-label">Text only <span class="active" id="textOnlyDisplay">off</span></span>
+    </label>
+    <label>
+      <input type="checkbox" id="thumbToggle">
+      <span class="mode-label">Thumbnails <span class="active" id="thumbDisplay">off</span></span>
+    </label>
+    <span class="col-slider" id="colSlider" style="display:none">
+      <input type="range" id="colRange" min="2" max="8" value="4">
+      <span id="colDisplay">4</span>
+    </span>
+    <select class="theme-select" id="themeSelect">
+      <option value="dark-green">Dark Green</option>
+      <option value="light">Light</option>
+      <option value="dark-blue">Dark Blue</option>
+      <option value="light-blue">Light Blue</option>
+    </select>
+    <button class="import-btn" id="importBtn">Import</button>
+    <button class="import-btn" id="exportBtn">Export</button>
+    <button class="admin-btn" id="adminBtn">+ Admin</button>
+    <button class="term-btn" id="terminalBtn">&gt;_ Terminal</button>
+  </div>
+</div>
+
+<div class="filter-bar" id="filterBar">
+  <span class="filter-label" id="filterLabel"></span>
+  <button class="filter-clear" id="filterClear">✕ clear filter</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="pagination" id="pagination"></div>
+<div id="sentinel"></div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-content" id="modalContent">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div id="modalInner"></div>
+  </div>
+</div>
+
+<div class="toverlay" id="toverlay">
+  <div class="twindow">
+    <div class="ttbar">
+      <span>kredtidy@cms</span>
+      <button class="tclose" id="tclose">&times;</button>
+    </div>
+    <div class="tbody" id="tbody"></div>
+    <div class="tinput">
+      <span>$</span>
+      <input id="tinput" placeholder="type help..." autocomplete="off" autocapitalize="off" spellcheck="false">
+    </div>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-panel-header">
+    <span>+ CMS Admin</span>
+    <button id="adminClose">&times;</button>
+  </div>
+  <div class="admin-panel-body" id="adminBody">
+    <!-- New Post Form -->
+    <div class="admin-section">
+      <h3 id="formTitle">New Post</h3>
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="postTitle" placeholder="Post title...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="postType">
+            <option value="text">Text</option>
+            <option value="photo">Photo</option>
+            <option value="video">Video</option>
+            <option value="quote">Quote</option>
+            <option value="link">Link</option>
+            <option value="audio">Audio</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date &amp; Time</label>
+          <input type="datetime-local" id="postDate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Tags (comma-separated)</label>
+        <input type="text" id="postTags" placeholder="art, design, code...">
+      </div>
+      <div class="form-group" id="bodyGroup">
+        <label>Body (HTML allowed)</label>
+        <textarea id="postBody" placeholder="Write your post content..."></textarea>
+      </div>
+      <div class="form-group" id="imageGroup">
+        <label>Images</label>
+        <div class="img-gallery" id="imgGallery">
+          <button class="img-add-btn" id="pickImageBtn" title="Add images">+</button>
+        </div>
+        <input type="hidden" id="editImagePath" value="">
+      </div>
+      <div class="form-group" id="linkGroup" style="display:none">
+        <label>URL</label>
+        <input type="url" id="postLink" placeholder="https://...">
+      </div>
+      <div class="form-group" id="videoGroup" style="display:none">
+        <label>Video URL (YouTube embed etc.)</label>
+        <input type="text" id="postVideo" placeholder="https://www.youtube.com/watch?v=...">
+      </div>
+      <div class="form-group" id="audioGroup" style="display:none">
+        <label>Audio embed HTML or URL</label>
+        <input type="text" id="postAudio" placeholder="Audio source URL...">
+      </div>
+      <input type="hidden" id="editId">
+      <input type="hidden" id="editImagePath">
+      <div class="admin-actions">
+        <button class="primary" id="savePostBtn">Publish Post</button>
+        <button id="cancelEditBtn" style="display:none">Cancel</button>
+        <button class="danger-btn" id="deletePostBtn" style="display:none">Delete</button>
+      </div>
+    </div>
+
+    <!-- Post List -->
+    <div class="admin-section">
+      <h3>All Posts</h3>
+      <div style="margin-bottom:8px">
+        <input type="text" id="postSearch" placeholder="Search posts..." style="width:100%;padding:6px 10px;border:1px solid var(--input-border);border-radius:6px;background:var(--input-bg);color:var(--text);font-size:0.82rem;font-family:inherit;outline:none">
+      </div>
+      <div class="admin-posts-list" id="adminPostList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+'use strict';
+
+const PER_PAGE = 20;
+let posts = [];
+let currentPage = 1;
+let isInfinite = true;
+let isTextOnly = false;
+let observer = null;
+let editingId = null;
+let filterMode = null;
+let filterPosts = [];
+let filterQuery = '';
+let isThumbMode = false;
+let thumbCols = 4;
+
+function _idb() {
+  return new Promise(function(r, reject) {
+    var db = indexedDB.open('kredtidy', 1);
+    db.onupgradeneeded = function(e) { e.target.result.createObjectStore('posts', { keyPath: 'id' }); };
+    db.onsuccess = function(e) { r(e.target.result); };
+    db.onerror = function() { reject(db.error); };
+  });
+}
+
+window.cms = {
+  getPosts: function() {
+    return _idb().then(function(db) {
+      return new Promise(function(r) {
+        var tx = db.transaction('posts', 'readonly');
+        var all = tx.objectStore('posts').getAll();
+        all.onsuccess = function() { r(all.result || []); db.close(); };
+        all.onerror = function() { r([]); db.close(); };
+      });
+    }).catch(function() { return []; });
+  },
+  savePosts: function(p) {
+    return _idb().then(function(db) {
+      return new Promise(function(r) {
+        var tx = db.transaction('posts', 'readwrite');
+        var store = tx.objectStore('posts');
+        store.clear();
+        p.forEach(function(post) { store.put(post); });
+        tx.oncomplete = function() { r(true); db.close(); };
+        tx.onerror = function() { r(false); db.close(); };
+      });
+    }).catch(function() { return false; });
+  },
+  importFile: () => new Promise(r => {
+    const i = document.createElement('input'); i.type = 'file'; i.accept = '.json';
+    i.onchange = () => {
+      const f = new FileReader();
+      f.onload = e => { try { const d = JSON.parse(e.target.result); r(Array.isArray(d) ? d : (d.posts || [])); } catch { r(null); } };
+      f.readAsText(i.files[0]);
+    };
+    i.click();
+  }),
+  exportFile: (data) => {
+    const b = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const u = URL.createObjectURL(b); const a = document.createElement('a');
+    var name = prompt('Export filename:', 'kredtidy-export.json'); if (!name) { URL.revokeObjectURL(u); return false; }
+    a.href = u; a.download = name; a.click(); URL.revokeObjectURL(u); return true;
+  },
+  pickImage: () => new Promise(r => {
+    const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml'; i.multiple = true;
+    i.onchange = () => {
+      Promise.all(Array.from(i.files).map(f => new Promise(res => {
+        const fr = new FileReader();
+        fr.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            var w = img.width, h = img.height;
+            var max = 1600;
+            if (w > max || h > max) {
+              if (w > h) { h = h * max / w; w = max; } else { w = w * max / h; h = max; }
+              var c = document.createElement('canvas'); c.width = w; c.height = h;
+              var ctx = c.getContext('2d');
+              if (f.type === 'image/jpeg' || f.type === 'image/webp') ctx.drawImage(img, 0, 0, w, h);
+              else { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h); }
+              res(c.toDataURL('image/jpeg', 0.7));
+            } else { res(e.target.result); }
+          };
+          img.src = e.target.result;
+        };
+        fr.readAsDataURL(f);
+      }))).then(r);
+    };
+    i.click();
+  })
+};
+
+function $(id) { return document.getElementById(id); }
+window.$ = $;
+
+function displayPosts() { return filterMode ? filterPosts : posts; }
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+function stripHtml(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html || '';
+  return d.textContent || d.innerText || '';
+}
+
+function truncate(text, max) {
+  return text.length > max ? text.slice(0, max) + '\u2026' : text;
+}
+
+function formatDate(dateStr, withTime, longMonth) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    const opts = { month: longMonth ? 'long' : 'short', day: 'numeric', year: 'numeric' };
+    if (withTime) { opts.hour = 'numeric'; opts.minute = '2-digit'; }
+    return d.toLocaleDateString('en-US', opts);
+  } catch { return dateStr; }
+}
+
+function dateSearchStr(p) {
+  const raw = (p.date || '').toLowerCase();
+  const s = formatDate(p.date).toLowerCase();
+  const f = formatDate(p.date, false, true).toLowerCase();
+  const sT = formatDate(p.date, true).toLowerCase();
+  const fT = formatDate(p.date, true, true).toLowerCase();
+  return raw + ' ' + s + ' ' + f + ' ' + sT + ' ' + fT;
+}
+
+function formatTime(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  } catch { return ''; }
+}
+
+function extractYoutubeId(str) {
+  if (!str) return null;
+  const m = str.match(/(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/|youtube\.com\/live\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
+function firstImage(post) {
+  const imgs = getImages(post);
+  if (imgs.length) return imgs[0];
+  if (post.type === 'video') {
+    const ytId = extractYoutubeId(post.videoSource || '');
+    if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+  }
+  return null;
+}
+
+function isVideoPost(post) {
+  return post.type === 'video';
+}
+
+function extractText(post) {
+  if (post.type === 'text') return stripHtml(post.body || '');
+  if (post.type === 'photo') return stripHtml(post.body || '');
+  if (post.type === 'quote') return stripHtml(post.body || '');
+  if (post.type === 'link') return stripHtml(post.body || '');
+  if (post.type === 'video') return stripHtml(post.body || '');
+  if (post.type === 'audio') return stripHtml(post.body || '');
+  return stripHtml(post.body || '');
+}
+
+function extractTitle(post) {
+  return post.title || extractText(post).slice(0, 80);
+}
+
+function getImages(post) {
+  if (post.images && post.images.length) return post.images;
+  if (post.image) return [post.image];
+  return [];
+}
+
+function getCols() {
+  if (isThumbMode) return thumbCols;
+  const w = window.innerWidth;
+  if (w <= 500) return 1;
+  if (w <= 800) return 2;
+  if (w <= 1100) return 3;
+  return 4;
+}
+
+function tileHtml(post) {
+  const title = extractTitle(post);
+  const text = extractText(post);
+  const tags = post.tags || [];
+  const date = formatDate(post.date, true);
+  const id = post.id;
+
+  if (isTextOnly) {
+    return '<div class="tile" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
+      '<div class="tile-body">' +
+        '<span class="tile-date">' + date + ' </span>' +
+        '<span class="tile-meta">[' + escHtml(post.type) + ']</span>' +
+        (title ? '<span class="tile-title">' + escHtml(title) + '</span>' : '') +
+        (text ? '<span class="tile-text">' + escHtml(truncate(text, 280)) + '</span>' : '') +
+        (tags.length ? '<span class="tile-tags">' + tags.map(t => '<span class="tile-tag">' + escHtml(t) + '</span>').join('') + '</span>' : '') +
+      '</div>' +
+    '</div>';
+  }
+
+  const img = firstImage(post);
+  const isVideo = isVideoPost(post);
+  const imgs = getImages(post);
+  const multi = imgs.length > 1;
+
+  if (isThumbMode) {
+    return '<div class="tile" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
+      '<div class="tile-inner">' +
+        (img ? '<div class="tile-media-wrap">' + (isVideo ? '<div class="tile-play"></div>' : '') + '<img class="tile-img" src="' + img + '" alt="" loading="lazy">' + (multi ? '<span style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.65rem;padding:1px 6px;border-radius:3px">+' + (imgs.length - 1) + '</span>' : '') + '</div>' : '') +
+        (title ? '<div class="tile-title">' + escHtml(title) + '</div>' : '') +
+      '</div>' +
+      '<button class="tile-edit-btn" onclick="event.stopPropagation();editPost(\'' + id + '\')">edit</button>' +
+    '</div>';
+  }
+
+  return '<div class="tile" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
+    '<div class="tile-inner">' +
+      (img ? '<div class="tile-media-wrap">' + (isVideo ? '<div class="tile-play"></div>' : '') + '<img class="tile-img" src="' + img + '" alt="" loading="lazy"></div>' : '') +
+      '<div class="tile-body">' +
+        (title ? '<div class="tile-title">' + escHtml(title) + '</div>' : '') +
+        (text ? '<div class="tile-text">' + escHtml(truncate(text, 180)) + '</div>' : '') +
+        '<div class="tile-meta">' +
+          '<span class="tile-date">' + date + '</span>' +
+          '<span style="color:#555;text-transform:capitalize;font-size:0.7rem">' + escHtml(post.type) + '</span>' +
+        '</div>' +
+        (tags.length ? '<div class="tile-tags">' + tags.map(t => '<span class="tile-tag">' + escHtml(t) + '</span>').join('') + '</div>' : '') +
+      '</div>' +
+      '<div class="tile-permalink">&#182; permalink</div>' +
+    '</div>' +
+    '<button class="tile-edit-btn" onclick="event.stopPropagation();editPost(\'' + id + '\')">edit</button>' +
+  '</div>';
+}
+
+function applyMasonry() {
+  if (isTextOnly) {
+    const g = $('grid'); const s = $('sentinel');
+    g.style.height = 'auto';
+    s.style.top = (g.offsetHeight - 1) + 'px';
+    return;
+  }
+  const grid = $('grid');
+  const tiles = Array.from(grid.querySelectorAll('.tile'));
+  if (!tiles.length) return;
+
+  const cols = getCols();
+  const gap = 16;
+  const pad = parseInt(getComputedStyle(grid).paddingLeft) || 24;
+  const gw = grid.offsetWidth - pad * 2;
+  if (gw <= 0) return;
+  const cw = (gw - gap * (cols - 1)) / cols;
+  const heights = new Array(cols).fill(0);
+
+  tiles.forEach(tile => {
+    const shortest = heights.indexOf(Math.min(...heights));
+    tile.style.position = 'absolute';
+    tile.style.width = cw + 'px';
+    tile.style.left = shortest * (cw + gap) + 'px';
+    tile.style.top = heights[shortest] + 'px';
+    heights[shortest] += tile.offsetHeight + gap;
+  });
+
+  grid.style.height = Math.max(...heights) + 'px';
+  const sentinel = $('sentinel');
+  sentinel.style.top = (Math.max(...heights) - 1) + 'px';
+}
+
+async function loadAllPosts() {
+  try {
+    posts = (await window.cms.getPosts()) || [];
+    posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  } catch(e) {
+    posts = [];
+  }
+}
+
+async function renderPage(page, append) {
+  const source = displayPosts();
+  const start = (page - 1) * PER_PAGE;
+  const pagePosts = source.slice(start, start + PER_PAGE);
+
+  if (append) {
+    $('grid').insertAdjacentHTML('beforeend', pagePosts.map(tileHtml).join(''));
+  } else {
+    const emptyMsg = filterMode
+      ? '<div class="empty">No posts match <b>' + escHtml(filterQuery) + '</b></div>'
+      : '<div class="empty">No posts yet. Click <b>+ Admin</b> to create your first post.</div>';
+    $('grid').innerHTML = pagePosts.length ? pagePosts.map(tileHtml).join('') : emptyMsg;
+  }
+
+  $('total').textContent = source.length + ' posts total' + (filterMode ? ' (filtered)' : '');
+
+  if (!append) {
+    const fb = $('filterBar');
+    if (filterMode) {
+      fb.classList.add('show');
+      $('filterLabel').textContent = filterMode + ': ' + filterQuery + ' (' + source.length + ' results)';
+    } else {
+      fb.classList.remove('show');
+    }
+  }
+
+  applyMasonry();
+  $('grid').querySelectorAll('img').forEach(img => {
+    if (!img.complete) img.addEventListener('load', applyMasonry, { once: true });
+  });
+  setTimeout(applyMasonry, 200);
+
+  const totalPages = Math.ceil(source.length / PER_PAGE);
+  if (page >= totalPages) {
+    if (isInfinite && source.length > 0) {
+      $('pagination').innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:0.85rem">All ' + source.length + ' posts loaded.</div>';
+    }
+    if (!isInfinite) renderPaginationBtns();
+  } else {
+    if (!isInfinite) renderPaginationBtns();
+  }
+
+  if (isInfinite) setupInfiniteScroll();
+}
+
+function setupInfiniteScroll() {
+  if (observer) observer.disconnect();
+  const totalPages = Math.ceil(posts.length / PER_PAGE);
+  if (currentPage >= totalPages) return;
+
+  const sentinel = $('sentinel');
+  observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      const nextPage = Math.ceil($('grid').querySelectorAll('.tile').length / PER_PAGE) + 1;
+      if (nextPage <= totalPages) {
+        const spinner = document.createElement('div');
+        spinner.className = 'loading';
+        spinner.id = 'load-spinner';
+        $('pagination').innerHTML = '';
+        $('pagination').appendChild(spinner);
+        currentPage = nextPage;
+        renderPage(nextPage, true);
+      }
+    }
+  }, { rootMargin: '400px' });
+  observer.observe(sentinel);
+}
+
+function renderPaginationBtns() {
+  const total = Math.ceil(posts.length / PER_PAGE);
+  const el = $('pagination');
+  if (total <= 1) { el.innerHTML = ''; return; }
+
+  let h = '';
+  h += '<button onclick="goPage(' + (currentPage - 1) + ')" ' + (currentPage <= 1 ? 'disabled' : '') + '>&#8249; Prev</button>';
+
+  let startPage = Math.max(1, currentPage - 3);
+  let endPage = Math.min(total, currentPage + 3);
+
+  if (startPage > 1) {
+    h += '<button class="page-btn" onclick="goPage(1)">1</button>';
+    if (startPage > 2) h += '<span style="color:var(--text-muted)">\u2026</span>';
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    h += '<button class="page-btn' + (i === currentPage ? ' current' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+  }
+
+  if (endPage < total) {
+    if (endPage < total - 1) h += '<span style="color:var(--text-muted)">\u2026</span>';
+    h += '<button class="page-btn" onclick="goPage(' + total + ')">' + total + '</button>';
+  }
+
+  h += '<button onclick="goPage(' + (currentPage + 1) + '" ' + (currentPage >= total ? 'disabled' : '') + '>Next &#8250;</button>';
+  el.innerHTML = h;
+}
+
+window.goPage = function(page) {
+  const total = Math.ceil(posts.length / PER_PAGE);
+  if (page < 1 || page > total) return;
+  currentPage = page;
+  renderPage(page, false);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.openPost = function(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  renderModal(post);
+  $('modal').classList.add('open');
+};
+
+window.editPost = function(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  editingId = id;
+  $('editId').value = id;
+  $('formTitle').textContent = 'Edit Post';
+  $('postTitle').value = post.title || '';
+  $('postType').value = post.type || 'text';
+  $('postBody').value = post.body || '';
+  $('postTags').value = (post.tags || []).join(', ');
+  $('postDate').value = (post.date || '').slice(0, 16);
+  $('postLink').value = post.linkUrl || '';
+  $('postVideo').value = post.videoSource || '';
+  $('postAudio').value = post.audioSource || '';
+  const imgs = getImages(post);
+  $('editImagePath').value = JSON.stringify(imgs);
+  renderImgGallery();
+  $('savePostBtn').textContent = 'Update Post';
+  $('cancelEditBtn').style.display = '';
+  $('deletePostBtn').style.display = '';
+
+  updateTypeFields();
+  $('adminPanel').classList.add('open');
+  $('adminBtn').classList.add('active');
+};
+
+function renderModal(post) {
+  const title = extractTitle(post);
+  const tags = post.tags || [];
+  const date = formatDate(post.date, true);
+  const type = post.type;
+  const id = post.id;
+
+  let img = null;
+  if (post.type === 'photo' || post.type === 'text') {
+    img = post.image || null;
+  } else if (post.type === 'video') {
+    const ytId = extractYoutubeId(post.videoSource || '');
+    if (ytId) img = 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+    else img = post.image || null;
+  }
+
+  let bodyHtml = post.body || '';
+  if (post.type === 'video') {
+    const ytId = extractYoutubeId(post.videoSource || '');
+    if (ytId) {
+      bodyHtml = '<div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:6px;overflow:hidden;margin:8px 0"><iframe src="https://www.youtube.com/embed/' + ytId + '" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div>';
+      if (post.body) bodyHtml += '<p style="margin-top:12px">' + post.body + '</p>';
+    }
+  }
+
+  const modalImgs = post.type !== 'video' ? getImages(post) : [];
+  const galleryHtml = modalImgs.length > 1
+    ? '<div class="modal-gallery">' + modalImgs.map(u => '<img src="' + u + '" alt="" loading="lazy">').join('') + '</div>'
+    : (modalImgs.length === 1 ? '<img class="modal-img" src="' + modalImgs[0] + '" alt="" loading="lazy">' : '');
+
+  $('modalInner').innerHTML =
+    '<div class="modal-head">' +
+      (title ? '<div class="modal-title">' + escHtml(title) + '</div>' : '') +
+      '<div class="modal-date">' + date + '</div>' +
+      '<div class="modal-meta">' +
+        '<span>' + escHtml(type) + '</span>' +
+        (modalImgs.length > 1 ? '<span>' + modalImgs.length + ' images</span>' : '') +
+      '</div>' +
+    '</div>' +
+    galleryHtml +
+    '<div class="modal-body">' + bodyHtml + '</div>' +
+    (tags.length ? '<div class="modal-tags">' + tags.map(t => '<span>#' + escHtml(t) + '</span>').join('') + '</div>' : '') +
+    '<div class="modal-footer">' +
+      '<button onclick="$(\'modal\').classList.remove(\'open\');editPost(\'' + id + '\')">Edit</button>' +
+      '<button class="danger" onclick="deleteAndClose(\'' + id + '\')">Delete</button>' +
+    '</div>';
+}
+
+window.deleteAndClose = async function(id) {
+  if (!confirm('Delete this post?')) return;
+  posts = posts.filter(p => p.id !== id);
+  await window.cms.savePosts(posts.map(cleanPost));
+  $('modal').classList.remove('open');
+  currentPage = 1;
+  renderPage(1, false);
+  renderAdminList();
+};
+
+function closeModal() {
+  $('modal').classList.remove('open');
+}
+
+function cleanPost(p) {
+  return Object.assign({}, p);
+}
+
+function applyFilter(mode, list, query) {
+  filterMode = mode;
+  filterPosts = list;
+  filterQuery = query;
+  currentPage = 1;
+  renderPage(1, false);
+  _tprt('Showing ' + list.length + ' results in main view. Type <b>show all</b> to clear.', 'tbold');
+}
+
+function clearFilter() {
+  filterMode = null;
+  filterPosts = [];
+  filterQuery = '';
+  currentPage = 1;
+  renderPage(1, false);
+}
+
+// Admin panel
+function updateTypeFields() {
+  const t = $('postType').value;
+  $('bodyGroup').style.display = 'block';
+  $('imageGroup').style.display = 'block';
+  $('linkGroup').style.display = t === 'link' ? 'block' : 'none';
+  $('videoGroup').style.display = t === 'video' ? 'block' : 'none';
+  $('audioGroup').style.display = t === 'audio' ? 'block' : 'none';
+  $('postBody').parentElement.querySelector('label').textContent =
+    t === 'quote' ? 'Quote text' :
+    t === 'link' ? 'Description' : 'Body (HTML allowed)';
+}
+
+function resetForm() {
+  editingId = null;
+  $('editId').value = '';
+  $('formTitle').textContent = 'New Post';
+  $('postTitle').value = '';
+  $('postType').value = 'text';
+  $('postBody').value = '';
+  $('postTags').value = '';
+  var _now = new Date(); var _pad = function(n) { return String(n).padStart(2, '0'); };
+  $('postDate').value = _now.getFullYear() + '-' + _pad(_now.getMonth()+1) + '-' + _pad(_now.getDate()) + 'T' + _pad(_now.getHours()) + ':' + _pad(_now.getMinutes());
+  $('postLink').value = '';
+  $('postVideo').value = '';
+  $('postAudio').value = '';
+  $('editImagePath').value = '';
+  renderImgGallery();
+  $('savePostBtn').textContent = 'Publish Post';
+  $('cancelEditBtn').style.display = 'none';
+  $('deletePostBtn').style.display = 'none';
+  updateTypeFields();
+}
+
+async function savePost() {
+  const title = $('postTitle').value.trim();
+  const type = $('postType').value;
+  const body = $('postBody').value;
+  const tags = $('postTags').value.split(',').map(t => t.trim()).filter(Boolean);
+  var _now = new Date(); var _pad = function(n) { return String(n).padStart(2, '0'); };
+  const date = $('postDate').value || _now.getFullYear() + '-' + _pad(_now.getMonth()+1) + '-' + _pad(_now.getDate()) + 'T' + _pad(_now.getHours()) + ':' + _pad(_now.getMinutes());
+  const linkUrl = $('postLink').value.trim();
+  const videoSource = $('postVideo').value.trim();
+  const audioSource = $('postAudio').value.trim();
+  let images = [];
+  try { images = JSON.parse($('editImagePath').value || '[]'); } catch(e) {}
+  if (!Array.isArray(images)) images = [];
+
+  const post = {
+    id: editingId || Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    title, type, body, tags, date,
+    linkUrl, videoSource, audioSource,
+    images: images.filter(Boolean)
+  };
+
+  if (editingId) {
+    posts = posts.map(p => p.id === editingId ? post : p);
+  } else {
+    posts.unshift(post);
+  }
+
+  posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (!(await window.cms.savePosts(posts.map(cleanPost)))) { posts = posts.filter(p => p.id !== post.id); return; }
+  clearFilter();
+  resetForm();
+  $('adminPanel').classList.remove('open');
+  $('adminBtn').classList.remove('active');
+  renderAdminList();
+}
+
+async function deletePost() {
+  if (!editingId) return;
+  if (!confirm('Delete this post permanently?')) return;
+  posts = posts.filter(p => p.id !== editingId);
+  await window.cms.savePosts(posts.map(cleanPost));
+  resetForm();
+  $('adminPanel').classList.remove('open');
+  $('adminBtn').classList.remove('active');
+  clearFilter();
+  renderAdminList();
+}
+
+function renderImgGallery() {
+  let urls = [];
+  try { urls = JSON.parse($('editImagePath').value || '[]'); } catch(e) {}
+  if (!Array.isArray(urls)) urls = [];
+  const gal = $('imgGallery');
+  let h = urls.map((u, i) =>
+    '<div class="img-thumb"><img src="' + u + '" alt=""><button class="del-thumb" data-idx="' + i + '">&times;</button></div>'
+  ).join('');
+  h += '<button class="img-add-btn" id="pickImageBtn">+</button>';
+  gal.innerHTML = h;
+  gal.querySelectorAll('.del-thumb').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const idx = parseInt(this.dataset.idx);
+      let arr = [];
+      try { arr = JSON.parse($('editImagePath').value || '[]'); } catch(e) {}
+      arr.splice(idx, 1);
+      $('editImagePath').value = JSON.stringify(arr);
+      renderImgGallery();
+    });
+  });
+  $('pickImageBtn').addEventListener('click', pickImage);
+}
+
+async function pickImage() {
+  try {
+    const input = document.createElement('input');
+    input.type = 'file'; input.multiple = true;
+    input.accept = 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml';
+    const dataUrls = await new Promise(r => {
+      input.onchange = () => {
+        Promise.all(Array.from(input.files).map(f => new Promise(res => {
+          const fr = new FileReader();
+          fr.onload = e => res(e.target.result);
+          fr.readAsDataURL(f);
+        }))).then(r);
+      };
+      input.click();
+    });
+    if (dataUrls && dataUrls.length) {
+      let existing = [];
+      try { existing = JSON.parse($('editImagePath').value || '[]'); } catch(e) {}
+      existing.push(...dataUrls);
+      $('editImagePath').value = JSON.stringify(existing);
+      renderImgGallery();
+    }
+  } catch(e) {}
+}
+
+function renderAdminList() {
+  const q = ($('postSearch').value || '').toLowerCase();
+  const filtered = posts.filter(p => {
+    if (!q) return true;
+    return (p.title || '').toLowerCase().includes(q) ||
+           (p.body || '').toLowerCase().includes(q) ||
+           (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
+           dateSearchStr(p).includes(q);
+  });
+
+  $('adminPostList').innerHTML = filtered.length ?
+    filtered.map(p =>
+      '<div class="admin-post-item" onclick="editPost(\'' + p.id + '\')">' +
+        '<span>' + escHtml(p.title || extractText(p).slice(0, 50) || '(untitled)') + ' <span style="color:var(--text-muted);font-size:0.7rem">' + escHtml(p.type) + ' - ' + formatDate(p.date, true) + '</span></span>' +
+        '<div class="item-actions">' +
+          '<button onclick="event.stopPropagation();editPost(\'' + p.id + '\')">edit</button>' +
+          '<button class="del" onclick="event.stopPropagation();deletePostById(\'' + p.id + '\')">\u00d7</button>' +
+        '</div>' +
+      '</div>'
+    ).join('') :
+    '<div style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:16px">No posts match</div>';
+}
+
+window.deletePostById = async function(id) {
+  if (!confirm('Delete this post?')) return;
+  posts = posts.filter(p => p.id !== id);
+  await window.cms.savePosts(posts.map(cleanPost));
+  clearFilter();
+  renderAdminList();
+};
+
+async function importPosts() {
+  try {
+    const data = await window.cms.importFile();
+    if (data && data.length > 0) {
+      if (!confirm('Import ' + data.length + ' posts? Existing posts with matching IDs will be updated.')) return;
+      for (const p of data) {
+        if (!p.id) p.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        const existing = posts.findIndex(e => e.id === p.id);
+        if (existing >= 0) posts[existing] = p;
+        else posts.push(p);
+      }
+      posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      await window.cms.savePosts(posts.map(cleanPost));
+      clearFilter();
+      renderAdminList();
+    }
+  } catch(e) {}
+}
+
+async function exportPosts() {
+  try {
+    if (!window.cms.exportFile(posts.map(cleanPost))) return;
+  } catch(e) {}
+}
+
+// Terminal
+var _th = []; var _thi = -1; var _tcmds = {}; var _trState = { searchGen: 0, searchActive: false };
+
+function _treg(n, a, d, f) { _tcmds[n] = { f: f, a: a || [], d: d || '' }; }
+function _tout(h) { var e = $('tbody'); if (e) e.innerHTML += h; }
+function _tprt(t, c) { _tout('<div class="to' + (c ? ' ' + c : '') + '">' + t + '</div>'); }
+function _tscb() { var e = $('tbody'); if (e) e.scrollTop = e.scrollHeight; }
+
+var _tvpHandler = null;
+
+function _tadj() {
+  if (!window.visualViewport) return;
+  if (window.innerWidth > 800) { var w = document.querySelector('.twindow'); if (w) w.style.height = ''; return; }
+  var w = document.querySelector('.twindow');
+  if (!w) return;
+  var h = window.visualViewport.height;
+  w.style.height = (h - 8) + 'px';
+}
+
+function _topen() {
+  var o = $('toverlay');
+  var b = $('tbody');
+  if (!o || !b) return;
+  o.classList.add('open');
+  b.innerHTML = '';
+  _tprt('kredtidy@cms v2.0 (offline)', 'tdim');
+  _tprt('type <b>help</b> for commands, <b>exit</b> to close', 'tdim');
+  _tprt('');
+  _tadj();
+  if (window.visualViewport && !_tvpHandler) {
+    _tvpHandler = function() { _tadj(); };
+    window.visualViewport.addEventListener('resize', _tvpHandler);
+    window.visualViewport.addEventListener('scroll', _tvpHandler);
+  }
+  setTimeout(function() { var i = $('tinput'); if (i) i.focus(); }, 100);
+}
+
+function _tclose() {
+  var o = $('toverlay');
+  if (o) o.classList.remove('open');
+  if (_tvpHandler) {
+    window.visualViewport.removeEventListener('resize', _tvpHandler);
+    window.visualViewport.removeEventListener('scroll', _tvpHandler);
+    _tvpHandler = null;
+  }
+}
+
+function _tgen() {
+  var lex=['a','aa','aaa','aaron','ab','abandoned','abc','aberdeen','abilities','ability','able','aboriginal','abortion','about','above','abraham','abroad','abs','absence','absent','absolute','absolutely','absorption','abstract','abstracts','abu','abuse','ac','academic','academics','academy','acc','accent','accept','acceptable','acceptance','accepted','accepting','accepts','access','accessed','accessibility','accessible','accessing','accessories','accessory','accident','accidents','accommodate','accommodation',
+'accommodations','accompanied','accompanying','accomplish','accomplished','accordance','according','accordingly','account','accountability','accounting','accounts','accreditation','accredited','accuracy','accurate','accurately','accused','acdbentity','ace','acer','achieve','achieved','achievement','achievements','achieving','acid','acids','acknowledge','acknowledged','acm','acne','acoustic','acquire','acquired','acquisition','acquisitions','acre','acres','acrobat','across','acrylic','act','acting','action','actions','activated','activation','active','actively',
+'activists','activities','activity','actor','actors','actress','acts','actual','actually','acute','ad','ada','adam','adams','adaptation','adapted','adapter','adapters','adaptive','adaptor','add','added','addiction','adding','addition','additional','additionally','additions','address','addressed','addresses','addressing','adds','adelaide','adequate','adidas','adipex','adjacent','adjust','adjustable','adjusted','adjustment','adjustments','admin','administered','administration','administrative','administrator','administrators','admission',
+'admissions','admit','admitted','adobe','adolescent','adopt','adopted','adoption','adrian','ads','adsl','adult','adults','advance','advanced','advancement','advances','advantage','advantages','adventure','adventures','adverse','advert','advertise','advertisement','advertisements','advertiser','advertisers','advertising','advice','advise','advised','advisor','advisors','advisory','advocacy','advocate','adware','ae','aerial','aerospace','af','affair','affairs','affect','affected','affecting','affects','affiliate','affiliated',
+'affiliates','affiliation','afford','affordable','afghanistan','afraid','africa','african','after','afternoon','afterwards','ag','again','against','age','aged','agencies','agency','agenda','agent','agents','ages','aggregate','aggressive','aging','ago','agree','agreed','agreement','agreements','agrees','agricultural','agriculture','ah','ahead','ai','aid','aids','aim','aimed','aims','air','aircraft','airfare','airline','airlines','airplane','airport','airports','aj',
+'ak','aka','al','ala','alabama','alan','alarm','alaska','albania','albany','albert','alberta','album','albums','albuquerque','alcohol','alert','alerts','alex','alexander','alexandria','alfred','algebra','algeria','algorithm','algorithms','ali','alias','alice','alien','align','alignment','alike','alive','all','allah','allan','alleged','allen','allergy','alliance','allied','allocated','allocation','allow','allowance','allowed','allowing','allows','alloy',
+'almost','alone','along','alot','alpha','alphabetical','alpine','already','also','alt','alter','altered','alternate','alternative','alternatively','alternatives','although','alto','aluminium','aluminum','alumni','always','am','amanda','amateur','amazing','amazon','amazoncom','amazoncouk','ambassador','amber','ambien','ambient','amd','amend','amended','amendment','amendments','amenities','america','american','americans','americas','amino','among','amongst','amount','amounts','amp','ampland',
+'amplifier','amsterdam','amy','an','ana','anaheim','analog','analyses','analysis','analyst','analysts','analytical','analyze','analyzed','anatomy','anchor','ancient','and','andale','anderson','andorra','andrea','andreas','andrew','andrews','andy','angel','angela','angeles','angels','anger','angle','angola','angry','animal','animals','animated','animation','anime','ann','anna','anne','annex','annie','anniversary','annotated','annotation','announce','announced','announcement',
+'announcements','announces','annoying','annual','annually','anonymous','another','answer','answered','answering','answers','ant','antarctica','antenna','anthony','anthropology','anti','antibodies','antibody','anticipated','antigua','antique','antiques','antivirus','antonio','anxiety','any','anybody','anymore','anyone','anything','anytime','anyway','anywhere','aol','ap','apache','apart','apartment','apartments','api','apnic','apollo','app','apparatus','apparel','apparent','apparently','appeal','appeals',
+'appear','appearance','appeared','appearing','appears','appendix','apple','appliance','appliances','applicable','applicant','applicants','application','applications','applied','applies','apply','applying','appointed','appointment','appointments','appraisal','appreciate','appreciated','appreciation','approach','approaches','appropriate','appropriations','approval','approve','approved','approx','approximate','approximately','apps','apr','april','apt','aqua','aquarium','aquatic','ar','arab','arabia','arabic','arbitrary','arbitration','arc','arcade',
+'arch','architect','architects','architectural','architecture','archive','archived','archives','arctic','are','area','areas','arena','arg','argentina','argue','argued','argument','arguments','arise','arising','arizona','arkansas','arlington','arm','armed','armenia','armor','arms','armstrong','army','arnold','around','arrange','arranged','arrangement','arrangements','array','arrest','arrested','arrival','arrivals','arrive','arrived','arrives','arrow','art','arthritis','arthur','article',
+'articles','artificial','artist','artistic','artists','arts','artwork','aruba','as','asbestos','ascii','ash','ashley','asia','asian','aside','asin','ask','asked','asking','asks','asn','asp','aspect','aspects','aspnet','ass','assault','assembled','assembly','assess','assessed','assessing','assessment','assessments','asset','assets','assign','assigned','assignment','assignments','assist','assistance','assistant','assisted','assists','associate','associated','associates','association',
+'associations','assume','assumed','assumes','assuming','assumption','assumptions','assurance','assure','assured','asthma','astrology','astronomy','asus','at','ata','ate','athens','athletes','athletic','athletics','ati','atlanta','atlantic','atlas','atm','atmosphere','atmospheric','atom','atomic','attach','attached','attachment','attachments','attack','attacked','attacks','attempt','attempted','attempting','attempts','attend','attendance','attended','attending','attention','attitude','attitudes','attorney','attorneys',
+'attract','attraction','attractions','attractive','attribute','attributes','au','auburn','auckland','auction','auctions','aud','audi','audience','audio','audit','auditor','aug','august','aurora','aus','austin','australia','australian','austria','authentic','authentication','author','authorities','authority','authorization','authorized','authors','auto','automated','automatic','automatically','automation','automobile','automobiles','automotive','autos','autumn','av','availability','available','avatar','ave','avenue','average',
+'avg','avi','aviation','avoid','avoiding','avon','aw','award','awarded','awards','aware','awareness','away','awesome','awful','axis','aye','az','azerbaijan','b','ba','babe','babes','babies','baby','bachelor','back','backed','background','backgrounds','backing','backup','bacon','bacteria','bacterial','bad','badge','badly','bag','baghdad','bags','bahamas','bahrain','bailey','baker','baking','balance','balanced','bald','bali',
+'ball','ballet','balloon','ballot','balls','baltimore','ban','banana','band','bands','bandwidth','bang','bangbus','bangkok','bangladesh','bank','banking','bankruptcy','banks','banned','banner','banners','baptist','bar','barbados','barbara','barbie','barcelona','bare','barely','bargain','bargains','barn','barnes','barrel','barrier','barriers','barry','bars','base','baseball','based','baseline','basement','basename','bases','basic','basically','basics','basin',
+'basis','basket','basketball','baskets','bass','bat','batch','bath','bathroom','bathrooms','baths','batman','batteries','battery','battle','battlefield','bay','bb','bbc','bbs','bbw','bc','bd','bdsm','be','beach','beaches','beads','beam','bean','beans','bear','bearing','bears','beast','beastality','beastiality','beat','beatles','beats','beautiful','beautifully','beauty','beaver','became','because','become','becomes','becoming','bed',
+'bedding','bedford','bedroom','bedrooms','beds','bee','beef','been','beer','before','began','begin','beginner','beginners','beginning','begins','begun','behalf','behavior','behavioral','behaviour','behind','beijing','being','beings','belarus','belfast','belgium','belief','beliefs','believe','believed','believes','belize','belkin','bell','belle','belly','belong','belongs','below','belt','belts','ben','bench','benchmark','bend','beneath','beneficial','benefit',
+'benefits','benjamin','bennett','benz','berkeley','berlin','bermuda','bernard','berry','beside','besides','best','bestiality','bestsellers','bet','beta','beth','better','betting','betty','between','beverage','beverages','beverly','beyond','bg','bhutan','bi','bias','bible','biblical','bibliographic','bibliography','bicycle','bid','bidder','bidding','bids','big','bigger','biggest','bike','bikes','bikini','bill','billing','billion','bills','billy','bin',
+'binary','bind','binding','bingo','bio','biodiversity','biographies','biography','biol','biological','biology','bios','biotechnology','bird','birds','birmingham','birth','birthday','bishop','bit','bitch','bite','bits','biz','bizarre','bizrate','bk','bl','black','blackberry','blackjack','blacks','blade','blades','blah','blair','blake','blame','blank','blanket','blast','bleeding','blend','bless','blessed','blind','blink','block','blocked','blocking',
+'blocks','blog','blogger','bloggers','blogging','blogs','blond','blonde','blood','bloody','bloom','bloomberg','blue','blues','bluetooth','blvd','bm','bmw','bo','board','boards','boat','boating','boats','bob','bobby','boc','bodies','body','bold','bolivia','bolt','bomb','bon','bond','bondage','bonds','bone','bones','bonus','boob','boobs','book','booking','bookings','bookmark','bookmarks','books','bookstore','bool',
+'boolean','boom','boost','boot','booth','boots','booty','border','borders','bored','boring','born','borough','bosnia','boss','boston','both','bother','botswana','bottle','bottles','bottom','bought','boulder','boulevard','bound','boundaries','boundary','bouquet','boutique','bow','bowl','bowling','box','boxed','boxes','boxing','boy','boys','bp','br','bra','bracelet','bracelets','bracket','brad','bradford','bradley','brain','brake',
+'brakes','branch','branches','brand','brandon','brands','bras','brass','brave','brazil','brazilian','breach','bread','break','breakdown','breakfast','breaking','breaks','breast','breasts','breath','breathing','breed','breeding','breeds','brian','brick','bridal','bride','bridge','bridges','brief','briefing','briefly','briefs','bright','brighton','brilliant','bring','bringing','brings','brisbane','bristol','britain','britannica','british','britney','broad','broadband','broadcast',
+'broadcasting','broader','broadway','brochure','brochures','broke','broken','broker','brokers','bronze','brook','brooklyn','brooks','bros','brother','brothers','brought','brown','browse','browser','browsers','browsing','bruce','brunei','brunette','brunswick','brush','brussels','brutal','bryan','bryant','bs','bt','bubble','buck','bucks','budapest','buddy','budget','budgets','buf','buffalo','buffer','bufing','bug','bugs','build','builder','builders','building',
+'buildings','builds','built','bukkake','bulgaria','bulgarian','bulk','bull','bullet','bulletin','bumper','bunch','bundle','bunny','burden','bureau','buried','burke','burlington','burn','burner','burning','burns','burst','burton','bus','buses','bush','business','businesses','busty','busy','but','butler','butt','butter','butterfly','button','buttons','butts','buy','buyer','buyers','buying','buys','buzz','bw','by','bye','byte',
+'bytes','c','ca','cab','cabin','cabinet','cabinets','cable','cables','cache','cached','cad','cadillac','cafe','cage','cake','cakes','cal','calcium','calculate','calculated','calculation','calculations','calculator','calculators','calendar','calendars','calgary','calibration','calif','california','call','called','calling','calls','calm','calvin','cam','cambodia','cambridge','camcorder','camcorders','came','camel','camera','cameras','cameron','cameroon','camp','campaign',
+'campaigns','campbell','camping','camps','campus','cams','can','canada','canadian','canal','canberra','cancel','cancellation','cancelled','cancer','candidate','candidates','candle','candles','candy','cannon','canon','cant','canvas','canyon','cap','capabilities','capability','capable','capacity','cape','capital','capitol','caps','captain','capture','captured','car','carb','carbon','card','cardiac','cardiff','cardiovascular','cards','care','career','careers','careful','carefully',
+'carey','cargo','caribbean','caring','carl','carlo','carlos','carmen','carnival','carol','carolina','caroline','carpet','carried','carrier','carriers','carries','carroll','carry','carrying','cars','cart','carter','cartoon','cartoons','cartridge','cartridges','cas','casa','case','cases','casey','cash','cashiers','casino','casinos','casio','cassette','cast','casting','castle','casual','cat','catalog','catalogs','catalogue','catalyst','catch','categories','category',
+'catering','cathedral','catherine','catholic','cats','cattle','caught','cause','caused','causes','causing','caution','cave','cayman','cb','cbs','cc','ccd','cd','cdna','cds','cdt','ce','cedar','ceiling','celebrate','celebration','celebrities','celebrity','celebs','cell','cells','cellular','celtic','cement','cemetery','census','cent','center','centered','centers','central','centre','centres','cents','centuries','century','ceo','ceramic','ceremony',
+'certain','certainly','certificate','certificates','certification','certified','cest','cet','cf','cfr','cg','cgi','ch','chad','chain','chains','chair','chairman','chairs','challenge','challenged','challenges','challenging','chamber','chambers','champagne','champion','champions','championship','championships','chan','chance','chancellor','chances','change','changed','changelog','changes','changing','channel','channels','chaos','chapel','chapter','chapters','char','character','characteristic','characteristics','characterization',
+'characterized','characters','charge','charged','charger','chargers','charges','charging','charitable','charity','charles','charleston','charlie','charlotte','charm','charming','charms','chart','charter','charts','chase','chassis','chat','cheap','cheaper','cheapest','cheat','cheats','check','checked','checking','checklist','checkout','checks','cheers','cheese','chef','chelsea','chem','chemical','chemicals','chemistry','chen','cheque','cherry','chess','chest','chester','chevrolet','chevy',
+'chi','chicago','chick','chicken','chicks','chief','child','childhood','children','childrens','chile','china','chinese','chip','chips','cho','chocolate','choice','choices','choir','cholesterol','choose','choosing','chorus','chose','chosen','chris','christ','christian','christianity','christians','christina','christine','christmas','christopher','chrome','chronic','chronicle','chronicles','chrysler','chubby','chuck','church','churches','ci','cia','cialis','ciao','cigarette','cigarettes',
+'cincinnati','cindy','cinema','cingular','cio','cir','circle','circles','circuit','circuits','circular','circulation','circumstances','circus','cisco','citation','citations','cite','cited','cities','citizen','citizens','citizenship','city','citysearch','civic','civil','civilian','civilization','cj','cl','claim','claimed','claims','claire','clan','clara','clarity','clark','clarke','class','classes','classic','classical','classics','classification','classified','classifieds','classroom','clause',
+'clay','clean','cleaner','cleaners','cleaning','cleanup','clear','clearance','cleared','clearing','clearly','clerk','cleveland','click','clicking','clicks','client','clients','cliff','climate','climb','climbing','clinic','clinical','clinics','clinton','clip','clips','clock','clocks','clone','close','closed','closely','closer','closes','closest','closing','closure','cloth','clothes','clothing','cloud','clouds','cloudy','club','clubs','cluster','clusters','cm',
+'cms','cn','cnet','cnetcom','cnn','co','coach','coaches','coaching','coal','coalition','coast','coastal','coat','coated','coating','cock','cocks','cod','code','codes','coding','coffee','cognitive','cohen','coin','coins','col','cold','cole','coleman','colin','collaboration','collaborative','collapse','collar','colleague','colleagues','collect','collectables','collected','collectible','collectibles','collecting','collection','collections','collective','collector','collectors','college',
+'colleges','collins','cologne','colombia','colon','colonial','colony','color','colorado','colored','colors','colour','colours','columbia','columbus','column','columnists','columns','com','combat','combination','combinations','combine','combined','combines','combining','combo','come','comedy','comes','comfort','comfortable','comic','comics','coming','comm','command','commander','commands','comment','commentary','commented','comments','commerce','commercial','commission','commissioner','commissioners','commissions','commit',
+'commitment','commitments','committed','committee','committees','commodities','commodity','common','commonly','commons','commonwealth','communicate','communication','communications','communist','communities','community','comp','compact','companies','companion','company','compaq','comparable','comparative','compare','compared','comparing','comparison','comparisons','compatibility','compatible','compensation','compete','competent','competing','competition','competitions','competitive','competitors','compilation','compile','compiled','compiler','complaint','complaints','complement','complete','completed','completely',
+'completing','completion','complex','complexity','compliance','compliant','complicated','complications','complimentary','comply','component','components','composed','composer','composite','composition','compound','compounds','comprehensive','compressed','compression','compromise','computation','computational','compute','computed','computer','computers','computing','con','concentrate','concentration','concentrations','concept','concepts','conceptual','concern','concerned','concerning','concerns','concert','concerts','conclude','concluded','conclusion','conclusions','concord','concrete','condition','conditional',
+'conditioning','conditions','condo','condos','conduct','conducted','conducting','conf','conference','conferences','conferencing','confidence','confident','confidential','confidentiality','config','configuration','configure','configured','configuring','confirm','confirmation','confirmed','conflict','conflicts','confused','confusion','congo','congratulations','congress','congressional','conjunction','connect','connected','connecticut','connecting','connection','connections','connectivity','connector','connectors','cons','conscious','consciousness','consecutive','consensus','consent','consequence','consequences','consequently',
+'conservation','conservative','consider','considerable','consideration','considerations','considered','considering','considers','consist','consistency','consistent','consistently','consisting','consists','console','consoles','consolidated','consolidation','consortium','conspiracy','const','constant','constantly','constitute','constitutes','constitution','constitutional','constraint','constraints','construct','constructed','construction','consult','consultancy','consultant','consultants','consultation','consulting','consumer','consumers','consumption','contact','contacted','contacting','contacts','contain','contained','container','containers',
+'containing','contains','contamination','contemporary','content','contents','contest','contests','context','continent','continental','continually','continue','continued','continues','continuing','continuity','continuous','continuously','contract','contracting','contractor','contractors','contracts','contrary','contrast','contribute','contributed','contributing','contribution','contributions','contributor','contributors','control','controlled','controller','controllers','controlling','controls','controversial','controversy','convenience','convenient','convention','conventional','conventions','convergence','conversation','conversations','conversion',
+'convert','converted','converter','convertible','convicted','conviction','convinced','cook','cookbook','cooked','cookie','cookies','cooking','cool','cooler','cooling','cooper','cooperation','cooperative','coordinate','coordinated','coordinates','coordination','coordinator','cop','cope','copied','copies','copper','copy','copying','copyright','copyrighted','copyrights','coral','cord','cordless','core','cork','corn','cornell','corner','corners','cornwall','corp','corporate','corporation','corporations','corps','corpus',
+'correct','corrected','correction','corrections','correctly','correlation','correspondence','corresponding','corruption','cos','cosmetic','cosmetics','cost','costa','costs','costume','costumes','cottage','cottages','cotton','could','council','councils','counsel','counseling','count','counted','counter','counters','counties','counting','countries','country','counts','county','couple','coupled','couples','coupon','coupons','courage','courier','course','courses','court','courtesy','courts','cove','cover','coverage',
+'covered','covering','covers','cow','cowboy','cox','cp','cpu','cr','crack','cradle','craft','crafts','craig','crap','craps','crash','crawford','crazy','cream','create','created','creates','creating','creation','creations','creative','creativity','creator','creature','creatures','credit','credits','creek','crest','crew','cricket','crime','crimes','criminal','crisis','criteria','criterion','critical','criticism','critics','crm','croatia','crop','crops',
+'cross','crossing','crossword','crowd','crown','crucial','crude','cruise','cruises','cruz','cry','crystal','cs','css','cst','ct','cu','cuba','cube','cubic','cuisine','cult','cultural','culture','cultures','cum','cumshot','cumshots','cumulative','cunt','cup','cups','cure','curious','currencies','currency','current','currently','curriculum','cursor','curtis','curve','curves','custody','custom','customer','customers','customise','customize','customized',
+'customs','cut','cute','cuts','cutting','cv','cvs','cw','cyber','cycle','cycles','cycling','cylinder','cyprus','cz','czech','d','da','dad','daddy','daily','dairy','daisy','dakota','dale','dallas','dam','damage','damaged','damages','dame','damn','dan','dana','dance','dancing','danger','dangerous','daniel','danish','danny','dans','dare','dark','darkness','darwin','das','dash','dat','data',
+'database','databases','date','dated','dates','dating','daughter','daughters','dave','david','davidson','davis','dawn','day','days','dayton','db','dc','dd','ddr','de','dead','deadline','deadly','deaf','deal','dealer','dealers','dealing','deals','dealt','dealtime','dean','dear','death','deaths','debate','debian','deborah','debt','debug','debut','dec','decade','decades','december','decent','decide','decided','decimal',
+'decision','decisions','deck','declaration','declare','declared','decline','declined','decor','decorating','decorative','decrease','decreased','dedicated','dee','deemed','deep','deeper','deeply','deer','def','default','defeat','defects','defence','defend','defendant','defense','defensive','deferred','deficit','define','defined','defines','defining','definitely','definition','definitions','degree','degrees','del','delaware','delay','delayed','delays','delegation','delete','deleted','delhi','delicious',
+'delight','deliver','delivered','delivering','delivers','delivery','dell','delta','deluxe','dem','demand','demanding','demands','demo','democracy','democrat','democratic','democrats','demographic','demonstrate','demonstrated','demonstrates','demonstration','den','denial','denied','denmark','dennis','dense','density','dental','dentists','denver','deny','department','departmental','departments','departure','depend','dependence','dependent','depending','depends','deployment','deposit','deposits','depot','depression','dept','depth',
+'deputy','der','derby','derek','derived','des','descending','describe','described','describes','describing','description','descriptions','desert','deserve','design','designated','designation','designed','designer','designers','designing','designs','desirable','desire','desired','desk','desktop','desktops','desperate','despite','destination','destinations','destiny','destroy','destroyed','destruction','detail','detailed','details','detect','detected','detection','detective','detector','determination','determine','determined','determines','determining',
+'detroit','deutsch','deutsche','deutschland','dev','devel','develop','developed','developer','developers','developing','development','developmental','developments','develops','deviant','deviation','device','devices','devil','devon','devoted','df','dg','dh','di','diabetes','diagnosis','diagnostic','diagram','dial','dialog','dialogue','diameter','diamond','diamonds','diana','diane','diary','dice','dick','dicke','dicks','dictionaries','dictionary','did','die','died','diego','dies',
+'diesel','diet','dietary','diff','differ','difference','differences','different','differential','differently','difficult','difficulties','difficulty','diffs','dig','digest','digit','digital','dildo','dildos','dim','dimension','dimensional','dimensions','dining','dinner','dip','diploma','dir','direct','directed','direction','directions','directive','directly','director','directories','directors','directory','dirt','dirty','dis','disabilities','disability','disable','disabled','disagree','disappointed','disaster','disc',
+'discharge','disciplinary','discipline','disciplines','disclaimer','disclaimers','disclose','disclosure','disco','discount','discounted','discounts','discover','discovered','discovery','discrete','discretion','discrimination','discs','discuss','discussed','discusses','discussing','discussion','discussions','disease','diseases','dish','dishes','disk','disks','disney','disorder','disorders','dispatch','dispatched','display','displayed','displaying','displays','disposal','disposition','dispute','disputes','dist','distance','distances','distant','distinct','distinction',
+'distinguished','distribute','distributed','distribution','distributions','distributor','distributors','district','districts','disturbed','div','dive','diverse','diversity','divide','divided','dividend','divine','diving','division','divisions','divorce','divx','diy','dj','dk','dl','dm','dna','dns','do','doc','dock','docs','doctor','doctors','doctrine','document','documentary','documentation','documentcreatetextnode','documented','documents','dod','dodge','doe','does','dog','dogs','doing',
+'doll','dollar','dollars','dolls','dom','domain','domains','dome','domestic','dominant','dominican','don','donald','donate','donated','donation','donations','done','donna','donor','donors','dont','doom','door','doors','dos','dosage','dose','dot','double','doubt','doug','douglas','dover','dow','down','download','downloadable','downloadcom','downloaded','downloading','downloads','downtown','dozen','dozens','dp','dpi','dr','draft','drag',
+'dragon','drain','drainage','drama','dramatic','dramatically','draw','drawing','drawings','drawn','draws','dream','dreams','dress','dressed','dresses','dressing','drew','dried','drill','drilling','drink','drinking','drinks','drive','driven','driver','drivers','drives','driving','drop','dropped','drops','drove','drug','drugs','drum','drums','drunk','dry','dryer','ds','dsc','dsl','dt','dts','du','dual','dubai','dublin',
+'duck','dude','due','dui','duke','dumb','dump','duncan','duo','duplicate','durable','duration','durham','during','dust','dutch','duties','duty','dv','dvd','dvds','dx','dying','dylan','dynamic','dynamics','e','ea','each','eagle','eagles','ear','earl','earlier','earliest','early','earn','earned','earning','earnings','earrings','ears','earth','earthquake','ease','easier','easily','east','easter','eastern',
+'easy','eat','eating','eau','ebay','ebony','ebook','ebooks','ec','echo','eclipse','eco','ecological','ecology','ecommerce','economic','economics','economies','economy','ecuador','ed','eddie','eden','edgar','edge','edges','edinburgh','edit','edited','editing','edition','editions','editor','editorial','editorials','editors','edmonton','eds','edt','educated','education','educational','educators','edward','edwards','ee','ef','effect','effective','effectively',
+'effectiveness','effects','efficiency','efficient','efficiently','effort','efforts','eg','egg','eggs','egypt','egyptian','eh','eight','either','ejaculation','el','elder','elderly','elect','elected','election','elections','electoral','electric','electrical','electricity','electro','electron','electronic','electronics','elegant','element','elementary','elements','elephant','elevation','eleven','eligibility','eligible','eliminate','elimination','elite','elizabeth','ellen','elliott','ellis','else','elsewhere','elvis',
+'em','emacs','email','emails','embassy','embedded','emerald','emergency','emerging','emily','eminem','emirates','emission','emissions','emma','emotional','emotions','emperor','emphasis','empire','empirical','employ','employed','employee','employees','employer','employers','employment','empty','en','enable','enabled','enables','enabling','enb','enclosed','enclosure','encoding','encounter','encountered','encourage','encouraged','encourages','encouraging','encryption','encyclopedia','end','endangered','ended','endif',
+'ending','endless','endorsed','endorsement','ends','enemies','enemy','energy','enforcement','eng','engage','engaged','engagement','engaging','engine','engineer','engineering','engineers','engines','england','english','enhance','enhanced','enhancement','enhancements','enhancing','enjoy','enjoyed','enjoying','enlarge','enlargement','enormous','enough','enquiries','enquiry','enrolled','enrollment','ensemble','ensure','ensures','ensuring','ent','enter','entered','entering','enterprise','enterprises','enters','entertaining','entertainment',
+'entire','entirely','entities','entitled','entity','entrance','entrepreneur','entrepreneurs','entries','entry','envelope','environment','environmental','environments','enzyme','eos','ep','epa','epic','epinions','epinionscom','episode','episodes','epson','eq','equal','equality','equally','equation','equations','equilibrium','equipment','equipped','equity','equivalent','er','era','eric','ericsson','erik','erotic','erotica','erp','error','errors','es','escape','escort','escorts','especially',
+'espn','essay','essays','essence','essential','essentially','essentials','essex','est','establish','established','establishing','establishment','estate','estates','estimate','estimated','estimates','estimation','estonia','et','etc','eternal','ethernet','ethical','ethics','ethiopia','ethnic','eu','eugene','eur','euro','europe','european','euros','ev','eva','eval','evaluate','evaluated','evaluating','evaluation','evaluations','evanescence','evans','eve','even','evening','event','events',
+'eventually','ever','every','everybody','everyday','everyone','everything','everywhere','evidence','evident','evil','evolution','ex','exact','exactly','exam','examination','examinations','examine','examined','examines','examining','example','examples','exams','exceed','excel','excellence','excellent','except','exception','exceptional','exceptions','excerpt','excess','excessive','exchange','exchanges','excited','excitement','exciting','exclude','excluded','excluding','exclusion','exclusive','exclusively','excuse','exec','execute',
+'executed','execution','executive','executives','exempt','exemption','exercise','exercises','exhaust','exhibit','exhibition','exhibitions','exhibits','exist','existed','existence','existing','exists','exit','exotic','exp','expand','expanded','expanding','expansion','expansys','expect','expectations','expected','expects','expedia','expenditure','expenditures','expense','expenses','expensive','experience','experienced','experiences','experiencing','experiment','experimental','experiments','expert','expertise','experts','expiration','expired','expires','explain',
+'explained','explaining','explains','explanation','explicit','explicitly','exploration','explore','explorer','exploring','explosion','expo','export','exports','exposed','exposure','express','expressed','expression','expressions','ext','extend','extended','extending','extends','extension','extensions','extensive','extent','exterior','external','extra','extract','extraction','extraordinary','extras','extreme','extremely','eye','eyed','eyes','ez','f','fa','fabric','fabrics','fabulous','face','faced','faces',
+'facial','facilitate','facilities','facility','facing','fact','factor','factors','factory','facts','faculty','fail','failed','failing','fails','failure','failures','fair','fairfield','fairly','fairy','faith','fake','fall','fallen','falling','falls','false','fame','familiar','families','family','famous','fan','fancy','fans','fantastic','fantasy','faq','faqs','far','fare','fares','farm','farmer','farmers','farming','farms','fascinating','fashion',
+'fast','faster','fastest','fat','fatal','fate','father','fathers','fatty','fault','favor','favorite','favorites','favors','favour','favourite','favourites','fax','fbi','fc','fcc','fd','fda','fe','fear','fears','feat','feature','featured','features','featuring','feb','february','fed','federal','federation','fee','feed','feedback','feeding','feeds','feel','feeling','feelings','feels','fees','feet','fell','fellow','fellowship',
+'felt','female','females','fence','feof','ferrari','ferry','festival','festivals','fetish','fever','few','fewer','ff','fg','fi','fiber','fibre','fiction','field','fields','fifteen','fifth','fifty','fig','fight','fighter','fighters','fighting','figure','figured','figures','fiji','file','filed','filename','files','filing','fill','filled','filling','film','filme','films','filter','filtering','filters','fin','final','finally',
+'finals','finance','finances','financial','financing','find','findarticles','finder','finding','findings','findlaw','finds','fine','finest','finger','fingering','fingers','finish','finished','finishing','finite','finland','finnish','fioricet','fire','fired','firefox','fireplace','fires','firewall','firewire','firm','firms','firmware','first','fiscal','fish','fisher','fisheries','fishing','fist','fisting','fit','fitness','fits','fitted','fitting','five','fix','fixed',
+'fixes','fixtures','fl','fla','flag','flags','flame','flash','flashers','flashing','flat','flavor','fleece','fleet','flesh','flex','flexibility','flexible','flickr','flight','flights','flip','float','floating','flood','floor','flooring','floors','floppy','floral','florence','florida','florist','florists','flour','flow','flower','flowers','flows','floyd','flu','fluid','flush','flux','fly','flyer','flying','fm','fo','foam',
+'focal','focus','focused','focuses','focusing','fog','fold','folder','folders','folding','folk','folks','follow','followed','following','follows','font','fonts','foo','food','foods','fool','foot','footage','football','footwear','for','forbes','forbidden','force','forced','forces','ford','forecast','forecasts','foreign','forest','forestry','forests','forever','forge','forget','forgot','forgotten','fork','form','formal','format','formation','formats',
+'formatting','formed','former','formerly','forming','forms','formula','fort','forth','fortune','forty','forum','forums','forward','forwarding','fossil','foster','foto','fotos','fought','foul','found','foundation','foundations','founded','founder','fountain','four','fourth','fox','fp','fr','fraction','fragrance','fragrances','frame','framed','frames','framework','framing','france','franchise','francis','francisco','frank','frankfurt','franklin','fraser','fraud','fred',
+'frederick','free','freebsd','freedom','freelance','freely','freeware','freeze','freight','french','frequencies','frequency','frequent','frequently','fresh','fri','friday','fridge','friend','friendly','friends','friendship','frog','from','front','frontier','frontpage','frost','frozen','fruit','fruits','fs','ft','ftp','fu','fuck','fucked','fucking','fuel','fuji','fujitsu','full','fully','fun','function','functional','functionality','functioning','functions','fund',
+'fundamental','fundamentals','funded','funding','fundraising','funds','funeral','funk','funky','funny','fur','furnished','furnishings','furniture','further','furthermore','fusion','future','futures','fuzzy','fw','fwd','fx','fy','g','ga','gabriel','gadgets','gage','gain','gained','gains','galaxy','gale','galleries','gallery','gambling','game','gamecube','games','gamespot','gaming','gamma','gang','gangbang','gap','gaps','garage','garbage','garcia',
+'garden','gardening','gardens','garlic','garmin','gary','gas','gasoline','gate','gates','gateway','gather','gathered','gathering','gauge','gave','gay','gays','gazette','gb','gba','gbp','gc','gcc','gd','gdp','ge','gear','geek','gel','gem','gen','gender','gene','genealogy','general','generally','generate','generated','generates','generating','generation','generations','generator','generators','generic','generous','genes','genesis','genetic',
+'genetics','geneva','genius','genome','genre','genres','gentle','gentleman','gently','genuine','geo','geographic','geographical','geography','geological','geology','geometry','george','georgia','gerald','german','germany','get','gets','getting','gg','ghana','ghost','ghz','gi','giant','giants','gibraltar','gibson','gif','gift','gifts','gig','gilbert','girl','girlfriend','girls','gis','give','given','gives','giving','gl','glad','glance',
+'glasgow','glass','glasses','glen','glenn','global','globe','glory','glossary','gloves','glow','glucose','gm','gmbh','gmc','gmt','gnome','gnu','go','goal','goals','goat','god','gods','goes','going','gold','golden','golf','gone','gonna','good','goods','google','gordon','gore','gorgeous','gospel','gossip','got','gothic','goto','gotta','gotten','gourmet','gov','governance','governing','government','governmental',
+'governments','governor','govt','gp','gpl','gps','gr','grab','grace','grad','grade','grades','gradually','graduate','graduated','graduates','graduation','graham','grain','grammar','grams','grand','grande','granny','grant','granted','grants','graph','graphic','graphical','graphics','graphs','gras','grass','grateful','gratis','gratuit','grave','gravity','gray','great','greater','greatest','greatly','greece','greek','green','greene','greenhouse','greensboro',
+'greeting','greetings','greg','gregory','grenada','grew','grey','grid','griffin','grill','grip','grocery','groove','gross','ground','grounds','groundwater','group','groups','grove','grow','growing','grown','grows','growth','gs','gsm','gst','gt','gtk','guam','guarantee','guaranteed','guarantees','guard','guardian','guards','guatemala','guess','guest','guestbook','guests','gui','guidance','guide','guided','guidelines','guides','guild','guilty',
+'guinea','guitar','guitars','gulf','gun','guns','guru','guy','guyana','guys','gym','gzip','h','ha','habitat','habits','hack','hacker','had','hair','hairy','haiti','half','halfcom','halifax','hall','halloween','halo','ham','hamburg','hamilton','hammer','hampshire','hampton','hand','handbags','handbook','handed','handheld','handhelds','handjob','handjobs','handle','handled','handles','handling','handmade','hands','handy','hang',
+'hanging','hans','hansen','happen','happened','happening','happens','happiness','happy','harassment','harbor','harbour','hard','hardcore','hardcover','harder','hardly','hardware','hardwood','harley','harm','harmful','harmony','harold','harper','harris','harrison','harry','hart','hartford','harvard','harvest','harvey','has','hash','hat','hate','hats','have','haven','having','hawaii','hawaiian','hawk','hay','hayes','hazard','hazardous','hazards','hb',
+'hc','hd','hdtv','he','head','headed','header','headers','heading','headline','headlines','headphones','headquarters','heads','headset','healing','health','healthcare','healthy','hear','heard','hearing','hearings','heart','hearts','heat','heated','heater','heath','heather','heating','heaven','heavily','heavy','hebrew','heel','height','heights','held','helen','helena','helicopter','hell','hello','helmet','help','helped','helpful','helping','helps',
+'hence','henderson','henry','hentai','hepatitis','her','herald','herb','herbal','herbs','here','hereby','herein','heritage','hero','heroes','herself','hewlett','hey','hh','hi','hidden','hide','hierarchy','high','higher','highest','highland','highlight','highlighted','highlights','highly','highs','highway','highways','hiking','hill','hills','hilton','him','himself','hindu','hint','hints','hip','hire','hired','hiring','his','hispanic',
+'hist','historic','historical','history','hit','hitachi','hits','hitting','hiv','hk','hl','ho','hobbies','hobby','hockey','hold','holdem','holder','holders','holding','holdings','holds','hole','holes','holiday','holidays','holland','hollow','holly','hollywood','holmes','holocaust','holy','home','homeland','homeless','homepage','homes','hometown','homework','hon','honda','honduras','honest','honey','hong','honolulu','honor','honors','hood',
+'hook','hop','hope','hoped','hopefully','hopes','hoping','hopkins','horizon','horizontal','hormone','horn','horny','horrible','horror','horse','horses','hose','hospital','hospitality','hospitals','host','hosted','hostel','hostels','hosting','hosts','hot','hotel','hotels','hotelscom','hotmail','hottest','hour','hourly','hours','house','household','households','houses','housewares','housewives','housing','houston','how','howard','however','howto','hp','hq',
+'hr','href','hrs','hs','ht','html','http','hu','hub','hudson','huge','hugh','hughes','hugo','hull','human','humanitarian','humanities','humanity','humans','humidity','humor','hundred','hundreds','hung','hungarian','hungary','hunger','hungry','hunt','hunter','hunting','huntington','hurricane','hurt','husband','hwy','hybrid','hydraulic','hydrocodone','hydrogen','hygiene','hypothesis','hypothetical','hyundai','hz','i','ia','ian','ibm',
+'ic','ice','iceland','icon','icons','icq','ict','id','idaho','ide','idea','ideal','ideas','identical','identification','identified','identifier','identifies','identify','identifying','identity','idle','idol','ids','ie','ieee','if','ignore','ignored','ii','iii','il','ill','illegal','illinois','illness','illustrated','illustration','illustrations','im','ima','image','images','imagination','imagine','imaging','img','immediate','immediately','immigrants',
+'immigration','immune','immunology','impact','impacts','impaired','imperial','implement','implementation','implemented','implementing','implications','implied','implies','import','importance','important','importantly','imported','imports','impose','imposed','impossible','impressed','impression','impressive','improve','improved','improvement','improvements','improving','in','inappropriate','inbox','inc','incentive','incentives','incest','inch','inches','incidence','incident','incidents','incl','include','included','includes','including','inclusion','inclusive',
+'income','incoming','incomplete','incorporate','incorporated','incorrect','increase','increased','increases','increasing','increasingly','incredible','incurred','ind','indeed','independence','independent','independently','index','indexed','indexes','india','indian','indiana','indianapolis','indians','indicate','indicated','indicates','indicating','indication','indicator','indicators','indices','indie','indigenous','indirect','individual','individually','individuals','indonesia','indonesian','indoor','induced','induction','industrial','industries','industry','inexpensive','inf',
+'infant','infants','infected','infection','infections','infectious','infinite','inflation','influence','influenced','influences','info','inform','informal','information','informational','informative','informed','infrared','infrastructure','ing','ingredients','inherited','initial','initially','initiated','initiative','initiatives','injection','injured','injuries','injury','ink','inkjet','inline','inn','inner','innocent','innovation','innovations','innovative','inns','input','inputs','inquire','inquiries','inquiry','ins','insects','insert',
+'inserted','insertion','inside','insider','insight','insights','inspection','inspections','inspector','inspiration','inspired','install','installation','installations','installed','installing','instance','instances','instant','instantly','instead','institute','institutes','institution','institutional','institutions','instruction','instructional','instructions','instructor','instructors','instrument','instrumental','instrumentation','instruments','insulin','insurance','insured','int','intake','integer','integral','integrate','integrated','integrating','integration','integrity','intel','intellectual','intelligence',
+'intelligent','intend','intended','intense','intensity','intensive','intent','intention','inter','interact','interaction','interactions','interactive','interest','interested','interesting','interests','interface','interfaces','interference','interim','interior','intermediate','internal','international','internationally','internet','internship','interpretation','interpreted','interracial','intersection','interstate','interval','intervals','intervention','interventions','interview','interviews','intimate','intl','into','intranet','intro','introduce','introduced','introduces','introducing','introduction','introductory',
+'invalid','invasion','invention','inventory','invest','investigate','investigated','investigation','investigations','investigator','investigators','investing','investment','investments','investor','investors','invisible','invision','invitation','invitations','invite','invited','invoice','involve','involved','involvement','involves','involving','io','ion','iowa','ip','ipaq','ipod','ips','ir','ira','iran','iraq','iraqi','irc','ireland','irish','iron','irrigation','irs','is','isa','isaac','isbn',
+'islam','islamic','island','islands','isle','iso','isolated','isolation','isp','israel','israeli','issn','issue','issued','issues','ist','istanbul','it','italia','italian','italiano','italic','italy','item','items','its','itsa','itself','itunes','iv','ivory','ix','j','ja','jack','jacket','jackets','jackie','jackson','jacksonville','jacob','jade','jaguar','jail','jake','jam','jamaica','james','jamie','jan',
+'jane','janet','january','japan','japanese','jar','jason','java','javascript','jay','jazz','jc','jd','je','jean','jeans','jeep','jeff','jefferson','jeffrey','jelsoft','jennifer','jenny','jeremy','jerry','jersey','jerusalem','jesse','jessica','jesus','jet','jets','jewel','jewellery','jewelry','jewish','jews','jill','jim','jimmy','jj','jm','jo','joan','job','jobs','joe','joel','john','johnny',
+'johns','johnson','johnston','join','joined','joining','joins','joint','joke','jokes','jon','jonathan','jones','jordan','jose','joseph','josh','joshua','journal','journalism','journalist','journalists','journals','journey','joy','joyce','jp','jpeg','jpg','jr','js','juan','judge','judges','judgment','judicial','judy','juice','jul','julia','julian','julie','july','jump','jumping','jun','junction','june','jungle','junior',
+'junk','jurisdiction','jury','just','justice','justify','justin','juvenile','jvc','k','ka','kai','kansas','karaoke','karen','karl','karma','kate','kathy','katie','katrina','kay','kazakhstan','kb','kde','keen','keep','keeping','keeps','keith','kelkoo','kelly','ken','kennedy','kenneth','kenny','keno','kent','kentucky','kenya','kept','kernel','kerry','kevin','key','keyboard','keyboards','keys','keyword','keywords',
+'kg','kick','kid','kidney','kids','kijiji','kill','killed','killer','killing','kills','kilometers','kim','kinase','kind','kinda','kinds','king','kingdom','kings','kingston','kirk','kiss','kissing','kit','kitchen','kits','kitty','klein','km','knee','knew','knife','knight','knights','knit','knitting','knives','knock','know','knowing','knowledge','knowledgestorm','known','knows','ko','kodak','kong','korea','korean',
+'kruger','ks','kurt','kuwait','kw','ky','kyle','l','la','lab','label','labeled','labels','labor','laboratories','laboratory','labour','labs','lace','lack','ladder','laden','ladies','lady','lafayette','laid','lake','lakes','lamb','lambda','lamp','lamps','lan','lancaster','lance','land','landing','lands','landscape','landscapes','lane','lanes','lang','language','languages','lanka','lap','laptop','laptops','large',
+'largely','larger','largest','larry','las','laser','last','lasting','lat','late','lately','later','latest','latex','latin','latina','latinas','latino','latitude','latter','latvia','lauderdale','laugh','laughing','launch','launched','launches','laundry','laura','lauren','law','lawn','lawrence','laws','lawsuit','lawyer','lawyers','lay','layer','layers','layout','lazy','lb','lbs','lc','lcd','ld','le','lead','leader',
+'leaders','leadership','leading','leads','leaf','league','lean','learn','learned','learners','learning','lease','leasing','least','leather','leave','leaves','leaving','lebanon','lecture','lectures','led','lee','leeds','left','leg','legacy','legal','legally','legend','legendary','legends','legislation','legislative','legislature','legitimate','legs','leisure','lemon','len','lender','lenders','lending','length','lens','lenses','leo','leon','leonard','leone',
+'les','lesbian','lesbians','leslie','less','lesser','lesson','lessons','let','lets','letter','letters','letting','leu','level','levels','levitra','levy','lewis','lexington','lexmark','lexus','lf','lg','li','liabilities','liability','liable','lib','liberal','liberia','liberty','librarian','libraries','library','libs','licence','license','licensed','licenses','licensing','licking','lid','lie','liechtenstein','lies','life','lifestyle','lifetime','lift',
+'light','lighter','lighting','lightning','lights','lightweight','like','liked','likelihood','likely','likes','likewise','lil','lime','limit','limitation','limitations','limited','limiting','limits','limousines','lincoln','linda','lindsay','line','linear','lined','lines','lingerie','link','linked','linking','links','linux','lion','lions','lip','lips','liquid','lisa','list','listed','listen','listening','listing','listings','listprice','lists','lit','lite',
+'literacy','literally','literary','literature','lithuania','litigation','little','live','livecam','lived','liver','liverpool','lives','livesex','livestock','living','liz','ll','llc','lloyd','llp','lm','ln','lo','load','loaded','loading','loads','loan','loans','lobby','loc','local','locale','locally','locate','located','location','locations','locator','lock','locked','locking','locks','lodge','lodging','log','logan','logged','logging',
+'logic','logical','logically','login','logistics','logo','logos','logs','lol','lolita','london','lone','lonely','long','longer','longest','longitude','look','looked','looking','looks','loop','loose','lopez','lord','lore','loren','los','lose','loser','loses','loss','lost','lot','lots','lottery','lou','loud','louis','louise','louisiana','louisville','lounge','love','loved','lovely','lover','lovers','loves','loving','low',
+'lower','lowest','lows','lp','ls','lt','ltd','lu','lucas','lucy','luggage','luke','lumber','lunch','lung','luther','luxembourg','luxury','lycos','lying','lynn','lyric','lyrics','m','ma','mac','macedonia','machine','machinery','machines','macintosh','macro','macromedia','mad','madagascar','madame','madison','madness','madonna','madrid','mafia','magazine','magazines','magic','magical','magnet','magnetic','magnificent','magnitude','mai','maiden',
+'mail','mailed','mailing','mailman','mails','mailto','main','maine','mainland','mainly','mainstream','maintain','maintained','maintaining','maintains','maintenance','major','majority','make','maker','makers','makes','makeup','making','malawi','malaysia','maldives','male','males','mali','mall','malpractice','malta','mambo','man','manage','managed','management','manager','managers','managing','manchester','mandate','mandatory','mango','manifest','manila','manipulation','mann','manner','manor',
+'manual','manually','manuals','manufacture','manufactured','manufacturer','manufacturers','manufacturing','many','map','maple','mapping','maps','mar','marathon','marble','marc','march','marco','marcus','mardi','mare','margaret','margin','maria','mariah','marie','marijuana','marilyn','marina','marine','mario','marion','marital','maritime','mark','marked','marker','markers','market','marketing','marketplace','markets','marking','marks','marriage','married','marriott','mars','marshall','mart',
+'martha','martial','martin','marvel','mary','maryland','mas','mask','mason','mass','massachusetts','massive','master','mastercard','masters','masturbating','masturbation','mat','match','matched','matches','matching','mate','material','materials','maternal','math','mathematical','mathematics','mating','matrix','mats','matt','matter','matters','matthew','mattress','mature','maturity','mauritius','max','maximize','maximum','may','maybe','mayor','mazda','mba','mb','mbps',
+'mc','mcdonald','md','me','meal','meals','mean','meaning','meaningful','meaningless','meanings','means','meant','measure','measured','measurement','measurements','measures','measuring','meat','mechanical','mechanics','mechanism','mechanisms','med','medal','media','medicaid','medical','medicare','medication','medications','medicine','medicines','medieval','mediterranean','medium','medline','meet','meeting','meetings','meets','meg','mega','mel','melbourne','melissa','mem','member','members','membership',
+'membrane','memo','memorial','memories','memory','memphis','men','mens','mental','mention','mentioned','mentor','menu','menus','mercedes','merchant','merchants','mercury','mercy','mere','merely','merge','merger','merit','merits','merry','mesa','mesh','mess','message','messages','messaging','messenger','met','meta','metabolism','metal','metallic','metals','meteorology','meter','meters','method','methodology','methods','metres','metric','metro','metropolitan','mexican','mexico','mg',
+'mh','mhz','mi','mia','miami','mic','mice','michael','michel','michelle','michigan','micro','microphone','microsoft','microwave','mid','midday','middle','midnight','midst','midwest','might','mighty','migration','mike','mil','milan','mild','mile','mileage','miles','milf','milfhunter','milfsex','military','milk','mill','millennium','miller','million','millions','mills','milton','milwaukee','mime','min','mind','minds','mine','mineral','minerals',
+'minimal','minimize','minimum','mining','minister','ministers','ministry','minneapolis','minnesota','minor','minority','mins','mint','minus','minute','minutes','miracle','mirror','mirrors','mis','misc','miscellaneous','miss','missed','missile','missing','mission','missions','mississippi','missouri','mistake','mistakes','mistress','mit','mitchell','mitigate','mixed','mixer','mixing','mixture','mj','ml','mm','mn','mo','mobile','mobility','mobilize','mobily','mobs',
+'mock','mode','model','modeling','modelling','models','modem','modems','moderate','moderator','moderators','modern','modes','modification','modifications','modified','modify','mods','modular','module','modules','moisture','mold','moldova','molecular','molecules','mom','moment','moments','momentum','moms','mon','monaco','monday','monetary','money','mongolia','monica','monitor','monitored','monitoring','monitors','monkey','mono','monopoly','monster','montana','monte','month','monthly',
+'months','montreal','monument','mood','moon','moore','moral','more','moreover','morning','morocco','morris','morrison','mortality','mortgage','mortgages','mosaic','moscow','moses','moss','most','mostly','motel','motels','mother','motherboard','mothers','motion','motivated','motivation','motor','motorcycle','motorcycles','motorola','motors','mount','mountain','mountains','mounted','mounting','mounts','mouse','mouth','move','moved','movement','movements','mover','movers','moves','movie',
+'movies','moving','mozambique','mozilla','mp','mpeg','mpegs','mpg','mph','mr','mrs','ms','msg','msie','msn','mt','mtv','mu','much','mud','mug','multi','multimedia','multiple','mumbai','municipal','municipality','murder','murphy','murray','muscle','muscles','museum','museums','music','musical','musician','musicians','muslim','muslims','must','mustang','mutual','muze','mv','mw','mx','my','myanmar','myers','myrtle','myself',
+'mysimon','myspace','mysql','mysterious','mystery','myth','n','na','nail','nails','naked','nam','name','named','namely','names','namespace','namibia','nancy','nano','naples','narrative','narrow','nasa','nascar','nasdaq','nashville','nasty','nat','nation','national','nationality','nationally','nations','nationwide','native','nato','natural','naturally','naturals','nature','naughty','nav','naval','navigate','navigation','navy','nb','nba','nbc','ncaa',
+'nd','ne','near','nearby','nearest','nearly','nebraska','nec','necessarily','necessary','necessity','neck','necklace','need','needed','needle','needs','negative','neglected','negotiate','negotiation','negotiations','neighbor','neighborhood','neighbors','neil','neither','nelson','neo','neon','nepal','nephew','nerve','nervous','nest','nested','net','netherlands','netscape','network','networking','networks','neural','neutral','nevada','never','nevertheless','new','newark','newbie','newcastle',
+'newer','newest','newfoundland','newly','newport','news','newscom','newsletter','newsletters','newspaper','newspapers','newton','next','nextel','nfl','ng','nh','nhl','nhs','ni','niagara','nibble','nicaragua','nice','niche','nick','nickel','nickname','nico','nicole','niger','nigeria','night','nightlife','nightmare','nights','nike','nikon','nil','nine','nintendo','nipple','nipples','nite','nixon','nj','nl','nm','nn','no',
+'noaa','noble','nobody','node','nodes','noise','nokia','nominated','nomination','nominations','non','none','nonprofit','noon','nor','norfolk','norm','normal','normally','norman','north','northeast','northern','northwest','norton','norway','norwegian','nos','nose','not','note','notebook','notebooks','notes','nothing','notice','noticeable','noticed','notices','notification','notifications','notified','notify','notion','notre','nottingham','nov','nova','novel','novels',
+'novelty','november','now','nowhere','np','nr','ns','nsw','nt','ntsc','nu','nuclear','nude','nudist','nudity','nugget','num','numeric','numerical','numerous','nurse','nursery','nurses','nursing','nut','nutrition','nutritional','nuts','nutten','nv','nvidia','nw','ny','nyc','nylon','nz','o','oak','oakland','oaks','oasis','oath','ob','obesity','obey','object','objective','objectives','objects','obligation','obligations','observation',
+'observations','observe','observed','observer','obstacles','obtain','obtained','obtaining','obvious','obviously','oc','occasional','occasionally','occasions','occupation','occupational','occupations','occupied','occupy','occur','occurred','occurrence','occurring','occurs','ocean','oclc','oct','october','odd','odds','odds','oecd','oem','of','off','offend','offense','offensive','offer','offered','offering','offerings','offers','office','officer','officers','offices','official','officially',
+'officials','offline','offset','offshore','offspring','often','og','oh','ohio','oil','oils','ok','okay','oklahoma','ol','old','older','oldest','olive','olympic','olympics','olympus','om','omaha','oman','ominous','omissions','on','once','one','ones','ongoing','onion','online','only','ons','ontario','onto','oops','open','opened','opening','openings','opens','opera','operate','operated','operates','operating','operation','operational','operations','operator',
+'operators','opinion','opinions','opponent','opponents','opportunities','opportunity','oppose','opposed','opposite','opposition','opt','optical','optics','optimal','optimization','optimize','optimum','option','optional','options','or','oral','orange','orbit','oracle','oral','orange','orbit','orchard','orchestra','order','ordered','ordering','orders','ordinance','ordinances','oregon','org','organ','organic','organisation','organisations','organise','organized','organising','organization','organizational','organizations','organize',
+'organized','organizer','organizing','orgasm','orgy','orient','oriental','orientation','oriented','origin','original','originally','origins','orlando','orleans','os','oscar','oscars','oslo','ot','other','others','otherwise','ottawa','ou','ought','our','ours','ourselves','out','outcome','outcomes','outdoor','outdoors','outer','outline','outlined','outlook','output','outputs','outreach','outside','outsourcing','outstanding','oval','oven','over','overall','overcome','overflow','overhead',
+'overlook','overly','override','overview','overwhelming','ow','owe','owen','own','owned','owner','owners','ownership','owns','oxford','oxide','oxygen','oz','ozone','p','pa','pace','pacific','pack','package','packages','packaging','packard','packed','packet','packets','packing','packs','pad','pads','page','pages','paid','pain','painful','paint','paintball','painter','painting','paintings','pair','pairs','pakistan','pal','palace','pale','palm','palmer','pam','pamela','pan',
+'panama','panasonic','panel','panels','panic','panties','pants','pantyhose','paper','paperback','papers','papua','par','para','parade','paradise','paragraph','paragraphs','paraguay','parallel','parameter','parameters','parcel','parent','parental','parenting','parents','parish','paris','parish','park','parker','parking','parkinson','parks','parliament','parliamentary','parole','parrot','parse','part','partial','partially','participant','participants','participate','participated','participating','participation','particle','particles',
+'particular','particularly','parties','partition','partly','partner','partners','partnership','partnerships','parts','party','pas','pass','passage','passed','passenger','passengers','passes','passing','passion','passive','passport','password','passwords','past','pasta','paste','pastor','pat','patch','patches','patent','patents','path','pathology','paths','patient','patients','patio','patricia','patrick','patrol','patron','pattern','patterns','paul','pavilion','paw','pawn','pay',
+'payable','payday','paying','payment','payments','paypal','payroll','pays','paysage','pdt','pe','peace','peaceful','peak','pearl','peas','pedestrian','pediatric','pediatrician','peeing','peer','peers','pen','penalties','penalty','pencil','pending','penetration','penguin','peninsula','penn','pennsylvania','penny','pension','pensions','pentagon','pentium','people','peoples','pepper','per','perceived','percent','percentage','perception','perfect','perfectly','perform','performance','performances','performed','performer',
+'performing','performs','perfume','perhaps','period','periodic','periodically','periods','peripheral','peripherals','perl','permalink','permanent','permanently','permission','permissions','permit','permits','permitted','perry','persian','persistent','person','personal','personality','personalized','personally','personals','personnel','persons','perspective','perspectives','perth','pertinent','peru','peruvian','pest','pet','pete','peter','petersburg','peterson','petite','petition','petroleum','pets','pf','pg','pgp','ph',
+'phantom','pharmaceutical','pharmaceuticals','pharmacology','pharmacy','phase','phases','phil','philadelphia','philip','philippines','philips','phillips','philosophical','philosophy','phoenix','phone','phones','photo','photograph','photographer','photographers','photographic','photographs','photography','photos','photoshop','php','phpmysql','phrase','phrases','physical','physically','physician','physicians','physics','physiology','pi','piano','pic','pichunter','pick','picked','picking','picks','pickup','picnic','pics','picture','pictures',
+'pie','piece','pieces','pierce','pierre','pig','pigs','pike','pile','pill','pillow','pills','pilot','pilots','pin','pine','ping','pink','pins','pioneer','pipe','pipeline','pipes','pirate','pirates','piss','pissing','pit','pitch','pitches','pittsburgh','pity','pix','pixel','pixels','pizza','pj','pk','pl','place','placed','placement','places','placing','plain','plaintiff','plan','plane','planes','planet','planets',
+'planned','planner','planners','planning','plans','plant','plants','plasma','plastic','plastics','plate','plates','platform','platforms','platinum','play','playback','playboy','player','players','playing','playlist','plays','playstation','plaza','ple','pleasant','please','pleased','pleasure','pledge','plenty','plot','plots','plug','plugin','plugins','plugs','plum','plumber','plumbing','plus','pluto','plymouth','pm','pmc','pmid','pn','pneumonia','po','po box',
+'poem','poems','poet','poetry','point','pointed','pointer','pointing','points','poison','pokemon','poker','poland','polar','pole','police','policies','policy','polish','polished','political','politically','politician','politicians','politics','poll','pollution','polo','poly','polyester','polymer','polyphonic','pond','pool','pools','poor','poorly','pop','popcorn','pope','popular','popularity','population','populations','popups','por','porn','porno','pornography','pornos','port',
+'portable','portal','portals','porter','portfolio','portion','portions','portland','portrait','portraits','ports','portsmouth','portugal','portuguese','pos','pose','posed','poses','posing','position','positioning','positions','positive','positively','possession','possibilities','possibility','possible','possibly','post','postage','postal','postcard','postcards','posted','poster','posters','posting','postings','postposted','posts','pot','potato','potatoes','potential','potentially','potter','pottery','poultry','pound','pounds',
+'pour','poverty','powder','powell','power','powered','powerful','powerpoint','powers','powerseller','pp','ppc','pr','practical','practically','practice','practices','practitioner','practitioners','prague','prairie','praise','pray','prayer','prayers','pre','preach','preceding','precious','precipitation','precise','precisely','precision','predator','predecessor','predefined','predict','predicted','prediction','predictions','prefer','preference','preferences','preferred','prefers','pregnancy','pregnant','prehistoric','preliminary','premier','premise','premium','premiums',
+'prepaid','preparation','prepare','prepared','preparing','prerequisite','prescribe','prescribed','prescription','prescriptions','presence','present','presentation','presentations','presented','presenting','presently','presents','preservation','preserve','preserved','presidency','president','presidential','presidents','press','pressed','pressing','pressure','preston','presumably','pretend','pretty','prev','prevail','prevalent','prevent','prevented','preventing','prevention','preventive','preview','previews','previous','previously','price','priced','prices','pricing','pride',
+'priest','priests','primarily','primary','prime','prince','princess','princeton','principal','principally','principle','principles','print','printable','printed','printer','printers','printing','prints','prior','priorities','priority','prison','prisoner','prisoners','privacy','private','privilege','privileges','prize','prizes','pro','probability','probably','probate','problem','problems','procedure','procedures','proceed','proceeded','proceeding','proceedings','proceeds','process','processed','processes','processing','processor','processors','procurement',
+'produce','produced','producer','producers','produces','producing','product','production','productions','productive','productivity','products','prof','profession','professional','professionalism','professionally','professionals','professor','professors','profile','profiles','profit','profits','program','programme','programmer','programmers','programmes','programming','programs','progress','progressive','prohibited','project','projected','projection','projections','projects','prominent','promise','promised','promises','promising','promo','promote','promoted','promotes','promoting','promotion',
+'promotional','promotions','prompt','promptly','proof','proofs','prop','propaganda','proper','properly','properties','property','prophet','proposal','proposals','propose','proposed','proposition','proprietary','pros','prose','prosecution','prospect','prospective','prospects','prostate','prostitutes','prostitution','protect','protected','protecting','protection','protective','protein','proteins','protest','protestants','protocol','protocols','proud','proudly','prove','proved','proven','provide','provided','providence','provider','providers','provides','providing',
+'province','provinces','provincial','provision','provisional','provisions','provoke','ps','psi','psp','pst','psychiatry','psychological','psychology','psychotherapy','pt','pts','pty','pu','pub','public','publication','publications','publicity','publicly','publish','published','publisher','publishers','publishing','pubmed','pubs','puerto','pull','pulled','pulling','pulse','pump','pumps','punch','punishment','punk','pupil','pupils','puppy','purchase','purchased','purchases','purchasing','pure','purely','purple','purpose','purposes','purse','pursuant',
+'pursue','pursuit','push','pushed','pushes','pushing','put','puts','putting','puzzle','puzzles','pyramid','q','qa','qatar','qc','qld','qt','qty','quad','qualification','qualifications','qualified','qualify','qualifying','qualitative','qualities','quality','quantitative','quantities','quantity','quantum','quarter','quarterly','quarters','queen','queens','queensland','queries','query','quest','question','questionnaire','questions','queue','qui','quick','quickly','quiet','quietly','quilt','quit','quite','quiz','quizzes','quo',
+'quotation','quotations','quote','quoted','quotes','quotid','r','ra','rabbi','rabbit','rabbits','race','races','rachel','racial','racing','racism','rack','racks','radar','radiation','radical','radio','radios','radius','rage','raid','rail','railroad','railway','railways','rain','rainbow','rains','raise','raised','raises','raising','raleigh','rally','ralph','ram','ran','ranch','rand','random','randy','range','ranges','rangers','rank','ranking','rankings',
+'ranks','rapid','rapidly','rapids','rare','rarely','rat','rate','rated','rates','rather','rating','ratings','ratio','rational','ratios','rats','raw','ray','raymond','rb','rc','rca','rd','re','reach','reached','reaches','reaching','reaction','reactions','read','reader','readers','readily','reading','readings','reads','ready','real','realistic','reality','realize','realized','really','realm','realtor','realtors','realty','rear',
+'reason','reasonable','reasonably','reasoning','reasons','rebate','rebates','rebecca','rebel','rebound','rebuild','recall','recalls','receipt','receipts','receive','received','receiver','receivers','receives','receiving','recent','recently','reception','receptor','receptors','recharge','recipe','recipes','recipient','recipients','recognition','recognize','recognized','recommend','recommendation','recommendations','recommended','recommends','reconstruction','record','recorded','recorder','recorders','recording','recordings','records','recover','recovered','recovery',
+'recreation','recreational','recruiting','recruitment','rector','red','redeem','redesign','redhat','redirect','rediscover','reduce','reduced','reduces','reducing','reduction','reductions','redundant','reef','reel','refer','refered','reference','referenced','references','referral','referrals','referred','referring','refers','refinance','refine','refined','reflect','reflected','reflection','reflections','reflects','reform','reforms','refresh','refrigerator','refugees','refund','refurbished','refuse','refused','reg','regard','regarded','regarding','regardless',
+'regards','reggae','regime','region','regional','regions','register','registered','registrar','registration','registry','regression','regular','regularly','regulate','regulated','regulation','regulations','regulatory','rehab','rehabilitation','reid','reject','rejected','relate','related','relates','relating','relation','relations','relationship','relationships','relative','relatively','relatives','relax','relaxation','relay','release','released','releases','relevance','relevant','reliability','reliable','reliably','relief','relieve','relieved','religion','religions',
+'religious','reload','reluctant','rely','relying','remain','remainder','remained','remaining','remains','remark','remarkable','remarks','remedies','remedy','remember','remembered','remind','reminder','reminders','remix','remote','remotely','removable','removal','remove','removed','removing','renaissance','render','rendered','rendering','renew','renewable','renewal','reno','rent','rental','rentals','rentcom','reopen','repair','repairs','repeat','repeated','repeatedly','replace','replaced','replacement','replacing',
+'replay','reply','replies','reply','report','reported','reporter','reporters','reporting','reports','repository','represent','representation','representations','representative','representatives','represented','representing','represents','reprint','reprints','reproduce','reproduced','reproduction','reproductive','republic','republican','republicans','reputation','request','requested','requesting','requests','require','required','requirement','requirements','requires','requiring','res','rescue','research','researcher','researchers','reseller','resellers','reservation','reservations','reserve','reserved',
+'reserves','reservoir','reset','residence','resident','residential','residents','resignation','resist','resistance','resistant','resolution','resolutions','resolve','resolved','resolver','resolving','resort','resorts','resource','resources','respect','respected','respective','respectively','respiratory','respond','responded','respondent','respondents','responding','response','responses','responsibilities','responsibility','responsible','responsive','rest','restaurant','restaurants','restore','restored','restoring','restrict','restricted','restriction','restrictions','restructuring','result','resulted',
+'resulting','results','resume','resumes','retail','retailer','retailers','retain','retained','retaining','retention','retire','retired','retirement','retreat','retrieval','retrieve','retrieved','retro','return','returned','returning','returns','reunion','reuters','rev','reveal','revealed','reveals','revelation','revenge','revenue','revenues','reverse','reversed','review','reviewed','reviewer','reviewers','reviewing','reviews','revise','revised','revision','revisions','revolution','revolutionary','reward','rewards','rfc',
+'rfp','rg','rh','rhode','rhode island','rhodes','rhythm','ri','ribbon','rica','rice','rich','richard','richards','richardson','richmond','richs','rick','ricky','rico','rid','ride','rider','riders','rides','ridge','riding','rifle','right','rights','rigid','rigorous','riley','rim','ring','rings','riot','rip','ripe','ripped','ripper','rise','rising','risk','risks','risky','rita','river','rivers','riverside','riviera','rl',
+'rm','rn','rna','ro','road','roads','roam','roar','rob','robber','robbery','robbie','robert','roberts','robertson','robin','robinson','robot','robots','robust','rochester','rock','rocket','rocks','rocky','rod','rodney','roger','rogers','roi','role','roles','roll','rolled','roller','rolling','rolls','rom','roman','romance','romania','romantic','rome','ron','ronald','roof','room','roommate','roommates','rooms','root','roots',
+'rope','rosa','rose','roses','ross','roster','rotary','rotation','rouge','rough','roughly','roulette','round','rounded','rounds','route','router','routers','routes','routine','routinely','routing','rover','row','rows','roy','royal','royalty','rp','rpg','rpm','rr','rrc','rs','rst','rsvp','rt','rtf','ru','rub','rubber','ruby','rug','rugby','rugs','rule','ruled','rules','ruling','run','runner','running','runs',
+'runway','rural','rush','russell','russia','russian','ruth','rv','rw','rwanda','ry','ryan','s','sa','sacramento','sacred','sacrifice','sad','saddam','safari','safe','safely','safer','safety','sage','sagem','said','sail','sailing','saint','saints','sake','salad','salaries','salary','sale','salem','sales','salsa','salt','salvador','salvation','sam','samba','same','samoan','sampling','samsung','samuel','san','sana','sand',
+'sandra','sandwich','sandy','sane','sanford','sang','sanitary','santa','sanyo','sao','sap','sapphire','sara','sarah','sas','saskatchewan','sat','satellite','satin','satisfaction','satisfactory','satisfied','satisfy','saturday','saturn','sauce','saudi','sauna','sausage','savage','save','saved','saving','savings','savior','saw','saxon','say','saying','says','sb','sc','scale','scales','scan','scanned','scanner','scanners','scanning','scary',
+'scene','scenes','scenic','schedule','scheduled','schedules','scheduling','schema','scheme','schemes','scholar','scholars','scholarship','scholarships','school','schools','sci','science','sciences','scientific','scientist','scientists','scoop','scope','score','scored','scores','scoring','scotia','scotland','scott','scottish','scout','scouts','scratch','screen','screening','screens','screensaver','screensavers','screw','screws','script','scripting','scripts','scroll','scsi','scuba','sculpture','sd',
+'se','sea','seafood','seal','sealed','sean','search','searchcom','searched','searches','searching','seas','season','seasonal','seasons','seat','seating','seats','seattle','sec','second','secondary','seconds','secret','secretariat','secretary','secrets','section','sections','sector','sectors','secure','secured','securely','secures','securities','security','sedan','see','seed','seeds','seeing','seek','seeking','seeks','seem','seemed','seems','seen','sees','sega','segment',
+'segments','seized','select','selected','selecting','selection','selections','selective','self','sell','seller','sellers','selling','sells','semblance','semi','semiconductor','seminar','seminars','sen','senate','senator','senators','send','sender','sending','sends','senegal','senior','seniors','sense','sensitive','sensitivity','sensor','sensors','sent','sentence','sentences','sentiment','seoul','sep','separate','separated','separately','separation','sept','september','sequence','sequences','serbia','serial',
+'seriously','serious','servant','serve','served','server','servers','serves','service','services','serving','session','sessions','set','settop','setting','settings','settle','settled','settlement','settlements','setup','seven','seventh','several','severe','severe','severely','severity','sew','sewing','sex','sexcam','sexo','sexual','sexuality','sexually','sexy','sf','sg','sh','shade','shades','shadow','shadows','shaft','shake','shakespeare','shakira','shall','shame','shanghai',
+'shannon','shape','shaped','shapes','share','shared','shareholders','shares','shareware','sharing','shark','sharks','sharon','sharp','shaved','shaw','she','shed','sheep','sheer','sheet','sheets','sheffield','shelf','shell','shelter','shelters','shen','shepherd','sheriff','sherman','shield','shift','shine','ship','shipment','shipments','shipped','shipping','ships','shirt','shirts','shit','shock','shocked','shoe','shoes','shoot','shooting','shop',
+'shopper','shoppers','shopping','shopzilla','shore','short','shortcuts','shorter','shortly','shorts','shot','shots','should','shoulder','shoulders','shout','show','showcase','showdown','showed','shower','showers','showing','shown','shows','showtimes','shut','shuttle','si','sic','side','sides','sie','sierra','sigh','sight','sights','sigma','sign','signal','signals','signature','signatures','signed','significance','significant','significantly','signing','signs','silence','silent','silicon',
+'silicone','silk','silly','silver','sim','similar','similarly','simon','simple','simplified','simplify','simply','simpson','sims','simulation','simulations','sin','since','sing','singapore','singer','singers','singh','singing','single','singles','sink','sinks','sip','sir','sister','sisters','sit','site','sitemap','sites','sitting','situated','situation','situations','six','sixth','size','sized','sizes','sk','skate','ski','skies',
+'skill','skilled','skills','skin','skins','skip','skirt','skirts','sku','sky','skype','sl','slave','slavery','slaves','sleep','sleeping','sleeps','slept','slide','slides','sliding','slight','slightly','slim','slogan','slot','slots','slovak','slovakia','slovenia','slow','slowly','slut','sluts','sm','small','smaller','smallest','smart','smell','smile','smilies','smith','smithsonian','smoke','smoked','smoking','smooth','smoothly','sms','sn','snack',
+'snake','snakes','snap','snapshot','snow','snowboard','snowWhite','snmp','so','soa','soap','soc','soccer','social','societies','society','sociology','socket','sockets','socks','sodium','sofa','soft','softball','software','soil','sol','solar','solaris','sold','soldier','soldiers','sole','solely','solid','solo','solomon','solution','solutions','solve','solved','solving','soma','somalia','some','somebody','somehow','someone','someplace','somesort','something','sometime',
+'sometimes','somewhat','somewhere','son','song','songs','sonic','sons','sony','soon','soonest','sophisticated','sorry','sort','sorted','sorts','sought','soul','souls','sound','sounds','soundtrack','soup','source','sources','south','southampton','southeast','southern','southwest','southwestern','soviet','soup','sovereign','sovereignty','soviet','sow','space','spaces','spaceship','spacing','spain','spam','span','spanish','spank','spanking','sparc','spare','spares','spas',
+'spatial','speak','speaker','speakers','speaking','speaks','special','specialist','specialists','specialized','specializing','specially','specials','specialties','specialty','species','specific','specifically','specification','specifications','specifics','specified','specifies','specify','specs','spectacular','spectrum','speech','speeches','speed','speeds','spell','spelling','spend','spending','spends','spent','sperm','sphere','spice','spider','spiders','spiel','spin','spine','spiral','spirit','spirits','spiritual','spirituality',
+'split','spoke','spoken','spokesman','sponsor','sponsored','sponsors','sponsorship','sport','sporting','sports','spot','spotless','spots','spouse','spray','spread','spreading','spreads','spring','springer','springfield','springs','sprint','spy','sq','sql','squad','square','squash','squeeze','sr','src','sri','ss','ssl','st','stability','stable','stack','stadium','staff','staffing','stage','stages','stair','staircase','stairs','stake','stakeholder','stakeholders',
+'stamp','stamps','stan','stand','standard','standards','standing','standings','stands','stanford','stanley','star','starring','stars','start','started','starter','starting','starts','startup','state','stated','statement','statements','states','statewide','static','stating','station','stationary','stationery','stations','statistical','statistics','stats','status','statute','statutes','statutory','stay','stayed','staying','stays','steady','steal','steam','steel','steering','stellar','stem','step',
+'stephanie','stephen','steps','stereo','stereotypes','sterling','steve','steven','stevens','stewart','stick','sticker','stickers','sticks','sticky','still','stock','stockholm','stockings','stocks','stolen','stomach','stone','stones','stood','stop','stopped','stopping','stops','storage','store','stored','stores','storey','storing','storm','storms','story','stove','straight','straightforward','strain','strand','strange','stranger','strap','strategic','strategies','strategy','stream',
+'streaming','streams','street','streets','strength','strengthen','strengthening','strengths','stress','stretch','strikes','striking','string','strings','strip','strips','stroke','strokes','strong','stronger','strongly','struck','structural','structure','structured','structures','struggle','stuck','stud','student','students','studied','studies','studio','studios','study','studying','stuff','stuffed','stunning','stupid','style','styles','stylish','stylus','su','sub','subject','subjects',
+'sublime','sublimedirectory','submission','submissions','submit','submitted','submitting','subscribe','subscriber','subscribers','subscription','subscriptions','subsection','subsequent','subsequently','subsidiaries','subsidiary','substance','substances','substantial','substantially','substitute','subtle','suburb','suburbs','subversion','subway','succeed','succeeded','succeeding','success','successful','successfully','succession','successive','successor','such','suck','sucks','suction','sudan','sudden','suddenly','sue','suffer','suffered','suffering','sufficient','sufficiently',
+'sugar','suggest','suggested','suggesting','suggestion','suggestions','suggests','suicide','suit','suitable','suite','suited','suites','suits','sullivan','sum','summaries','summary','summer','summit','sun','sunday','sunglasses','sunlight','sunny','sunrise','sunset','sunshine','super','superb','superintendent','superior','supervision','supervisor','supervisors','supl','supplement','supplemental','supplements','supplied','supplier','suppliers','supplies','supply','support','supported','supporter','supporters','supporting','supports',
+'suppose','supposed','supposedly','suppress','supreme','sure','surely','surf','surface','surfaces','surfing','surge','surgeon','surgeons','surgery','surgical','surname','surplus','surprise','surprised','surprising','surprisingly','surrey','surround','surrounded','surrounding','surveillance','survey','surveys','survival','survive','survived','survivor','survivors','susan','suspect','suspected','suspend','suspense','suspension','suspicion','suspicious','sust','sustainability','sustainable','sustained','suzuki','sv','swap','swapping','swaziland',
+'sweden','swedish','sweet','sweetheart','swift','swim','swimming','swimsuit','swing','swinging','swiss','switch','switched','switches','switching','switzerland','sword','swords','sydney','symantec','symbol','symbols','symmetry','sympathy','symphony','symposium','symptom','symptoms','sync','syndicate','syndication','syndrome','synopsis','syntax','synthesis','synthetic','syracuse','syria','sys','system','systematic','systems','t','ta','tab','table','tables','tablet','tablets','tabs',
+'tackle','tactics','tag','tagged','tags','tahoe','tail','tailored','taiwan','taiwanese','take','taken','takes','taking','tale','talent','talented','tales','talk','talked','talking','talks','tall','tampa','tan','tank','tanks','tanzania','tap','tape','tapes','target','targeted','targets','tariff','tarrant','task','tasks','taste','tattoo','taught','tax','taxation','taxes','taxi','taxonomy','taylor','tb','tba','tbd','tc',
+'tcpp','td','te','tea','teach','teacher','teachers','teaches','teaching','team','teams','tear','tears','tech','technical','technician','technicians','technique','techniques','techno','technological','technologies','technology','techrepublic','ted','teddy','tee','teen','teenage','teens','teeth','tel','telecommunication','telecommunications','telephone','telephony','television','televisions','tell','telling','tells','temp','temperature','temperatures','template','templates','temple','tempo','temporal','temporarily','temporary','ten',
+'tenant','tenants','tend','tended','tending','tends','tennessee','tennis','tense','tension','tent','term','terminal','terminals','termination','terminology','terms','terrace','terrain','terrible','terribly','terrier','terrific','territories','territory','terror','terrorism','terrorist','terrorists','terrorize','terry','test','testament','tested','testimonials','testimony','testing','tests','texas','text','textbook','textbooks','textile','textiles','texts','texture','tftp','tgp','th',
+'thai','thailand','than','thank','thanks','thanksgiving','that','thats','thatthe','the','theater','theaters','theatre','thee','theft','thehun','their','them','theme','themes','themselves','then','theology','theorem','theoretical','theories','theory','therapeutic','therapist','therapy','there','thereafter','thereby','therefore','thereof','thereto','thermal','thesaurus','these','thesis','they','thick','thickness','thin','thing','things','think','thinking','thinkpad','thinks','thinly',
+'third','thirds','thirteen','thirty','this','thomas','thompson','thomson','thong','thongs','thor','thorough','thoroughly','those','though','thought','thoughtful','thoughts','thousand','thousands','thread','threaded','threads','threat','threatened','threatening','threats','three','threesome','threshold','thriller','throat','throne','through','throughout','throughput','throw','throwing','thrown','throws','thru','thumb','thumbnail','thumbnails','thumbs','thumbzilla','thunder','thursday','thus','th','thyroid',
+'ti','tibet','ticket','tickets','tide','tidy','tie','tied','tier','ties','tiger','tigers','tight','tightly','tile','tiles','till','tim','time','timeline','timely','times','timing','timothy','tin','tina','tinkle','tiny','tion','tip','tips','tire','tired','tires','tissue','tissues','tit','title','titled','titles','tits','titten','tm','tmp','tn','to','tobacco','tobago','today','todd','toddler','toe',
+'toes','together','toilet','token','tokyo','told','toll','tom','tomato','tomatoes','tommy','tomorrow','ton','tone','toner','tones','tongue','tonight','tons','tony','too','took','tool','toolbar','toolbox','toolkit','tools','tooth','top','topaz','topic','topics','topless','topological','topology','tops','tor','torch','torn','toronto','torque','torrent','tort','torture','toshiba','total','totally','totals','touch','touched',
+'touching','tour','touring','tourism','tourist','tourists','tournament','tournaments','tours','toward','towards','tower','towers','town','towns','township','toxic','toxin','toy','toyota','toys','tp','tr','trace','track','trackback','trackbacks','tracked','tracking','tracks','tract','tractor','tracy','trade','trademark','trademarks','trader','trades','trading','tradition','traditional','traditions','traffic','tragedy','trail','trailer','trailers','trails','train',
+'trained','trainer','trainers','training','trains','trait','traits','tramadol','trance','trash','trauma','travel','traveler','travelers','traveling','traveller','travellers','travelling','travels','travesti','tray','treasure','treasurer','treasures','treasury','treat','treated','treating','treatment','treatments','treaty','tree','trees','trek','tremendous','trend','trends','treo','tri','trial','trials','triangle','tribal','tribe','tribes','tribunal','tribune','tribute','trick','tricks',
+'tried','tries','trigger','triggers','trim','trinity','trio','trip','triple','trips','triumph','trivia','trivial','tro','trolley','troops','trophy','tropical','trouble','troubles','troubleshooting','trout','truck','trucks','true','truly','trunk','trust','trusted','trustee','trustees','trusts','truth','truths','try','trying','ts','tsunami','tt','ttl','tu','tub','tube','tubes','tucson','tue','tuesday','tuition','tulsa','tumor',
+'tune','tuner','tunes','tuning','tunisia','tunisian','tunnel','turbo','turk','turkey','turkish','turning','turn','turnaround','turned','turner','turning','turns','turnover','turnpike','turtle','turtles','tus','tuscany','tv','tvs','tw','twelve','twenty','twice','twiki','twin','twins','twist','twisted','two','twx','ty','tyler','type','types','typical','typically','typing','u','uc','uganda','ugly','uh','uk','ukraine',
+'ul','ultimate','ultimately','ultra','ultram','um','umbrella','un','una','unable','unauthorized','unavailable','unavoidable','unbalanced','unbiased','uncle','unclear','uncomfortable','uncommon','unconscious','unconstitutional','under','undercover','undergraduate','underground','underlying','understand','understanding','understood','undertake','undertaken','underwear','undo','undocumented','une','unemployed','unemployment','unexpected','unfair','unfold','unfortunate','unfortunately','unhappy','uniform','uniforms','uninstall','union','unions','unique','uniprotkb','uniprotkb','unit',
+'united','units','unity','universal','universe','universities','university','unix','unknown','unless','unlike','unlikely','unlimited','unlock','unnecessary','unsigned','unsubscribe','until','untitled','unusual','unwrap','unzip','up','update','updated','updates','updating','upgrade','upgrades','upgrading','upload','uploaded','upon','upper','ups','upset','upskirt','upskirts','uptime','ur','urban','urge','urgent','urgently','uri','url','urls','uruguay','urw','us',
+'usa','usage','usb','usc','usd','use','used','useful','usefulness','useless','user','username','users','uses','usgs','ush','usher','using','usps','usr','usual','usually','ut','utah','utc','utilities','utility','utilization','utilize','utils','utmost','uts','uu','uv','uw','uzbekistan','v','va','vacancies','vacation','vacations','vaccine','vacuum','vagina','vaginal','vague','val','valid','validation','validity',
+'valium','valley','valuable','valuation','value','valued','values','valve','valves','vampire','van','vancouver','vanilla','var','variable','variables','variance','variation','variations','varied','varies','varieties','variety','various','vary','varying','vast','vat','vatican','vault','vb','vbulletin','vc','vcard','vcd','vcr','ve','vector','vegas','vegetable','vegetables','vegetarian','vegetation','vehicle','vehicles','velocity','velvet','vendor','vendors',
+'venezuela','venice','venture','ventures','venue','venues','ver','verbal','verde','verification','verified','verify','verizon','vermont','vernon','verse','version','versions','versus','vertex','vertical','vertically','very','verzeichnis','ves','vessel','vessels','veteran','veterans','veterinary','vg','vhs','vi','via','viagra','vibrator','vibrators','vic','vice','vicenza','vicious','victim','victims','victor','victoria','victorian','victory','video','videos','vids',
+'vienna','vietnam','vietnamese','view','viewed','viewer','viewers','viewing','viewpicture','views','vii','viii','viking','village','villages','villas','vincent','vintage','vinyl','violation','violations','violence','violent','violin','vip','viral','virgin','virginia','virtual','virtually','virtue','virus','viruses','vis','visa','visibility','visible','vision','visit','visited','visiting','visitor','visitors','vista','visual','visually','vitae','vital','vitamin','vitamins',
+'vocabulary','vocal','vocals','vocational','voice','voices','void','voip','vol','volcano','volleyball','voltage','volume','volumes','voluntary','volunteer','volunteered','volunteering','volunteers','volvo','von','vote','voted','voter','voters','votes','voting','voyeur','voyeurweb','voyuer',"vp","vpn","vs","vsnet","vt","vulnerability","vulnerable","w","wa","wage","wages","wagner","wagon","wait","waiting","waive","waived","wake","wal","wallet",
+'wall','wallace','wallpaper','wallpapers','walls','walnut','walsh','walt','walter','wan','wang','wanna','want','wanted","wanting','wants','war','ward','wards','ware','warehouse','warehouses','warfare','warmer','warm','warming','warn','warned','warner','warning','warnings','warrant','warranty','warren','warrior','warriors','wars','warwick','was','wash','washer','washing','washington','waste','wastewater","watch","watched","watches","watching','water',
+'waterfront','waterproof','waters','watershed','waterwater','watson','watt','watts','wave','waves','wax','way','wayne','ways','wb','wca','we','weak','weaken','weakness','weaknesses','wealth','wealthy','weapon','weapons','wear','wearing','weather','web','webcam','webcams','webcast','weblog','weblogs','webmaster','webmasters','webpage','webpages','webservice','webservices','website','websites','webster','webwire','wed','wedding','weddings','wednesday','weed','week',
+'weekend','weekends','weekly','weeks','weight','weighted','weights','weird','welcome','weld','welfare','well','wellbeing','wellness','wells','welsh','wendy','went','were','wert','west','western','westminster','wet','whale','whales','what','whatever','whats','wheat','wheel','wheels','when','whenever','where','whereas','wherever','whether','which','while','whilst','white','whitehouse','whites','whitney','who','whole','wholesale','whom','whore','whose','why',
+'wi','wicked','wide','widely','wider','widescreen','widespread','width','wife','wifi','wiki','wikipedia','wild','wilderness','wildlife','will','william','williams','willing','willow','wilmington','wilson','win','wind','windowing','window','windows','winds','windsor','wine','wines','wing","wings','winner','winners','winning','wins','winter','wire','wired','wireless","wires","wiring','wisconsin','wisdom','wise','wish','wishes','wishlist','wit',
+'witch','with','withdraw','withdrawal','within','without','witness','witnesses','wizard','wm','wn','wo','wolf','woman','women','womens','won','wonder','wonderful','wondering','wood','wooden","woods','wool','worcester','word','wordpress','words','work','worked','worker','workers','workflow','workforce','working','workout','workplace','works','workshop','workshops','workstation','world','worldcat','worlds','worldsex','worldwide','worm','worms','worn','worried','worry',
+'worse','worship','worst','worth','worthy','would','wound','wounded','wrap','wrapped','wrapping','wrestling','wright','wrist','write','writer','writers','writes','writing','writings','written','wrong','wrote','ws','wt','wto','wu','wv','ww','www','wx','wy','wyoming','x','xanax','xbox','xenical','xhtml','xi','xl','xml','xn','xp','xx','xxx','y','ya','yacht','yahoo','yale','yamaha','yang',
+'yard','yards','yarn','ye','yea','yeah','year','yearly','years','yeast','yellow','yemen','yen','yes','yesterday','yet','yield','yields','yng','yo','yoda','yoga','york','yorkshire','you','young','younger','your','yours','yourself','youth','yr','yrs','yt','yu','yugoslavia','yukon','z','za','zambia','zdnet','zealand','zen','zero','zimbabwe','zinc','zip','zipcode','zips','zoloft','zone',
+'zones','zoning','zoom','zoophilia','zope','zshopping','zu','zum','zw'];
+  var num = Math.floor(Math.random() * 8) + 1;
+  var out = [];
+  for (var i = 0; i < num; i++) { out.push(lex[Math.floor(Math.random() * lex.length)]); }
+  _tprt(out.join('  '), 'tdim');
+}
+
+function _trun(raw) {
+  var input = raw.trim();
+  if (!input) { _tprt('<span class="tbold">$</span>'); _tgen(); _tscb(); return; }
+  var args = input.split(/\s+/);
+  _th.push(raw);
+  _thi = _th.length;
+  var c = args[0].toLowerCase();
+  var rest = args.slice(1);
+  _tout('<div class="to"><span style="color:#3a3">$ </span>' + raw + '</div>');
+  var f = null;
+  if (_tcmds[c]) f = _tcmds[c];
+  else {
+    for (var k in _tcmds) {
+      if (_tcmds[k].a.indexOf(c) !== -1) { f = _tcmds[k]; break; }
+    }
+  }
+  if (f) {
+    try { f.f(rest); } catch(e) { _tprt('Error: ' + e.message, 'terr'); }
+  }
+  _tscb();
+}
+
+_treg('help', ['?', 'h'], 'show commands', function() {
+  _tprt('Available commands:', 'tbold');
+  var ks = Object.keys(_tcmds).sort();
+  ks.forEach(function(n) { var c = _tcmds[n]; _tprt('  <b>' + n + '</b>  ' + c.d, 'tdim'); });
+});
+
+_treg('posts', ['ls', 'list'], 'list recent posts', function(a) {
+  var n = parseInt(a[0]) || 20;
+  var list = posts.slice(0, n);
+  if (!list.length) { _tprt('No posts found. Create some!', 'tdim'); return; }
+  list.forEach(function(p, i) {
+    _tprt((i + 1) + '. [' + p.type + '] ' + (p.title || extractText(p).slice(0, 60)) + ' (' + (p.date || '').slice(0, 10) + ') id=' + p.id);
+  });
+});
+
+_treg('count', ['wc'], 'post count', function() {
+  _tprt(posts.length + ' posts total', 'tbold');
+});
+
+_treg('cat', ['show'], 'cat &lt;id&gt; - show post', function(a) {
+  if (!a[0]) { _tprt('Usage: cat &lt;post-id&gt;', 'twarn'); return; }
+  var p = posts.find(function(x) { return x.id === a[0] || x.id.indexOf(a[0]) === 0; });
+  if (!p) { _tprt('Post not found: ' + a[0], 'terr'); return; }
+  _tprt('--- ' + (p.title || '(untitled)') + ' ---', 'tbold');
+  _tprt('Type: ' + p.type + ' | Date: ' + formatDate(p.date, true) + ' | Tags: ' + (p.tags || []).join(', '));
+  _tprt('');
+  _tprt(stripHtml(p.body || '') || '(no body)');
+  _tprt('--- end ---', 'tdim');
+});
+
+_treg('search', ['grep', 'find'], 'search &lt;q&gt; - shows results as tiles', function(a) {
+  if (!a[0]) { _tprt('Usage: search &lt;query&gt;', 'twarn'); return; }
+  var q = a.join(' ').toLowerCase();
+  var results = posts.filter(function(p) {
+    return (p.title || '').toLowerCase().indexOf(q) !== -1 ||
+           (p.body || '').toLowerCase().indexOf(q) !== -1 ||
+           (p.tags || []).some(function(t) { return t.toLowerCase().indexOf(q) !== -1; }) ||
+           p.type.indexOf(q) !== -1 ||
+           dateSearchStr(p).indexOf(q) !== -1;
+  });
+  _tprt('Found ' + results.length + ' matching posts for "' + q + '"', 'tbold');
+  if (results.length) applyFilter('search', results, q);
+});
+
+_treg('tags', [], 'list all tags (from cache)', function() {
+  var tset = {};
+  posts.forEach(function(p) { (p.tags || []).forEach(function(t) { tset[t] = (tset[t] || 0) + 1; }); });
+  var sorted = Object.entries(tset).sort(function(a, b) { return b[1] - a[1]; });
+  if (!sorted.length) { _tprt('No tags found.', 'tdim'); return; }
+  _tprt('Tags (' + sorted.length + ' unique):', 'tbold');
+  sorted.forEach(function(e) { _tprt('  #' + e[0] + ' (' + e[1] + ')'); });
+});
+
+_treg('tag', ['filter'], 'tag &lt;name&gt; - shows results as tiles', function(a) {
+  if (!a[0]) { _tprt('Usage: tag &lt;tag-name&gt;', 'twarn'); return; }
+  var t = a[0].toLowerCase();
+  var results = posts.filter(function(p) { return (p.tags || []).some(function(x) { return x.toLowerCase() === t; }); });
+  _tprt('Posts tagged #' + t + ': ' + results.length, 'tbold');
+  if (results.length) applyFilter('tag', results, '#' + t);
+});
+
+_treg('random', ['rand', 'rnd'], 'random [n] - shows results as tiles', function(a) {
+  var n = Math.min(parseInt(a[0]) || 12, posts.length);
+  if (!posts.length) { _tprt('No posts yet.', 'tdim'); return; }
+  var pool = posts.slice();
+  var picks = [];
+  for (var i = 0; i < n; i++) {
+    var idx = Math.floor(Math.random() * pool.length);
+    picks.push(pool.splice(idx, 1)[0]);
+  }
+  _tprt('Showing ' + picks.length + ' random posts', 'tbold');
+  applyFilter('random', picks, picks.length + ' random picks');
+});
+
+_treg('clear', ['cls'], 'clear screen', function() { $('tbody').innerHTML = ''; });
+
+_treg('date', ['time'], 'show date', function() { _tprt(new Date().toString()); });
+_treg('whoami', [], 'blog identity', function() { _tprt('kredtidy - Offline CMS'); });
+_treg('exit', ['quit', 'close'], 'close terminal', function() { _tclose(); });
+_treg('echo', [], 'echo &lt;text&gt;', function(a) { _tprt(a.join(' ')); });
+_treg('history', ['hist'], 'cmd history', function() { _th.forEach(function(h, i) { _tprt((i + 1) + '  ' + h); }); });
+_treg('reload', ['reboot'], 'refresh view', function() { _tprt('refreshing...', 'tdim'); clearFilter(); });
+_treg('showall', ['all', 'reset'], 'clear filter &amp; show all posts', function() { _tprt('showing all posts', 'tbold'); clearFilter(); });
+_treg('nano', [], 'MProcs nano', function() { _tgen(); });
+_treg('enter', [], '(empty line) MProcs nano', function() { _tprt('Just press Enter on an empty line.', 'tdim'); });
+_treg('wipe', ['nuke'], 'wipe all posts (with export prompt)', function() {
+  if (!posts.length) { _tprt('No posts to wipe.', 'tdim'); return; }
+  _tprt('WARNING: This will permanently delete all ' + posts.length + ' posts.', 'terr');
+  _tprt('Type <b>yes, export &amp; wipe</b> to export then delete, or <b>yes, wipe</b> to delete without export.', 'twarn');
+  _trState._wipePending = true;
+});
+_trState._wipePending = false;
+var _origTrun = _trun;
+_trun = function(raw) {
+  var lower = raw.trim().toLowerCase();
+  if (_trState._wipePending) {
+    _trState._wipePending = false;
+    _tout('<div class="to"><span style="color:#3a3">$ </span>' + raw + '</div>');
+    var doWipe = false;
+    if (lower === 'yes, export & wipe' || lower === "yes, export &amp; wipe") {
+      if (window.cms.exportFile(posts.map(cleanPost))) { doWipe = true; _tprt('Exporting...', 'tdim'); }
+      else { _tprt('Export cancelled. Wipe aborted.', 'twarn'); }
+    } else if (lower === 'yes, wipe') {
+      doWipe = true;
+    } else {
+      _tprt('Wipe cancelled.', 'tdim');
+    }
+    if (doWipe) {
+      var n = posts.length;
+      posts = [];
+      window.cms.savePosts([]).catch(function(){});
+      clearFilter();
+      renderAdminList();
+      _tprt('Wiped ' + n + ' posts.', 'tbold');
+    }
+    _tscb();
+    return;
+  }
+  _origTrun(raw);
+};
+_treg('theme', [], 'theme &lt;name&gt;', function(a) {
+  var themes = ['dark-green', 'light', 'dark-blue', 'light-blue'];
+  var m = themes.filter(function(t) { return t.indexOf(a[0]) === 0; });
+  if (m.length === 1) {
+    document.body.dataset.theme = m[0];
+    $('themeSelect').value = m[0];
+    localStorage.setItem('wp-theme', m[0]);
+    _tprt('Theme set: ' + m[0]);
+  } else if (m.length > 1) {
+    _tprt('Multiple matches: ' + m.join(', '));
+  } else {
+    _tprt('Available themes: ' + themes.join(', '));
+  }
+});
+_treg('sudo', ['su'], 'try root', function() { _tprt('Permission denied.', 'twarn'); _tprt('(you already have full access, hacker)'); });
+_treg('ping', [], 'fake ping', function() { _tprt('PING localhost (127.0.0.1): 56 data bytes', 'tdim'); _tprt('64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.042 ms', 'tdim'); _tprt('64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.038 ms', 'tdim'); _tprt('--- localhost ping statistics ---', 'tdim'); _tprt('2 packets transmitted, 2 packets received, 0% packet loss', 'tdim'); });
+
+// Init
+async function init() {
+  await loadAllPosts();
+
+  // Theme
+  var saved = localStorage.getItem('wp-theme') || 'dark-green';
+  document.body.dataset.theme = saved;
+  $('themeSelect').value = saved;
+  $('themeSelect').addEventListener('change', function() {
+    document.body.dataset.theme = this.value;
+    localStorage.setItem('wp-theme', this.value);
+  });
+
+  // Text only
+  if (localStorage.getItem('wp-textonly') === '1') {
+    isTextOnly = true;
+    $('textOnlyToggle').checked = true;
+    $('textOnlyDisplay').textContent = 'on';
+    document.body.classList.add('text-only');
+    if (isThumbMode) {
+      isThumbMode = false;
+      $('thumbToggle').checked = false;
+      $('thumbDisplay').textContent = 'off';
+      $('colSlider').style.display = 'none';
+      document.body.classList.remove('thumb-mode');
+      localStorage.setItem('wp-thumb', '0');
+    }
+  }
+
+  // Infinite scroll toggle
+  $('modeToggle').addEventListener('change', function() {
+    isInfinite = this.checked;
+    $('modeDisplay').textContent = isInfinite ? 'on' : 'off';
+    if (observer) observer.disconnect();
+    currentPage = 1;
+    renderPage(1, false);
+  });
+
+  $('textOnlyToggle').addEventListener('change', function() {
+    isTextOnly = this.checked;
+    $('textOnlyDisplay').textContent = isTextOnly ? 'on' : 'off';
+    localStorage.setItem('wp-textonly', isTextOnly ? '1' : '0');
+    if (isTextOnly) { document.body.classList.add('text-only'); }
+    else { document.body.classList.remove('text-only'); }
+    if (isTextOnly && isThumbMode) {
+      isThumbMode = false;
+      $('thumbToggle').checked = false;
+      $('thumbDisplay').textContent = 'off';
+      $('colSlider').style.display = 'none';
+      document.body.classList.remove('thumb-mode');
+      localStorage.setItem('wp-thumb', '0');
+    }
+    currentPage = 1;
+    renderPage(1, false);
+  });
+
+  // Thumbnail mode
+  if (localStorage.getItem('wp-thumb') === '1') {
+    isThumbMode = true;
+    $('thumbToggle').checked = true;
+    $('thumbDisplay').textContent = 'on';
+    document.body.classList.add('thumb-mode');
+    $('colSlider').style.display = '';
+    if (isTextOnly) {
+      isTextOnly = false;
+      $('textOnlyToggle').checked = false;
+      $('textOnlyDisplay').textContent = 'off';
+      document.body.classList.remove('text-only');
+      localStorage.setItem('wp-textonly', '0');
+    }
+  }
+  thumbCols = parseInt(localStorage.getItem('wp-thumbcols')) || 4;
+  $('colRange').value = thumbCols;
+  $('colDisplay').textContent = thumbCols;
+
+  $('thumbToggle').addEventListener('change', function() {
+    isThumbMode = this.checked;
+    $('thumbDisplay').textContent = isThumbMode ? 'on' : 'off';
+    $('colSlider').style.display = isThumbMode ? '' : 'none';
+    localStorage.setItem('wp-thumb', isThumbMode ? '1' : '0');
+    if (isThumbMode) { document.body.classList.add('thumb-mode'); }
+    else { document.body.classList.remove('thumb-mode'); }
+    if (isThumbMode && isTextOnly) {
+      isTextOnly = false;
+      $('textOnlyToggle').checked = false;
+      $('textOnlyDisplay').textContent = 'off';
+      document.body.classList.remove('text-only');
+      localStorage.setItem('wp-textonly', '0');
+    }
+    currentPage = 1;
+    renderPage(1, false);
+  });
+
+  $('colRange').addEventListener('input', function() {
+    thumbCols = parseInt(this.value);
+    $('colDisplay').textContent = thumbCols;
+    localStorage.setItem('wp-thumbcols', thumbCols);
+    if (isThumbMode) { currentPage = 1; renderPage(1, false); }
+  });
+
+  // Modal
+  $('modalClose').addEventListener('click', closeModal);
+  $('modal').addEventListener('click', function(e) {
+    if (e.target === $('modal')) closeModal();
+  });
+
+  // Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var to = $('toverlay');
+      if (to && to.classList.contains('open')) {
+        if (_trState.searchActive) { _trState.searchGen++; _trState.searchActive = false; _tprt('search cancelled.', 'tdim'); return; }
+        _tclose(); return;
+      }
+      if ($('modal').classList.contains('open')) closeModal();
+    }
+  });
+
+  // Resize handler
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(applyMasonry, 150);
+  });
+
+  // Terminal
+  try {
+    $('terminalBtn').addEventListener('click', _topen);
+    $('tclose').addEventListener('click', _tclose);
+    $('toverlay').addEventListener('click', function(e) { if (e.target === $('toverlay')) _tclose(); });
+    var ti = $('tinput');
+    if (ti) {
+      ti.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); _trun(this.value); this.value = ''; }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); if (_thi > 0) { _thi--; this.value = _th[_thi]; } }
+        else if (e.key === 'ArrowDown') { e.preventDefault(); if (_thi < _th.length - 1) { _thi++; this.value = _th[_thi]; } else { _thi = _th.length; this.value = ''; } }
+        else if (e.key === 'Tab') { e.preventDefault(); var v = this.value.trim().toLowerCase(); var m = Object.keys(_tcmds).filter(function(k) { return k.indexOf(v) === 0; }); if (m.length === 1) this.value = m[0] + ' '; }
+      });
+      ti.addEventListener('focus', function() { setTimeout(_tadj, 300); });
+    }
+  } catch(e) {}
+
+  // Admin panel
+  $('adminBtn').addEventListener('click', function() {
+    var panel = $('adminPanel');
+    if (panel.classList.contains('open')) {
+      panel.classList.remove('open');
+      this.classList.remove('active');
+      resetForm();
+    } else {
+      resetForm();
+      panel.classList.add('open');
+      this.classList.add('active');
+      renderAdminList();
+    }
+  });
+
+  $('adminClose').addEventListener('click', function() {
+    $('adminPanel').classList.remove('open');
+    $('adminBtn').classList.remove('active');
+    resetForm();
+  });
+
+  $('postType').addEventListener('change', updateTypeFields);
+  $('savePostBtn').addEventListener('click', savePost);
+  $('cancelEditBtn').addEventListener('click', function() {
+    resetForm();
+  });
+  $('deletePostBtn').addEventListener('click', deletePost);
+  $('pickImageBtn').addEventListener('click', pickImage);
+  $('postSearch').addEventListener('input', renderAdminList);
+
+  $('importBtn').addEventListener('click', importPosts);
+  $('exportBtn').addEventListener('click', exportPosts);
+
+  $('filterClear').addEventListener('click', clearFilter);
+
+  // Render
+  currentPage = 1;
+  renderPage(1, false);
+}
+
+init();
+})();
+</script>
+</body>
+</html>
