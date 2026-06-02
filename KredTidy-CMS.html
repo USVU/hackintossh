@@ -2111,6 +2111,36 @@ _treg('reload', ['reboot'], 'refresh view', function() { _tprt('refreshing...', 
 _treg('showall', ['all', 'reset'], 'clear filter &amp; show all posts', function() { _tprt('showing all posts', 'tbold'); clearFilter(); });
 _treg('nano', [], 'MProcs nano', function() { _tgen(); });
 _treg('enter', [], '(empty line) MProcs nano', function() { _tprt('Just press Enter on an empty line.', 'tdim'); });
+_treg('post', [], 'post [flags] - create post from terminal', function(a) {
+  if (!a.length) { _tprt('Usage: post --title &quot;...&quot; --content &quot;...&quot; [--tags a,b,c] [--type text]', 'twarn'); return; }
+  var raw = a.join(' ');
+  var tokens = [], cur = '', inQ = false, inSQ = false;
+  for (var c = 0; c < raw.length; c++) {
+    var ch = raw[c];
+    if (ch === '"' && !inSQ) { inQ = !inQ; if (!inQ) { tokens.push(cur); cur = ''; } continue; }
+    if (ch === "'" && !inQ) { inSQ = !inSQ; if (!inSQ) { tokens.push(cur); cur = ''; } continue; }
+    if ((ch === ' ' || ch === '\t') && !inQ && !inSQ) { if (cur) { tokens.push(cur); cur = ''; } }
+    else { cur += ch; }
+  }
+  if (cur) tokens.push(cur);
+  var title = '', content = '', tags = [], type = 'text';
+  for (var i = 0; i < tokens.length; i++) {
+    if (tokens[i] === '--title' || tokens[i] === '-t') { title = tokens[++i] || ''; }
+    else if (tokens[i] === '--content' || tokens[i] === '-c') { content = tokens[++i] || ''; }
+    else if (tokens[i] === '--tags' || tokens[i] === '-g') { tags = (tokens[++i] || '').split(',').map(function(t) { return t.trim(); }).filter(Boolean); }
+    else if (tokens[i] === '--type' || tokens[i] === '-T') { type = tokens[++i] || 'text'; }
+  }
+  if (!title && !content) { _tprt('Provide at least --title or --content.', 'twarn'); return; }
+  var now = new Date(); var pad = function(n) { return String(n).padStart(2, '0'); };
+  var dateStr = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + 'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+  var p = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), title: title, type: type, body: content, tags: tags, date: dateStr, images: [] };
+  posts.unshift(p);
+  posts.sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); });
+  window.cms.savePosts(posts.map(cleanPost)).then(function() {
+    clearFilter(); renderAdminList();
+    _tprt('Posted: ' + (title || '(untitled)') + ' [' + type + ']', 'tbold');
+  }).catch(function() {});
+});
 _treg('wipe', ['nuke'], 'wipe all posts (with export prompt)', function() {
   if (!posts.length) { _tprt('No posts to wipe.', 'tdim'); return; }
   _tprt('WARNING: This will permanently delete all ' + posts.length + ' posts.', 'terr');
