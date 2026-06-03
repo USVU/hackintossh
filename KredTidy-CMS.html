@@ -1774,7 +1774,7 @@ function _topen() {
   o.classList.add('open');
   b.innerHTML = '';
   _tprt('kredtidy@cms v2.0 (offline)', 'tdim');
-  _tprt('type <b>help</b> for commands, <b>exit</b> to close', 'tdim');
+  _tprt('type <b>help</b> for commands, <b>F2</b> to toggle, <b>exit</b> to close', 'tdim');
   _tprt('');
   _tadj();
   if (window.visualViewport && !_tvpHandler) {
@@ -2299,7 +2299,7 @@ async function init() {
     if (e.target === $('modal')) closeModal();
   });
 
-  // Escape key
+  // Escape / Ctrl+` keys
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       var to = $('toverlay');
@@ -2308,6 +2308,11 @@ async function init() {
         _tclose(); return;
       }
       if ($('modal').classList.contains('open')) closeModal();
+    }
+    if (e.key === 'F2') {
+      e.preventDefault();
+      var to = $('toverlay');
+      if (to && to.classList.contains('open')) { _tclose(); } else { _topen(); }
     }
   });
 
