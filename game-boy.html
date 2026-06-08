@@ -45,13 +45,17 @@ body{
   pointer-events:none
 }
 #mobile-controls{position:absolute;inset:0;pointer-events:none;z-index:10;display:none}
-@media(hover:none)and(pointer:coarse){
+@media(max-width:900px){
   #mobile-controls{display:block}
-  #container{max-width:100vw;max-height:100dvh;padding:0;border-radius:0}
-  #container #c{max-width:100%;max-height:100dvh;width:auto;height:auto;aspect-ratio:960/600;border-radius:0}
+  #container{width:100vw;padding:0;border-radius:0;overflow:hidden}
+  #container #c{width:100vw;height:auto;aspect-ratio:960/600;border-radius:0;max-height:100dvh;object-fit:contain}
   #container #mm{display:none}
-  #controls{font-size:10px;bottom:8px}
-  #hud{font-size:11px;top:12px;left:14px}
+  #controls{font-size:10px;bottom:6px}
+  #hud{font-size:12px;top:10px;left:12px}
+  #hud br{display:none}
+  #hud #girlCount:after{content:'g'}
+  #hud #boyStatus{display:inline}
+  #wxDisplay{font-size:10px}
 }
 .mc-btn{
   position:absolute;pointer-events:auto;
@@ -90,6 +94,17 @@ body{
   <div id="hud">🌸 <span id="girlCount">0</span> girls · ♂ <span id="boyStatus">away</span><br><span id="wxDisplay"></span></div>
   <div id="controls">W A S D <span style="opacity:.4">move</span> · ← → <span style="opacity:.4">turn</span> · E <span style="opacity:.4">interact</span></div>
   <canvas id="mm"></canvas>
+  <div id="mobile-controls">
+    <div class="mc-btn" id="mc-up">▲</div>
+    <div class="mc-btn" id="mc-left">◀</div>
+    <div class="mc-btn" id="mc-down">▼</div>
+    <div class="mc-btn" id="mc-right">▶</div>
+    <div class="mc-btn" id="mc-tl">↺</div>
+    <div class="mc-btn" id="mc-tr">↻</div>
+    <div class="mc-btn" id="mc-e">E</div>
+    <div class="mc-btn" id="mc-v">V</div>
+    <div class="mc-btn" id="mc-m" style="right:10px;bottom:108px;width:44px;height:44px;font-size:14px">M</div>
+  </div>
 </div>
 <script>
 const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
@@ -633,21 +648,8 @@ genMap();pl.x=18;pl.y=18;pl.a=Math.PI*0.25;
 for(let i=0;i<40;i++)spwn();
 spawnBoy();
 loop();
-</script>
-<div id="mobile-controls">
-  <div class="mc-btn" id="mc-up">▲</div>
-  <div class="mc-btn" id="mc-left">◀</div>
-  <div class="mc-btn" id="mc-down">▼</div>
-  <div class="mc-btn" id="mc-right">▶</div>
-  <div class="mc-btn" id="mc-tl">↺</div>
-  <div class="mc-btn" id="mc-tr">↻</div>
-  <div class="mc-btn" id="mc-e">E</div>
-  <div class="mc-btn" id="mc-v">V</div>
-  <div class="mc-btn" id="mc-m" style="right:10px;bottom:108px;width:44px;height:44px;font-size:14px">M</div>
-</div>
-<script>
+if('ontouchstart' in window){
 (function(){
-if(!('ontouchstart' in window))return;
 function kd(k){document.dispatchEvent(new KeyboardEvent('keydown',{key:k,bubbles:true}))}
 function ku(k){document.dispatchEvent(new KeyboardEvent('keyup',{key:k,bubbles:true}))}
 function t(el,k){
@@ -663,23 +665,12 @@ t(document.getElementById('mc-left'),'a');
 t(document.getElementById('mc-right'),'d');
 t(document.getElementById('mc-tl'),'ArrowLeft');
 t(document.getElementById('mc-tr'),'ArrowRight');
-(function(){
-var btn=document.getElementById('mc-e');
-if(!btn)return;
-btn.addEventListener('touchstart',function(e){e.preventDefault();kd('e')},{passive:false});
+var mcE=document.getElementById('mc-e');if(mcE)mcE.addEventListener('touchstart',function(e){e.preventDefault();kd('e')},{passive:false});
+var mcV=document.getElementById('mc-v');if(mcV)mcV.addEventListener('touchstart',function(e){e.preventDefault();kd('v')},{passive:false});
+var mcM=document.getElementById('mc-m'),mM=document.getElementById('mm');
+if(mcM&&mM){var vis=false;mcM.addEventListener('touchstart',function(e){e.preventDefault();vis=!vis;mM.style.display=vis?'block':'none'},{passive:false});}
 })();
-(function(){
-var btn=document.getElementById('mc-v');
-if(!btn)return;
-btn.addEventListener('touchstart',function(e){e.preventDefault();kd('v')},{passive:false});
-})();
-(function(){
-var btn=document.getElementById('mc-m'),mm=document.getElementById('mm');
-if(!btn||!mm)return;
-var vis=false;
-btn.addEventListener('touchstart',function(e){e.preventDefault();vis=!vis;mm.style.display=vis?'block':'none'},{passive:false});
-})();
-})();
+}
 </script>
 </body>
 </html>
