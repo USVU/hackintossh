@@ -104,6 +104,7 @@ body{
     <div class="mc-btn" id="mc-e">E</div>
     <div class="mc-btn" id="mc-v">V</div>
     <div class="mc-btn" id="mc-m" style="right:10px;bottom:108px;width:44px;height:44px;font-size:14px">M</div>
+    <div id="mc-toggle" style="position:absolute;top:8px;right:8px;pointer-events:auto;width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);font-size:16px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;z-index:20">⌨</div>
   </div>
 </div>
 <script>
@@ -457,36 +458,20 @@ function rz(){
   gr.addColorStop(0.5,`rgb(${Math.floor(40*gb)},${Math.floor(70*gb)},${Math.floor(30*gb)})`);
   gr.addColorStop(1,`rgb(${Math.floor(25*gb)},${Math.floor(45*gb)},${Math.floor(20*gb)})`);
   ctx.fillStyle=gr;ctx.fillRect(0,Math.floor(H/2),W,Math.ceil(H/2));
-  const sorted=[...girls].filter(g=>{const d=Math.hypot(g.x-pl.x,g.y-pl.y);return d>0.4&&d<25;}).sort((a,b)=>Math.hypot(b.x-pl.x,b.y-pl.y)-Math.hypot(a.x-pl.x,a.y-pl.y));
-  sorted.forEach(g=>{
-    const d=Math.hypot(g.x-pl.x,g.y-pl.y);if(d<0.4||d>25)return;
-    const dx=g.x-pl.x,dy=g.y-pl.y,ang=Math.atan2(dy,dx);
+  let ents=[...girls].filter(g=>{const d=Math.hypot(g.x-pl.x,g.y-pl.y);return d>0.4&&d<25;});
+  if(boy){const d=Math.hypot(boy.x-pl.x,boy.y-pl.y);if(d>0.4&&d<25)ents.push({isBoy:true,g:boy,app:boy.app,sprite:boy.sprite,x:boy.x,y:boy.y});}
+  ents.sort((a,b)=>Math.hypot(b.x-pl.x,b.y-pl.y)-Math.hypot(a.x-pl.x,a.y-pl.y));
+  ents.forEach(e=>{
+    const d=Math.hypot(e.x-pl.x,e.y-pl.y);if(d<0.4||d>25)return;
+    const dx=e.x-pl.x,dy=e.y-pl.y,ang=Math.atan2(dy,dx);
     let diff=norm(ang-pl.a);if(Math.abs(diff)>HFOV+0.05)return;
     const sx=(diff/HFOV+1)*W/2;if(sx<-25||sx>W+25)return;
-    const sh=Math.floor(H*0.55*g.app.hgt/d);if(sh<2)return;
+    const sh=Math.floor(H*0.55*e.app.hgt/d);if(sh<2)return;
     const st=Math.floor(H/2+EYE*H/d-sh),sw=Math.floor(sh*0.67),sl=Math.floor(sx-sw/2);
-    ctx.drawImage(g.sprite,sl,st,sw,sh);
-    if(g.wave>0){ctx.fillStyle='rgba(255,255,150,0.7)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('☆',sx,st-3);}
+    ctx.drawImage(e.sprite,sl,st,sw,sh);
+    if(e.isBoy){if(d<2.5){ctx.fillStyle='rgba(100,200,255,0.6)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('◆',sx,st-3);}}
+    else if(e.wave>0){ctx.fillStyle='rgba(255,255,150,0.7)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('☆',sx,st-3);}
   });
-  if(boy){
-    const d=Math.hypot(boy.x-pl.x,boy.y-pl.y);
-    if(d>0.4&&d<25){
-      const dx=boy.x-pl.x,dy=boy.y-pl.y,ang=Math.atan2(dy,dx);
-      let diff=norm(ang-pl.a);
-      if(Math.abs(diff)<=HFOV+0.05){
-        const sx=(diff/HFOV+1)*W/2;
-        if(sx>-25&&sx<W+25){
-          const sh=Math.floor(H*0.55*boy.app.hgt/d);if(sh>=2){
-            const st=Math.floor(H/2+EYE*H/d-sh),sw=Math.floor(sh*0.67),sl=Math.floor(sx-sw/2);
-            ctx.drawImage(boy.sprite,sl,st,sw,sh);
-            if(Math.hypot(boy.x-pl.x,boy.y-pl.y)<2.5){
-              ctx.fillStyle='rgba(100,200,255,0.6)';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText('◆',sx,st-3);
-            }
-          }
-        }
-      }
-    }
-  }
   wxParts.forEach(p=>{
     const dx=p.x-pl.x,dy=p.y-pl.y,d=Math.hypot(dx,dy);
     if(d<0.5||d>18)return;
@@ -669,6 +654,8 @@ var mcE=document.getElementById('mc-e');if(mcE)mcE.addEventListener('touchstart'
 var mcV=document.getElementById('mc-v');if(mcV)mcV.addEventListener('touchstart',function(e){e.preventDefault();kd('v')},{passive:false});
 var mcM=document.getElementById('mc-m'),mM=document.getElementById('mm');
 if(mcM&&mM){var vis=false;mcM.addEventListener('touchstart',function(e){e.preventDefault();vis=!vis;mM.style.display=vis?'block':'none'},{passive:false});}
+var tg=document.getElementById('mc-toggle'),mc=document.getElementById('mobile-controls');
+if(tg&&mc){var hidden=false;tg.addEventListener('touchstart',function(e){e.preventDefault();hidden=!hidden;mc.querySelectorAll('.mc-btn').forEach(function(b){b.style.display=hidden?'none':'';});tg.textContent=hidden?'◀':'⌨'},{passive:false});}
 })();
 }
 </script>
