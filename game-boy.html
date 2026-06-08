@@ -44,6 +44,39 @@ body{
   image-rendering:pixelated;image-rendering:crisp-edges;
   pointer-events:none
 }
+#mobile-controls{position:absolute;inset:0;pointer-events:none;z-index:10;display:none}
+@media(hover:none)and(pointer:coarse){#mobile-controls{display:block}}
+#container{max-width:100vw;max-height:100dvh;padding:0}
+#container #c{max-width:100%;max-height:100dvh;width:auto;height:auto;aspect-ratio:960/600}
+.mc-btn{
+  position:absolute;pointer-events:auto;
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.7);font-size:20px;display:flex;
+  align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;touch-action:none;user-select:none
+}
+.mc-btn:active{background:rgba(255,255,255,0.25)}
+#mc-up{left:70px;bottom:160px}
+#mc-left{left:10px;bottom:108px}
+#mc-right{left:130px;bottom:108px}
+#mc-down{left:70px;bottom:56px}
+#mc-tl{left:200px;bottom:108px;width:44px;height:44px;font-size:16px}
+#mc-tr{left:250px;bottom:108px;width:44px;height:44px;font-size:16px}
+#mc-e{right:70px;bottom:160px;background:rgba(255,105,180,0.2);border-color:rgba(255,105,180,0.4);font-size:14px;font-weight:700}
+#mc-e:active{background:rgba(255,105,180,0.4)}
+#mc-v{right:10px;bottom:56px;width:44px;height:44px;font-size:12px}
+@media(max-width:500px){
+  .mc-btn{width:44px;height:44px;font-size:16px}
+  #mc-up{left:58px;bottom:136px}
+  #mc-left{left:8px;bottom:92px}
+  #mc-right{left:108px;bottom:92px}
+  #mc-down{left:58px;bottom:48px}
+  #mc-tl{left:162px;bottom:92px;width:38px;height:38px;font-size:14px}
+  #mc-tr{left:204px;bottom:92px;width:38px;height:38px;font-size:14px}
+  #mc-e{right:58px;bottom:136px}
+  #mc-v{right:8px;bottom:48px;width:38px;height:38px}
+}
 </style>
 </head>
 <body>
@@ -595,6 +628,46 @@ genMap();pl.x=18;pl.y=18;pl.a=Math.PI*0.25;
 for(let i=0;i<40;i++)spwn();
 spawnBoy();
 loop();
+</script>
+<div id="mobile-controls">
+  <div class="mc-btn" id="mc-up">▲</div>
+  <div class="mc-btn" id="mc-left">◀</div>
+  <div class="mc-btn" id="mc-down">▼</div>
+  <div class="mc-btn" id="mc-right">▶</div>
+  <div class="mc-btn" id="mc-tl">↺</div>
+  <div class="mc-btn" id="mc-tr">↻</div>
+  <div class="mc-btn" id="mc-e">E</div>
+  <div class="mc-btn" id="mc-v">V</div>
+</div>
+<script>
+(function(){
+if(!('ontouchstart' in window))return;
+function kd(k){document.dispatchEvent(new KeyboardEvent('keydown',{key:k,bubbles:true}))}
+function ku(k){document.dispatchEvent(new KeyboardEvent('keyup',{key:k,bubbles:true}))}
+function t(el,k){
+  if(!el)return;
+  var active=false;
+  el.addEventListener('touchstart',function(e){e.preventDefault();if(!active){active=true;kd(k)}},{passive:false});
+  el.addEventListener('touchend',function(e){e.preventDefault();if(active){active=false;ku(k)}},{passive:false});
+  el.addEventListener('touchcancel',function(){if(active){active=false;ku(k)}});
+}
+t(document.getElementById('mc-up'),'w');
+t(document.getElementById('mc-down'),'s');
+t(document.getElementById('mc-left'),'a');
+t(document.getElementById('mc-right'),'d');
+t(document.getElementById('mc-tl'),'ArrowLeft');
+t(document.getElementById('mc-tr'),'ArrowRight');
+(function(){
+var btn=document.getElementById('mc-e');
+if(!btn)return;
+btn.addEventListener('touchstart',function(e){e.preventDefault();kd('e')},{passive:false});
+})();
+(function(){
+var btn=document.getElementById('mc-v');
+if(!btn)return;
+btn.addEventListener('touchstart',function(e){e.preventDefault();kd('v')},{passive:false});
+})();
+})();
 </script>
 </body>
 </html>
