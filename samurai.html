@@ -842,7 +842,7 @@ function drawWeapon(){
 // === COMBAT ===
 function doSlash(type){
   if(pl.slashTmr>0||!pl.alive||state.paused||state.gameOver)return;
-  pl.slashTmr=8;pl.slashType=type;
+  pl.slashTmr=8;pl.slashType=type;sndSlash();
   const range=type==='q'?2.2:2.8;
   const arc=type==='q'?1.0:0.6;
   const dmg=type==='e'?2:1;
@@ -857,7 +857,7 @@ function doSlash(type){
     while(diff<-Math.PI)diff+=2*Math.PI;
     if(Math.abs(diff)>arc/2+0.2)return;
     hitAny=true;
-    e.hp-=dmg;e.hurtTmr=8;
+    e.hp-=dmg;e.hurtTmr=8;sndHit();
     e.x+=Math.cos(ang)*0.3;e.y+=Math.sin(ang)*0.3;
     // Hit particles
     for(let i=0;i<6;i++){
@@ -871,7 +871,7 @@ function doSlash(type){
   if(hitAny)state.shake.i=3;state.shake.d=80;
 }
 function killEnemy(e){
-  e.hp=0;
+  e.hp=0;sndKill();
   for(let i=0;i<16;i++){
     const a=rand(0,Math.PI*2),sp=rand(.01,.05);
     particles.push({x:e.x+rand(-.2,.2),y:e.y+rand(-.2,.2),
@@ -920,7 +920,7 @@ function spawnEnemy(){
 }
 function playerHit(dmg){
   if(pl.iFrames>0||!pl.alive)return;
-  pl.hp-=dmg;pl.hurtTmr=10;pl.iFrames=30;
+  pl.hp-=dmg;pl.hurtTmr=10;pl.iFrames=30;sndHurt();
   state.shake.i=7;state.shake.d=120;
   for(let i=0;i<8;i++){
     const a=rand(0,Math.PI*2),sp=rand(.01,.04);
@@ -1177,7 +1177,7 @@ function update(){
     pickups.forEach(p=>{
       if(p.life>0&&dist(pl,p)<0.6){
         if(p.ty==='hp'&&pl.hp<pl.maxHp){
-          pl.hp=Math.min(pl.maxHp,pl.hp+1);
+          pl.hp=Math.min(pl.maxHp,pl.hp+1);sndPickup();
           for(let i=0;i<4;i++)particles.push({x:p.x,y:p.y,vx:rand(-.02,.02),vy:rand(-.02,.02),life:10+rand(0,8),max:18,sz:2+rand(0,2),col:'#44ff88',ty:'hit'});
           updateUI();
         }
@@ -1309,7 +1309,7 @@ document.addEventListener('keydown',e=>{
   if(k==='e'){doSlash('e');e.preventDefault();}
   if(k===' '){
     if(pl.onGround&&pl.alive){
-      pl.zVel=JUMP_VEL;pl.onGround=false;
+      pl.zVel=JUMP_VEL;pl.onGround=false;sndJump();
       e.preventDefault();
     }
   }
@@ -1321,6 +1321,17 @@ document.addEventListener('keyup',e=>{
   if(e.key==='ArrowRight')keys['arrowright']=false;
 });
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
+
+// === SOUNDS ===
+var _actx=null;
+function _p(f,d,t,g,s){try{if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();var o=_actx.createOscillator(),n=_actx.createGain();o.type=t||'sawtooth';o.frequency.value=f;n.gain.setValueAtTime(g||0.15,_actx.currentTime);n.gain.exponentialRampToValueAtTime(0.001,_actx.currentTime+(d||0.2));if(s)o.frequency.linearRampToValueAtTime(s,_actx.currentTime+(d||0.2));o.connect(n);n.connect(_actx.destination);o.start();o.stop(_actx.currentTime+(d||0.2));}catch(e){}}
+function _n(d,g){try{if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();var b=_actx.createBuffer(1,_actx.sampleRate*0.2,_actx.sampleRate),w=b.getChannelData(0);for(var i=0;i<w.length;i++)w[i]=Math.random()*2-1;var s=_actx.createBufferSource(),n=_actx.createGain();s.buffer=b;n.gain.setValueAtTime(g||0.1,_actx.currentTime);n.gain.exponentialRampToValueAtTime(0.001,_actx.currentTime+(d||0.1));s.connect(n);n.connect(_actx.destination);s.start();}catch(e){}}
+function sndSlash(){_p(200,0.08,'sawtooth',0.2,80);setTimeout(function(){_p(400,0.1,'sawtooth',0.15,100);},30);}
+function sndHit(){_n(0.06,0.2);_p(300,0.05,'square',0.1,150);}
+function sndKill(){_p(800,0.05,'sine',0.15,200);setTimeout(function(){_p(600,0.08,'sine',0.12,150);},50);setTimeout(function(){_p(400,0.12,'sine',0.1,100);},100);}
+function sndHurt(){_p(100,0.15,'sawtooth',0.2,40);_n(0.08,0.15);}
+function sndJump(){_p(200,0.06,'sine',0.1,500);setTimeout(function(){_p(300,0.05,'sine',0.08,400);},40);}
+function sndPickup(){_p(600,0.06,'sine',0.12,900);setTimeout(function(){_p(900,0.08,'sine',0.1,1200);},60);}
 
 // === START ===
 loadScores();
