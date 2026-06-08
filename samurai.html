@@ -132,14 +132,16 @@ body{
 #mc-left{left:10px;bottom:115px}
 #mc-right{left:130px;bottom:115px}
 #mc-down{left:70px;bottom:60px}
-#mc-tl{left:10px;bottom:170px;width:44px;height:44px;font-size:16px}
-#mc-tr{left:130px;bottom:170px;width:44px;height:44px;font-size:16px}
+#mc-tl{right:70px;bottom:115px;width:44px;height:44px;font-size:16px}
+#mc-tr{right:130px;bottom:115px;width:44px;height:44px;font-size:16px}
 #mc-q-attack{right:70px;bottom:170px;background:rgba(100,180,255,0.12);border-color:rgba(100,180,255,0.3);font-size:13px;font-weight:700}
 #mc-q-attack:active{background:rgba(100,180,255,0.3)}
 #mc-e-attack{right:10px;bottom:115px;background:rgba(255,180,100,0.12);border-color:rgba(255,180,100,0.3);font-size:13px;font-weight:700}
 #mc-e-attack:active{background:rgba(255,180,100,0.35)}
 #mc-jump{right:10px;bottom:170px;width:44px;height:44px;font-size:16px}
 #mc-run{right:70px;bottom:60px;width:44px;height:44px;font-size:11px;font-weight:700}
+#mc-run.on{background:rgba(100,255,180,0.15)!important;border-color:rgba(100,255,180,0.3)!important;color:rgba(100,255,180,0.6)}
+#mc-run:active{background:rgba(255,255,255,0.2)}
 #mc-pause{right:130px;bottom:60px;width:44px;height:44px;font-size:14px}
 #mc-nano{position:absolute;pointer-events:auto;right:10px;bottom:6px;width:36px;height:28px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.35);font-size:10px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
 #mc-nano:active{background:rgba(255,255,255,0.15)}
@@ -151,13 +153,13 @@ body{
   #mc-left{left:6px;bottom:98px}
   #mc-right{left:102px;bottom:98px}
   #mc-down{left:54px;bottom:50px}
-  #mc-tl{left:6px;bottom:146px;width:36px;height:36px;font-size:14px}
-  #mc-tr{left:102px;bottom:146px;width:36px;height:36px;font-size:14px}
+  #mc-tl{right:54px;bottom:98px;width:36px;height:36px;font-size:14px}
+  #mc-tr{right:98px;bottom:98px;width:36px;height:36px;font-size:14px}
   #mc-q-attack{right:54px;bottom:146px;font-size:11px}
   #mc-e-attack{right:6px;bottom:98px;font-size:11px}
   #mc-jump{right:6px;bottom:146px;width:36px;height:36px;font-size:14px}
-  #mc-run{right:54px;bottom:50px;width:36px;height:36px;font-size:10px}
   #mc-pause{right:102px;bottom:50px;width:36px;height:36px;font-size:12px}
+  #mc-run{right:54px;bottom:50px;width:36px;height:36px;font-size:10px}
   #mc-nano{right:6px;bottom:4px;width:32px;height:24px;font-size:9px}
 }
 
@@ -1439,8 +1441,15 @@ t(document.getElementById('mc-tr'),'ArrowRight');
 // Combat attacks (hold-release to match keyboard behavior)
 t(document.getElementById('mc-q-attack'),'q');
 t(document.getElementById('mc-e-attack'),'e');
-// Sprint (hold to run)
-t(document.getElementById('mc-run'),'Shift');
+// Sprint toggle - press to toggle on/off
+var mcRun=document.getElementById('mc-run'),runOn=false;
+if(mcRun){
+  mcRun.addEventListener('touchstart',function(e){
+    e.preventDefault();
+    runOn=!runOn;
+    if(runOn){kd('Shift');mcRun.classList.add('on');}else{ku('Shift');mcRun.classList.remove('on');}
+  },{passive:false});
+}
 // Jump - one-shot on touch
 var mcJump=document.getElementById('mc-jump');
 if(mcJump)mcJump.addEventListener('touchstart',function(e){e.preventDefault();kd(' ')},{passive:false});
