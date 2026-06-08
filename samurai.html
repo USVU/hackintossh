@@ -141,7 +141,10 @@ body{
 #mc-jump{right:10px;bottom:170px;width:44px;height:44px;font-size:16px}
 #mc-run{right:70px;bottom:60px;width:44px;height:44px;font-size:11px;font-weight:700}
 #mc-pause{right:130px;bottom:60px;width:44px;height:44px;font-size:14px}
-#mc-restart{right:130px;bottom:115px;width:44px;height:44px;font-size:13px;font-weight:700}
+#mc-nano{position:absolute;pointer-events:auto;right:10px;bottom:6px;width:36px;height:28px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.35);font-size:10px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+#mc-nano:active{background:rgba(255,255,255,0.15)}
+#mc-restart{position:absolute;pointer-events:auto;top:42px;right:8px;width:30px;height:30px;border-radius:6px;background:rgba(255,80,80,0.06);border:1px solid rgba(255,80,80,0.1);color:rgba(255,120,120,0.35);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+#mc-restart:active{background:rgba(255,80,80,0.18)}
 @media(max-width:500px){
   .mc-btn{width:44px;height:44px;font-size:16px}
   #mc-up{left:54px;bottom:146px}
@@ -155,7 +158,7 @@ body{
   #mc-jump{right:6px;bottom:146px;width:36px;height:36px;font-size:14px}
   #mc-run{right:54px;bottom:50px;width:36px;height:36px;font-size:10px}
   #mc-pause{right:102px;bottom:50px;width:36px;height:36px;font-size:12px}
-  #mc-restart{right:102px;bottom:98px;width:36px;height:36px;font-size:11px}
+  #mc-nano{right:6px;bottom:4px;width:32px;height:24px;font-size:9px}
 }
 
 </style>
@@ -195,8 +198,9 @@ body{
     <div class="mc-btn" id="mc-jump">⤴</div>
     <div class="mc-btn" id="mc-run">RUN</div>
     <div class="mc-btn" id="mc-pause">⏸</div>
-    <div class="mc-btn" id="mc-restart">R</div>
+    <div id="mc-nano">⏎</div>
     <div id="mc-toggle" style="position:absolute;top:8px;right:8px;pointer-events:auto;width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);font-size:16px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;z-index:20">⌨</div>
+    <div id="mc-restart">R</div>
   </div>
 </div>
 <script>
@@ -1446,6 +1450,9 @@ if(mcPause)mcPause.addEventListener('touchstart',function(e){e.preventDefault();
 // Restart/Retire - one-shot
 var mcRestart=document.getElementById('mc-restart');
 if(mcRestart)mcRestart.addEventListener('touchstart',function(e){e.preventDefault();kd('r')},{passive:false});
+// Nano - one-shot
+var mcNano=document.getElementById('mc-nano');
+if(mcNano)mcNano.addEventListener('touchstart',function(e){e.preventDefault();kd('Enter')},{passive:false});
 // Toggle controls visibility
 var tg=document.getElementById('mc-toggle'),mc=document.getElementById('mobile-controls');
 if(tg&&mc){
@@ -1453,7 +1460,7 @@ if(tg&&mc){
   tg.addEventListener('touchstart',function(e){
     e.preventDefault();
     hidden=!hidden;
-    mc.querySelectorAll('.mc-btn').forEach(function(b){b.style.display=hidden?'none':'';});
+    mc.querySelectorAll('.mc-btn,#mc-nano,#mc-restart').forEach(function(b){b.style.display=hidden?'none':'';});
     tg.textContent=hidden?'▶':'⌨';
   },{passive:false});
 }
