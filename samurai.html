@@ -106,6 +106,58 @@ body{
 }
 #nanoDisp.show{opacity:1}
 
+#mobile-controls{position:absolute;inset:0;pointer-events:none;z-index:10;display:none}
+@media(max-width:1024px){
+  #mobile-controls{display:block}
+  #container{width:100vw;padding:0;border-radius:0;overflow:hidden}
+  #container #c{width:100vw;height:auto;aspect-ratio:16/9;border-radius:0;max-height:100dvh;object-fit:contain}
+  #controls{display:none}
+  #cdQ,#cdE{width:34px;height:34px;font-size:12px;bottom:6px}
+  #cdQ{left:6px}#cdE{left:46px}
+  #healthBar{top:6px;left:6px}
+  #healthBar .heart{font-size:14px}
+  #scoreDisp{top:6px;right:6px;font-size:13px}
+  #topScoreDisp{top:32px;right:6px}
+}
+.mc-btn{
+  position:absolute;pointer-events:auto;
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);
+  color:rgba(255,255,255,0.7);font-size:20px;display:flex;
+  align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;touch-action:none;user-select:none
+}
+.mc-btn:active{background:rgba(255,255,255,0.2)}
+#mc-up{left:70px;bottom:170px}
+#mc-left{left:10px;bottom:115px}
+#mc-right{left:130px;bottom:115px}
+#mc-down{left:70px;bottom:60px}
+#mc-tl{left:10px;bottom:170px;width:44px;height:44px;font-size:16px}
+#mc-tr{left:130px;bottom:170px;width:44px;height:44px;font-size:16px}
+#mc-q-attack{right:70px;bottom:170px;background:rgba(100,180,255,0.12);border-color:rgba(100,180,255,0.3);font-size:13px;font-weight:700}
+#mc-q-attack:active{background:rgba(100,180,255,0.3)}
+#mc-e-attack{right:10px;bottom:115px;background:rgba(255,180,100,0.12);border-color:rgba(255,180,100,0.3);font-size:13px;font-weight:700}
+#mc-e-attack:active{background:rgba(255,180,100,0.35)}
+#mc-jump{right:10px;bottom:170px;width:44px;height:44px;font-size:16px}
+#mc-run{right:70px;bottom:60px;width:44px;height:44px;font-size:11px;font-weight:700}
+#mc-pause{right:130px;bottom:60px;width:44px;height:44px;font-size:14px}
+#mc-restart{right:130px;bottom:115px;width:44px;height:44px;font-size:13px;font-weight:700}
+@media(max-width:500px){
+  .mc-btn{width:44px;height:44px;font-size:16px}
+  #mc-up{left:54px;bottom:146px}
+  #mc-left{left:6px;bottom:98px}
+  #mc-right{left:102px;bottom:98px}
+  #mc-down{left:54px;bottom:50px}
+  #mc-tl{left:6px;bottom:146px;width:36px;height:36px;font-size:14px}
+  #mc-tr{left:102px;bottom:146px;width:36px;height:36px;font-size:14px}
+  #mc-q-attack{right:54px;bottom:146px;font-size:11px}
+  #mc-e-attack{right:6px;bottom:98px;font-size:11px}
+  #mc-jump{right:6px;bottom:146px;width:36px;height:36px;font-size:14px}
+  #mc-run{right:54px;bottom:50px;width:36px;height:36px;font-size:10px}
+  #mc-pause{right:102px;bottom:50px;width:36px;height:36px;font-size:12px}
+  #mc-restart{right:102px;bottom:98px;width:36px;height:36px;font-size:11px}
+}
+
 </style>
 </head>
 <body>
@@ -130,6 +182,21 @@ body{
       <div class="topScore" id="topScoreMsg"></div>
       <p style="margin-top:10px">Press R to restart</p>
     </div>
+    </div>
+  <div id="mobile-controls">
+    <div class="mc-btn" id="mc-up">▲</div>
+    <div class="mc-btn" id="mc-left">◀</div>
+    <div class="mc-btn" id="mc-down">▼</div>
+    <div class="mc-btn" id="mc-right">▶</div>
+    <div class="mc-btn" id="mc-tl">↺</div>
+    <div class="mc-btn" id="mc-tr">↻</div>
+    <div class="mc-btn" id="mc-q-attack">←⚔</div>
+    <div class="mc-btn" id="mc-e-attack">⚔→</div>
+    <div class="mc-btn" id="mc-jump">⤴</div>
+    <div class="mc-btn" id="mc-run">RUN</div>
+    <div class="mc-btn" id="mc-pause">⏸</div>
+    <div class="mc-btn" id="mc-restart">R</div>
+    <div id="mc-toggle" style="position:absolute;top:8px;right:8px;pointer-events:auto;width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);font-size:16px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;z-index:20">⌨</div>
   </div>
 </div>
 <script>
@@ -1344,6 +1411,55 @@ if(saved){
   initGame();
 }
 loop();
+
+// === MOBILE TOUCH CONTROLS ===
+if('ontouchstart' in window){
+(function(){
+function kd(k){document.dispatchEvent(new KeyboardEvent('keydown',{key:k,bubbles:true}))}
+function ku(k){document.dispatchEvent(new KeyboardEvent('keyup',{key:k,bubbles:true}))}
+function t(el,k){
+  if(!el)return;
+  var active=false;
+  el.addEventListener('touchstart',function(e){e.preventDefault();if(!active){active=true;kd(k)}},{passive:false});
+  el.addEventListener('touchend',function(e){e.preventDefault();if(active){active=false;ku(k)}},{passive:false});
+  el.addEventListener('touchcancel',function(){if(active){active=false;ku(k)}});
+}
+// D-pad movement
+t(document.getElementById('mc-up'),'w');
+t(document.getElementById('mc-down'),'s');
+t(document.getElementById('mc-left'),'a');
+t(document.getElementById('mc-right'),'d');
+// Turning
+t(document.getElementById('mc-tl'),'ArrowLeft');
+t(document.getElementById('mc-tr'),'ArrowRight');
+// Combat attacks (hold-release to match keyboard behavior)
+t(document.getElementById('mc-q-attack'),'q');
+t(document.getElementById('mc-e-attack'),'e');
+// Sprint (hold to run)
+t(document.getElementById('mc-run'),'Shift');
+// Jump - one-shot on touch
+var mcJump=document.getElementById('mc-jump');
+if(mcJump)mcJump.addEventListener('touchstart',function(e){e.preventDefault();kd(' ')},{passive:false});
+// Pause - one-shot toggle
+var mcPause=document.getElementById('mc-pause');
+if(mcPause)mcPause.addEventListener('touchstart',function(e){e.preventDefault();kd('Escape')},{passive:false});
+// Restart/Retire - one-shot
+var mcRestart=document.getElementById('mc-restart');
+if(mcRestart)mcRestart.addEventListener('touchstart',function(e){e.preventDefault();kd('r')},{passive:false});
+// Toggle controls visibility
+var tg=document.getElementById('mc-toggle'),mc=document.getElementById('mobile-controls');
+if(tg&&mc){
+  var hidden=false;
+  tg.addEventListener('touchstart',function(e){
+    e.preventDefault();
+    hidden=!hidden;
+    mc.querySelectorAll('.mc-btn').forEach(function(b){b.style.display=hidden?'none':'';});
+    tg.textContent=hidden?'▶':'⌨';
+  },{passive:false});
+}
+})();
+}
+
 </script>
 </body>
 </html>
