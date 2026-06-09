@@ -1403,11 +1403,9 @@ function escHtml(s) {
 
 function getTileWidthClass(id) {
   if (isTextOnly) return '';
-  var s = String(id), hash = 0;
-  for (var i = 0; i < s.length; i++) { hash = ((hash << 5) - hash) + s.charCodeAt(i); hash |= 0; }
-  var bucket = (Math.abs(hash) % 37);
-  if (bucket < 2) return ' tile-full';
-  if (bucket < 7) return ' tile-wide-2';
+  var r = Math.floor(Math.random() * 37);
+  if (r < 2) return ' tile-full';
+  if (r < 7) return ' tile-wide-2';
   return '';
 }
 
