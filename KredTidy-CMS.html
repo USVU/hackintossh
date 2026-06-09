@@ -3,11 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KredTidy CMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>USVirtualUni — KredTidy CMS</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-:root, [data-theme="dark-green"] {
+[data-theme="dark-green"] {
   --bg: #0a0a0a;
   --card-bg: #141414;
   --card-bg-alt: #1a1a1a;
@@ -159,10 +162,238 @@
   --input-focus: #2a70cc;
 }
 
+[data-theme="dark-purple"] {
+  --bg: #0d0a14;
+  --card-bg: #181422;
+  --card-bg-alt: #1e1a2a;
+  --border: #2a1f3d;
+  --border-2: #352848;
+  --border-3: #403358;
+  --accent: #b366ff;
+  --accent-light: rgba(179,102,255,0.12);
+  --text: #e8ddf4;
+  --text-body: #d8cce8;
+  --text-sec: #a890c8;
+  --text-tert: #8a6aab;
+  --text-dim: #755590;
+  --text-muted: #604480;
+  --text-quote: #9a7ab8;
+  --modal-bg: #181422;
+  --img-bg: #1e1a2a;
+  --modimg-bg: #0d0a14;
+  --btn-bg: #181422;
+  --btn-color: #a890c8;
+  --toggle-bg: #2a1f3d;
+  --toggle-border: #352848;
+  --toggle-dot: #8a6aab;
+  --meta-bg: #1e1a2a;
+  --meta-border: #352848;
+  --meta-color: #8a6aab;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+  --admin-bg: #11081a;
+  --danger: #ff5555;
+  --danger-hover: #ff7777;
+  --input-bg: #181422;
+  --input-border: #2a1f3d;
+  --input-focus: #b366ff;
+}
+
+[data-theme="dark-red"] {
+  --bg: #140a0a;
+  --card-bg: #221414;
+  --card-bg-alt: #2a1a1a;
+  --border: #3d1f1f;
+  --border-2: #482828;
+  --border-3: #583333;
+  --accent: #ff5555;
+  --accent-light: rgba(255,85,85,0.12);
+  --text: #f4dddd;
+  --text-body: #e8cccc;
+  --text-sec: #c8a0a0;
+  --text-tert: #ab8a8a;
+  --text-dim: #907575;
+  --text-muted: #806060;
+  --text-quote: #b89a9a;
+  --modal-bg: #221414;
+  --img-bg: #2a1a1a;
+  --modimg-bg: #140a0a;
+  --btn-bg: #221414;
+  --btn-color: #c8a0a0;
+  --toggle-bg: #3d1f1f;
+  --toggle-border: #482828;
+  --toggle-dot: #ab8a8a;
+  --meta-bg: #2a1a1a;
+  --meta-border: #482828;
+  --meta-color: #ab8a8a;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+  --admin-bg: #1a0e0e;
+  --danger: #ff8888;
+  --danger-hover: #ffaaaa;
+  --input-bg: #221414;
+  --input-border: #3d1f1f;
+  --input-focus: #ff5555;
+}
+
+:root, [data-theme="dark-cyan"] {
+  --bg: #081417;
+  --card-bg: #0d1f24;
+  --card-bg-alt: #122930;
+  --border: #1a3d44;
+  --border-2: #204d55;
+  --border-3: #255d68;
+  --accent: #40e0d0;
+  --accent-light: rgba(64,224,208,0.12);
+  --text: #d8f0f4;
+  --text-body: #c0e4ec;
+  --text-sec: #88c8d4;
+  --text-tert: #6aacb8;
+  --text-dim: #5590a0;
+  --text-muted: #447888;
+  --text-quote: #7ab8c4;
+  --modal-bg: #0d1f24;
+  --img-bg: #122930;
+  --modimg-bg: #081417;
+  --btn-bg: #0d1f24;
+  --btn-color: #88c8d4;
+  --toggle-bg: #1a3d44;
+  --toggle-border: #204d55;
+  --toggle-dot: #6aacb8;
+  --meta-bg: #122930;
+  --meta-border: #204d55;
+  --meta-color: #6aacb8;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+  --admin-bg: #0b191c;
+  --danger: #ff5555;
+  --danger-hover: #ff7777;
+  --input-bg: #0d1f24;
+  --input-border: #1a3d44;
+  --input-focus: #40e0d0;
+}
+
+[data-theme="dark-amber"] {
+  --bg: #140f08;
+  --card-bg: #221a0d;
+  --card-bg-alt: #2a2012;
+  --border: #3d2f1a;
+  --border-2: #483820;
+  --border-3: #584425;
+  --accent: #ffaa40;
+  --accent-light: rgba(255,170,64,0.12);
+  --text: #f4ebd8;
+  --text-body: #e8dfc0;
+  --text-sec: #c8b888;
+  --text-tert: #ab966a;
+  --text-dim: #907a55;
+  --text-muted: #806844;
+  --text-quote: #b8a47a;
+  --modal-bg: #221a0d;
+  --img-bg: #2a2012;
+  --modimg-bg: #140f08;
+  --btn-bg: #221a0d;
+  --btn-color: #c8b888;
+  --toggle-bg: #3d2f1a;
+  --toggle-border: #483820;
+  --toggle-dot: #ab966a;
+  --meta-bg: #2a2012;
+  --meta-border: #483820;
+  --meta-color: #ab966a;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+  --admin-bg: #1a1209;
+  --danger: #ff5555;
+  --danger-hover: #ff7777;
+  --input-bg: #221a0d;
+  --input-border: #3d2f1a;
+  --input-focus: #ffaa40;
+}
+
+[data-theme="light-warm"] {
+  --bg: #faf5f0;
+  --card-bg: #fff;
+  --card-bg-alt: #f5ece0;
+  --border: #e0d0c0;
+  --border-2: #d5c5b5;
+  --border-3: #c8b0a0;
+  --accent: #8b5e3c;
+  --accent-light: rgba(139,94,60,0.1);
+  --text: #3a2a1a;
+  --text-body: #4a3a2a;
+  --text-sec: #806855;
+  --text-tert: #998877;
+  --text-dim: #aa9988;
+  --text-muted: #bbaa99;
+  --text-quote: #887766;
+  --modal-bg: #fff;
+  --img-bg: #f5ece0;
+  --modimg-bg: #faf5f0;
+  --btn-bg: #f5ece0;
+  --btn-color: #806855;
+  --toggle-bg: #e0d0c0;
+  --toggle-border: #d5c5b5;
+  --toggle-dot: #aa9988;
+  --meta-bg: #f5ece0;
+  --meta-border: #e0d0c0;
+  --meta-color: #806855;
+  --text-inverse: #fff;
+  --play-bg: rgba(0,0,0,0.5);
+  --play-border: #fff;
+  --admin-bg: #f5ece0;
+  --danger: #cc2222;
+  --danger-hover: #ee3333;
+  --input-bg: #fff;
+  --input-border: #e0d0c0;
+  --input-focus: #8b5e3c;
+}
+
+[data-theme="light-mint"] {
+  --bg: #f0faf5;
+  --card-bg: #fff;
+  --card-bg-alt: #e8f5ed;
+  --border: #c8e0d5;
+  --border-2: #b8d5c8;
+  --border-3: #a0c8b8;
+  --accent: #2d8a6e;
+  --accent-light: rgba(45,138,110,0.1);
+  --text: #1a2a22;
+  --text-body: #2a3a32;
+  --text-sec: #557766;
+  --text-tert: #778877;
+  --text-dim: #889988;
+  --text-muted: #99aa99;
+  --text-quote: #667766;
+  --modal-bg: #fff;
+  --img-bg: #e8f5ed;
+  --modimg-bg: #f0faf5;
+  --btn-bg: #e8f5ed;
+  --btn-color: #557766;
+  --toggle-bg: #c8e0d5;
+  --toggle-border: #b8d5c8;
+  --toggle-dot: #889988;
+  --meta-bg: #e8f5ed;
+  --meta-border: #c8e0d5;
+  --meta-color: #557766;
+  --text-inverse: #fff;
+  --play-bg: rgba(0,0,0,0.5);
+  --play-border: #fff;
+  --admin-bg: #e8f5ed;
+  --danger: #cc2222;
+  --danger-hover: #ee3333;
+  --input-bg: #fff;
+  --input-border: #c8e0d5;
+  --input-focus: #2d8a6e;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inconsolata', 'SF Mono', Consolas, monospace;
   min-height: 100vh;
 }
 
@@ -389,6 +620,9 @@ body {
 
 .tile:hover .tile-permalink { opacity: 1; }
 
+.tile.tile-wide-2 { }
+.tile.tile-full { }
+
 .tile .tile-inner {
   color: inherit;
   text-decoration: none;
@@ -417,7 +651,7 @@ body {
   position: static; width: 100%; background: transparent; border: none;
   border-bottom: 1px solid var(--border); border-radius: 0;
   padding: 14px 4px 12px; overflow: visible;
-  font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; line-height: 1.5; cursor: pointer;
+  font-family: "Inconsolata", "SF Mono", Consolas, monospace; font-size: 0.82rem; line-height: 1.5; cursor: pointer;
 }
 .text-only .grid .tile:hover { border-color: var(--accent); box-shadow: none; background: var(--card-bg); }
 .text-only .tile-media-wrap, .text-only .tile-img { display: none; }
@@ -505,8 +739,8 @@ body {
   background: var(--modal-bg);
   border: 1px solid var(--border-3);
   border-radius: 12px;
-  max-width: 720px;
-  width: 100%;
+  max-width: 1100px;
+  width: 94%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -639,7 +873,8 @@ body {
 .modal-footer button.danger:hover { background: var(--danger); color: #fff; }
 
 @media (max-width: 800px) {
-  .modal-content { padding: 24px 20px; }
+  .modal-content { max-width: none; width: 100%; border-radius: 8px; padding: 24px 16px; }
+  .modal-overlay { padding: 12px; }
   .modal-head .modal-title { font-size: 1.1rem; }
   .header { padding: 24px 16px 12px; }
   .header h1 { font-size: 1.4rem; }
@@ -650,7 +885,7 @@ body {
   padding: 4px 12px; border: 1px solid var(--border-3);
   border-radius: 5px; background: var(--card-bg);
   color: var(--text-sec); cursor: pointer;
-  font-size: 0.78rem; font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.78rem; font-family: "Inconsolata", "SF Mono", Consolas, monospace;
   transition: all 0.15s;
 }
 .term-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -660,12 +895,12 @@ body {
 
 .twindow { width:100%; max-width:960px; height:85vh; height:85dvh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
 
-.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; }
+.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; }
 .ttbar span { flex:1; }
 .ttbar .tclose { background:none; border:none; color:#666; cursor:pointer; font-size:1.2rem; line-height:1; padding:0 4px; }
 .ttbar .tclose:hover { color:#ff5f57; }
 
-.tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
+.tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "Inconsolata","SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
 .tbody .to { margin-bottom:2px; }
 .tbody .tdim { color:#4a4; }
 .tbody .tbold { color:#20ff20; font-weight:bold; }
@@ -673,8 +908,8 @@ body {
 .tbody .twarn { color:#ffaa00; }
 
 .tinput { display:flex; align-items:center; background:#0c0c0c; border-top:1px solid #2a2a2a; padding:8px 16px; }
-.tinput span { color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
-.tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
+.tinput span { color:#20ff20; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
+.tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
 .tinput input::placeholder { color:#3a3; }
 
 @media (max-width: 800px) {
@@ -915,7 +1150,7 @@ body {
 <body>
 
 <div class="header">
-  <h1>KredTidy CMS</h1>
+  <h1>USVirtualUni — KredTidy CMS</h1>
   <div class="desc">Offline Blog Content Manager</div>
   <div class="total" id="total"></div>
   <div class="controls">
@@ -937,9 +1172,15 @@ body {
     </span>
     <select class="theme-select" id="themeSelect">
       <option value="dark-green">Dark Green</option>
-      <option value="light">Light</option>
       <option value="dark-blue">Dark Blue</option>
+      <option value="dark-purple">Dark Purple</option>
+      <option value="dark-red">Dark Red</option>
+      <option value="dark-cyan">Dark Cyan</option>
+      <option value="dark-amber">Dark Amber</option>
+      <option value="light">Light</option>
       <option value="light-blue">Light Blue</option>
+      <option value="light-warm">Light Warm</option>
+      <option value="light-mint">Light Mint</option>
     </select>
     <button class="import-btn" id="importBtn">Import</button>
     <button class="import-btn" id="exportBtn">Export</button>
@@ -1160,6 +1401,16 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
+function getTileWidthClass(id) {
+  if (isTextOnly) return '';
+  var s = String(id), hash = 0;
+  for (var i = 0; i < s.length; i++) { hash = ((hash << 5) - hash) + s.charCodeAt(i); hash |= 0; }
+  var bucket = (Math.abs(hash) % 37);
+  if (bucket < 2) return ' tile-full';
+  if (bucket < 7) return ' tile-wide-2';
+  return '';
+}
+
 function stripHtml(html) {
   const d = document.createElement('div');
   d.innerHTML = html || '';
@@ -1203,12 +1454,18 @@ function extractYoutubeId(str) {
   return m ? m[1] : null;
 }
 
-function firstImage(post) {
+function firstImage(post, preferLarge) {
   const imgs = getImages(post);
   if (imgs.length) return imgs[0];
   if (post.type === 'video') {
     const ytId = extractYoutubeId(post.videoSource || '');
-    if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+    if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/' + (preferLarge ? 'maxresdefault.jpg' : 'hqdefault.jpg');
+  }
+  if (post.type === 'photo') {
+    if (preferLarge && post['photo-url-1280']) return post['photo-url-1280'];
+    if (post['photo-url-500']) return post['photo-url-500'];
+    if (post['photo-url-250']) return post['photo-url-250'];
+    return null;
   }
   return null;
 }
@@ -1252,9 +1509,10 @@ function tileHtml(post) {
   const tags = post.tags || [];
   const date = formatDate(post.date, true);
   const id = post.id;
+  var wideClass = isTextOnly ? '' : getTileWidthClass(id);
 
   if (isTextOnly) {
-    return '<div class="tile" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
+    return '<div class="tile' + wideClass + '" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
       '<div class="tile-body">' +
         '<span class="tile-date">' + date + ' </span>' +
         '<span class="tile-meta">[' + escHtml(post.type) + ']</span>' +
@@ -1265,13 +1523,14 @@ function tileHtml(post) {
     '</div>';
   }
 
-  const img = firstImage(post);
+  var preferLarge = wideClass.indexOf('tile-full') !== -1 || wideClass.indexOf('tile-wide-2') !== -1;
+  var img = firstImage(post, preferLarge);
   const isVideo = isVideoPost(post);
   const imgs = getImages(post);
   const multi = imgs.length > 1;
 
   if (isThumbMode) {
-    return '<div class="tile" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
+    return '<div class="tile' + wideClass + '" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
       '<div class="tile-inner">' +
         (img ? '<div class="tile-media-wrap">' + (isVideo ? '<div class="tile-play"></div>' : '') + '<img class="tile-img" src="' + img + '" alt="" loading="lazy">' + (multi ? '<span style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.65rem;padding:1px 6px;border-radius:3px">+' + (imgs.length - 1) + '</span>' : '') + '</div>' : '') +
         (title ? '<div class="tile-title">' + escHtml(title) + '</div>' : '') +
@@ -1280,7 +1539,7 @@ function tileHtml(post) {
     '</div>';
   }
 
-  return '<div class="tile" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
+  return '<div class="tile' + wideClass + '" data-post-id="' + id + '" onclick="openPost(\'' + id + '\')">' +
     '<div class="tile-inner">' +
       (img ? '<div class="tile-media-wrap">' + (isVideo ? '<div class="tile-play"></div>' : '') + '<img class="tile-img" src="' + img + '" alt="" loading="lazy"></div>' : '') +
       '<div class="tile-body">' +
@@ -1317,13 +1576,42 @@ function applyMasonry() {
   const cw = (gw - gap * (cols - 1)) / cols;
   const heights = new Array(cols).fill(0);
 
-  tiles.forEach(tile => {
-    const shortest = heights.indexOf(Math.min(...heights));
-    tile.style.position = 'absolute';
-    tile.style.width = cw + 'px';
-    tile.style.left = shortest * (cw + gap) + 'px';
-    tile.style.top = heights[shortest] + 'px';
-    heights[shortest] += tile.offsetHeight + gap;
+  tiles.forEach(function(tile) {
+    var span = 1;
+    if (tile.classList.contains('tile-full')) span = cols;
+    else if (tile.classList.contains('tile-wide-2')) span = Math.min(2, cols);
+
+    if (span === cols) {
+      var maxH = Math.max.apply(null, heights);
+      tile.style.position = 'absolute';
+      tile.style.width = gw + 'px';
+      tile.style.left = '0px';
+      tile.style.top = maxH + 'px';
+      var newH = maxH + tile.offsetHeight + gap;
+      for (var i = 0; i < cols; i++) heights[i] = newH;
+    } else if (span > 1) {
+      var bestStart = 0;
+      var bestTop = Infinity;
+      for (var i = 0; i <= cols - span; i++) {
+        var maxInSpan = 0;
+        for (var j = i; j < i + span; j++) maxInSpan = Math.max(maxInSpan, heights[j]);
+        if (maxInSpan < bestTop) { bestTop = maxInSpan; bestStart = i; }
+      }
+      var tw = cw * span + gap * (span - 1);
+      tile.style.position = 'absolute';
+      tile.style.width = tw + 'px';
+      tile.style.left = (bestStart * (cw + gap)) + 'px';
+      tile.style.top = bestTop + 'px';
+      var newH = bestTop + tile.offsetHeight + gap;
+      for (var j = bestStart; j < bestStart + span; j++) heights[j] = newH;
+    } else {
+      var shortest = heights.indexOf(Math.min.apply(null, heights));
+      tile.style.position = 'absolute';
+      tile.style.width = cw + 'px';
+      tile.style.left = shortest * (cw + gap) + 'px';
+      tile.style.top = heights[shortest] + 'px';
+      heights[shortest] += tile.offsetHeight + gap;
+    }
   });
 
   grid.style.height = Math.max(...heights) + 'px';
@@ -2177,7 +2465,7 @@ _trun = function(raw) {
   _origTrun(raw);
 };
 _treg('theme', [], 'theme &lt;name&gt;', function(a) {
-  var themes = ['dark-green', 'light', 'dark-blue', 'light-blue'];
+  var themes = ['dark-green', 'dark-blue', 'dark-purple', 'dark-red', 'dark-cyan', 'dark-amber', 'light', 'light-blue', 'light-warm', 'light-mint'];
   var m = themes.filter(function(t) { return t.indexOf(a[0]) === 0; });
   if (m.length === 1) {
     document.body.dataset.theme = m[0];
@@ -2198,7 +2486,7 @@ async function init() {
   await loadAllPosts();
 
   // Theme
-  var saved = localStorage.getItem('wp-theme') || 'dark-green';
+  var saved = localStorage.getItem('wp-theme') || 'dark-cyan';
   document.body.dataset.theme = saved;
   $('themeSelect').value = saved;
   $('themeSelect').addEventListener('change', function() {
