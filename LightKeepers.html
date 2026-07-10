@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightKeepers</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Courier New',monospace;color:#0f0}
+#viewport{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+#ui{position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;pointer-events:none}
+#ui>*{pointer-events:auto}
+#header{position:absolute;top:0;left:0;right:0;padding:8px 16px;background:rgba(0,0,0,0.85);border-bottom:1px solid #0f0;display:flex;justify-content:space-between;align-items:center}
+#header .title{font-size:18px;font-weight:bold;letter-spacing:4px;text-shadow:0 0 10px #0f0}
+#nav-back,#nav-next{font-size:14px;cursor:pointer;user-select:none}
+#header .room-info{font-size:11px;color:#0a0}
+#header .room-info span{margin:0 12px}
+#toolbar{position:absolute;bottom:0;left:0;right:0;height:36px;background:rgba(0,0,0,0.88);border-top:1px solid #0f0;display:flex;align-items:center;padding:0 8px;gap:2px;z-index:15;overflow-x:auto}
+#terminal.minimized{height:28px}
+#terminal-bar{display:flex;justify-content:space-between;padding:4px 12px;background:rgba(0,30,0,0.8);border-bottom:1px solid #0a0;cursor:pointer;font-size:10px;letter-spacing:1px;user-select:none;flex-shrink:0}
+#terminal-bar .indicator{color:#0f0}
+#terminal-output{flex:1;overflow-y:auto;padding:4px 12px;line-height:1.5;min-height:0}
+#terminal-output .line{word-wrap:break-word;color:#0f0}
+#terminal-output .warning{color:#ff0}
+#terminal-output .error{color:#f00}
+#terminal-input-line{display:flex;padding:4px 12px 8px;border-top:1px solid #0a0;flex-shrink:0}
+#terminal-prompt{color:#0f0;margin-right:8px;white-space:nowrap}
+#terminal-input{flex:1;background:transparent;border:none;outline:none;color:#0f0;font:inherit;font-size:12px}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:100;display:none;justify-content:center;align-items:center}
+.modal-overlay.active{display:flex}
+.modal{background:#111;border:1px solid #0f0;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+.modal h2{color:#0f0;font-size:14px}
+.modal p{color:#0a0;margin-bottom:8px;font-size:12px;line-height:1.5;word-wrap:break-word}
+.modal .btn{background:transparent;border:1px solid #0f0;color:#0f0;padding:6px 16px;cursor:pointer;font:inherit;font-size:11px;margin:4px}
+.modal .btn:hover{background:#0f0;color:#000}
+.modal .close-btn{float:right;cursor:pointer;border:1px solid #0f0;padding:2px 8px;font-size:11px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
+.cat-item{border:1px solid #0a0;padding:8px;cursor:pointer;text-align:center;background:#0a0a0a}
+.cat-item:hover{border-color:#0f0;background:#111}
+.cat-item img{width:100%;height:90px;object-fit:cover;margin-bottom:4px;border:1px solid #0a0}
+.cat-item .name{font-size:10px;color:#0f0}
+.cat-item .sub{font-size:9px;color:#060}
+.cat-empty{padding:20px;text-align:center;color:#060;font-size:12px}
+#crosshair{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;pointer-events:none;display:none}
+#crosshair::before,#crosshair::after{content:'';position:absolute;background:#0f0}
+#crosshair::before{width:2px;height:20px;top:-10px;left:-1px}
+#crosshair::after{width:20px;height:2px;top:-1px;left:-10px}
+#photo-detail-img{max-width:100%;max-height:50vh;width:auto;height:auto;object-fit:contain;margin:8px 0;border:1px solid #0a0;background:#000}
+#toolbar{position:absolute;bottom:0;left:0;right:0;height:36px;background:rgba(0,0,0,0.88);border-top:1px solid #0f0;display:flex;align-items:center;padding:0 8px;gap:2px;z-index:15;overflow-x:auto}
+#toolbar .btn{background:transparent;border:1px solid #0a0;color:#0f0;padding:4px 10px;cursor:pointer;font:11px monospace;white-space:nowrap;letter-spacing:0.5px;flex-shrink:0}
+#toolbar .btn:hover{border-color:#0f0;background:rgba(0,255,0,0.1)}
+#toolbar .sep{color:#0a0;margin:0 4px;user-select:none}
+#toast{position:fixed;bottom:44px;left:50%;transform:translateX(-50%);z-index:25;pointer-events:none;transition:opacity .3s;opacity:0}
+#toast.show{opacity:1}
+#toast .msg{background:rgba(0,0,0,0.9);border:1px solid #0f0;padding:6px 16px;font:12px monospace;color:#0f0;white-space:nowrap}
+#mobile-btn{position:fixed;bottom:44px;right:4px;z-index:30;background:rgba(0,0,0,0.7);border:1px solid #0f0;color:#0f0;font:18px monospace;cursor:pointer;padding:4px 8px;display:none;touch-action:none}
+#m-pad{position:fixed;bottom:90px;left:8px;z-index:30;display:none;flex-direction:column;align-items:center;gap:3px;touch-action:none}
+#m-pad .row{display:flex;gap:3px;justify-content:center}
+#m-pad .m-btn{width:44px;height:44px;background:rgba(0,0,0,0.65);border:1px solid #0f0;color:#0f0;font:16px monospace;text-align:center;line-height:44px;border-radius:4px;touch-action:none;user-select:none;-webkit-user-select:none}
+#m-pad .m-btn:active{background:rgba(0,255,0,0.25)}
+#m-pad .m-btn.active{background:rgba(0,255,0,0.25)}
+#m-run{width:44px;height:44px;background:rgba(0,0,0,0.65);border:1px solid #0f0;color:#0f0;font:11px monospace;text-align:center;line-height:44px;border-radius:4px;touch-action:none;user-select:none;-webkit-user-select:none}
+#m-run.active{background:rgba(0,255,0,0.25)}
+@media(hover:none)and(pointer:coarse){#mobile-btn{display:block}body{padding-bottom:80px}}
+#photo-detail-img{max-width:100%;max-height:50vh;width:auto;height:auto;object-fit:contain;margin:8px 0;border:1px solid #0a0;background:#000}
+</style>
+</head>
+<body>
+<div id="viewport"></div>
+<div id="ui">
+  <div id="header">
+    <div class="title">
+      <span id="nav-back" onclick="goBack()" style="opacity:0.3">&#9664;</span>
+      LIGHTKEEPERS
+      <span id="nav-next" onclick="goNext()" style="opacity:0.3">&#9654;</span>
+    </div>
+    <div class="room-info">
+      <span id="room-id">ROOM-0000</span>
+      <span id="room-size">--</span>
+      <span id="room-photos">0 PHOTOS</span>
+      <span id="room-doors">0 DOORS</span>
+    </div>
+  </div>
+  <div id="crosshair"></div>
+  <div id="toolbar">
+    <button class="btn" onclick="goBack()" id="tb-back" style="opacity:0.3">&#9664; BACK</button>
+    <button class="btn" onclick="goNext()" id="tb-next" style="opacity:0.3">NEXT &#9654;</button>
+    <span class="sep">|</span>
+    <button class="btn" onclick="genNewRoom()">+ NEW</button>
+    <button class="btn" onclick="saveRoom(prompt('Room name:')||'untitled')">SAVE</button>
+    <span class="sep">|</span>
+    <button class="btn" onclick="showRooms()">ROOMS</button>
+    <button class="btn" onclick="showPhs()">PHOTOS</button>
+    <button class="btn" onclick="showGenCatDialog()">GEN FROM PHOTOS</button>
+    <span class="sep" style="flex:1"></span>
+    <button class="btn" onclick="if(state.room&&state.room.photoData[0])showPhoto(0)">PHOTO INFO</button>
+  </div>
+  <div id="toast"><div class="msg" id="toast-msg"></div></div>
+  <button id="mobile-btn" ontouchstart="event.stopPropagation();togglePad()">+</button>
+  <div id="m-pad">
+    <div class="row"><div class="m-btn" data-key="KeyW">W</div></div>
+    <div class="row"><div class="m-btn" data-key="KeyA">A</div><div class="m-btn" data-key="KeyS">S</div><div class="m-btn" data-key="KeyD">D</div></div>
+    <div class="row"><div id="m-run" data-key="ShiftLeft">RUN</div></div>
+  </div>
+</div>
+<div id="photo-modal" class="modal-overlay">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <h2 id="photo-modal-title" style="margin:0;font-size:14px;color:#0f0;overflow-wrap:break-word;word-break:break-word;flex:1;padding-right:8px">PHOTO</h2>
+      <span class="close-btn" onclick="closePhotoModal()" style="flex-shrink:0">X</span>
+    </div>
+    <img id="photo-detail-img" src="" alt="">
+    <p id="photo-modal-author"></p>
+    <p id="photo-modal-desc"></p>
+    <div id="photo-modal-actions"></div>
+  </div>
+</div>
+<div id="catalogue-modal" class="modal-overlay">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <h2 id="catalogue-modal-title" style="margin:0;font-size:14px;color:#0f0;flex:1;padding-right:8px">CATALOGUE</h2>
+      <span class="close-btn" onclick="closeCatalogueModal()" style="flex-shrink:0">X</span>
+    </div>
+    <div id="catalogue-modal-body"></div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// All string concatenation (no template literals to avoid backtick issues)
+var T = THREE;
+
+// ============ LABEL SPRITE ============
+function makeLabel(text, sub) {
+  var c = document.createElement('canvas');
+  c.width = 1024; c.height = 196;
+  var ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgba(0,0,0,0.85)';
+  ctx.fillRect(0, 0, 1024, 196);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  var fontSize = 26;
+  ctx.font = 'bold ' + fontSize + 'px monospace';
+  while (ctx.measureText(text).width > 960 && fontSize > 13) {
+    fontSize--;
+    ctx.font = 'bold ' + fontSize + 'px monospace';
+  }
+  ctx.fillStyle = '#0f0';
+  ctx.fillText(text, 512, 70);
+  if (sub) {
+    var subSize = 18;
+    ctx.font = subSize + 'px monospace';
+    while (ctx.measureText(sub).width > 960 && subSize > 10) {
+      subSize--;
+      ctx.font = subSize + 'px monospace';
+    }
+    ctx.fillStyle = '#0a0';
+    ctx.fillText(sub, 512, 120);
+  }
+  var tex = new T.CanvasTexture(c);
+  var s = new T.Sprite(new T.SpriteMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false}));
+  s.scale.set(2.8, 0.55, 1);
+  return s;
+}
+
+
+// ============ STATE ============
+var state = {
+  room: null, rooms: JSON.parse(localStorage.getItem('lk_rooms') || '[]'),
+  // Photo catalogues: { name: {name:string, photos:[...], timestamp:n}, ... }
+  photoCatalogues: JSON.parse(localStorage.getItem('lk_photoCats') || '{}'),
+  activeCat: localStorage.getItem('lk_activeCat') || 'Default',
+  roomIdC: parseInt(localStorage.getItem('lk_roomCnt') || '0'),
+  phIdC: parseInt(localStorage.getItem('lk_phCnt') || '0'),
+  trans: false, curPhoto: null,
+  photoPool: [],
+  usedPoolIdx: [] // indices into photoPool already shown in previous rooms
+};
+// Migrate old single-list photos to catalogues if needed
+(function() {
+  var cats = state.photoCatalogues;
+  var catNames = Object.keys(cats);
+  if (catNames.length === 0) {
+    var old = JSON.parse(localStorage.getItem('lk_photos') || '[]');
+    cats['Default'] = { name:'Default', photos:old, timestamp:Date.now() };
+    if (old.length === 0) {
+      cats['Default'].photos = [];
+    }
+  }
+  if (!cats[state.activeCat]) state.activeCat = catNames[0] || 'Default';
+  if (!cats[state.activeCat]) { cats[state.activeCat] = { name:state.activeCat, photos:[], timestamp:Date.now() }; }
+})();
+function saveCats() { localStorage.setItem('lk_photoCats', JSON.stringify(state.photoCatalogues)); }
+function activePhotos() { return (state.photoCatalogues[state.activeCat] || {photos:[]}).photos; }
+var graph = { rooms: {}, conns: {} };
+var roomHist = [];
+var histIdx = -1;
+
+function saveGraph(id, cfg, phs) {
+  graph.rooms[id] = { config: JSON.parse(JSON.stringify(cfg)), photos: phs.map(function(p){return Object.assign({},p);}) };
+}
+function pushHist(id) {
+  if (histIdx >= 0 && roomHist[histIdx] === id) return;
+  roomHist.splice(histIdx + 1);
+  roomHist.push(id);
+  histIdx = roomHist.length - 1;
+  navBtns();
+}
+function navBtns() {
+  var b = document.getElementById('nav-back') || document.getElementById('tb-back');
+  var n = document.getElementById('nav-next') || document.getElementById('tb-next');
+  var opacity = histIdx > 0 ? '1' : '0.3';
+  if (b) b.style.opacity = opacity;
+  opacity = histIdx < roomHist.length - 1 ? '1' : '0.3';
+  if (n) n.style.opacity = opacity;
+}
+
+function pickRoomPhotos() {
+  var pool = state.photoPool;
+  // Ensure pool is well-stocked
+  if (pool.length < 20) refillPool();
+  // Calculate available unused indices
+  var unused = [];
+  for (var i = 0; i < pool.length; i++) {
+    if (state.usedPoolIdx.indexOf(i) < 0) unused.push(i);
+  }
+  // If running low on unused, fetch more before picking
+  if (unused.length < 8) { refillPool(); var after = state.photoPool.length; for (var i = pool.length; i < after; i++) unused.push(i); }
+  if (unused.length === 0) return [];
+  var count = Math.min(4 + Math.floor(Math.random() * 4), unused.length);
+  var shuffled = [].concat(unused);
+  for (var i = shuffled.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t;
+  }
+  var chosen = shuffled.slice(0, count);
+  for (var ci = 0; ci < chosen.length; ci++) state.usedPoolIdx.push(chosen[ci]);
+  return chosen.map(function(idx) {
+    return {title:pool[idx].title, author:pool[idx].author, url:pool[idx].url, description:''};
+  });
+}
+
+var refilling = false;
+async function refillPool() {
+  if (refilling) return;
+  refilling = true;
+  try {
+    var r = await fetch('https://commons.wikimedia.org/w/api.php?action=query&generator=random&grnnamespace=6&grnlimit=50&prop=imageinfo&iiprop=url&format=json&origin=*', {mode:'cors'});
+    if (r.ok) {
+      var d = await r.json();
+      var pages = d.query && d.query.pages;
+      if (pages) {
+        var ids = Object.keys(pages);
+        for (var i = 0; i < ids.length; i++) {
+          var p = pages[ids[i]];
+          var url = p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url;
+          if (url && /\.(jpg|jpeg|png|gif|webp)$/i.test(url)) {
+            state.photoPool.push({title:p.title.replace(/^File:/,'').substring(0,40), author:'Wikimedia Commons', url:url, description:''});
+          }
+        }
+      }
+    }
+  } catch(e) { console.warn('Wikimedia refill failed:', e); }
+  // If still empty, add picsum fallbacks
+  if (state.photoPool.length < 4) {
+    var names = ['Cindy Sherman','Nan Goldin','Diane Arbus','Dorothea Lange','Annie Leibovitz','Sally Mann','Rinko Kawauchi','Francesca Woodman','Mickalene Thomas','Zanele Muholi','Claude Cahun','Lorna Simpson','Catherine Opie','Carrie Mae Weems','Mona Hatoum','Shirin Neshat','Sophie Calle','Lee Miller','Imogen Cunningham','Graciela Iturbide','Dayanita Singh','Rania Matar','Deana Lawson','LaToya Ruby Frazier','Marilyn Nance','Liz Johnson Artur','Poulomi Basu','Nandita Raman','Smita Sharma','Shahidul Alam'];
+    while (state.photoPool.length < 12) {
+      var ni = Math.floor(Math.random() * names.length);
+      state.photoPool.push({title:'Untitled ' + (state.photoPool.length+1), author:names[ni], url:'https://picsum.photos/seed/lk' + (Date.now() + state.photoPool.length) + '/400/300', description:'Photo by ' + names[ni]});
+    }
+  }
+  refilling = false;
+}
+
+// ============ THREE.JS ============
+var vp = document.getElementById('viewport');
+var scene = new T.Scene();
+scene.background = new T.Color(0x111111);
+var cam = new T.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 100);
+cam.position.set(0, 1.6, 5);
+var ren = new T.WebGLRenderer({antialias:true});
+ren.setSize(window.innerWidth, window.innerHeight);
+ren.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+vp.appendChild(ren.domElement);
+
+// ============ FP CONTROLS ============
+var fp = new T.Vector3(0, 1.6, 0);
+var yaw = 0, pitch = 0;
+var spd = 4.0;
+var keys = {};
+var locked = false;
+var mobileRunning = false;
+
+document.addEventListener('keydown', function(e) {
+  keys[e.code] = true;
+  if (e.key === 'Shift') e.preventDefault();
+});
+document.addEventListener('keyup', function(e) { keys[e.code] = false; });
+
+// Right-click hold to look (pointer lock while held)
+ren.domElement.addEventListener('mousedown', function(e) {
+  if (e.button === 2 && !state.trans) { e.preventDefault(); ren.domElement.requestPointerLock(); }
+});
+ren.domElement.addEventListener('mouseup', function(e) {
+  if (e.button === 2 && locked) { document.exitPointerLock(); }
+});
+ren.domElement.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+// Left-click: interact with doors/photos (always available)
+ren.domElement.addEventListener('click', function(e) {
+  if (e.button !== 0 || state.trans || !state.room) return;
+  var rect = ren.domElement.getBoundingClientRect();
+  var mx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  var my = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+  ray.setFromCamera(new T.Vector2(mx, my), cam);
+  var hits = ray.intersectObjects(state.room.clicks);
+  for (var i = 0; i < hits.length; i++) {
+    var o = hits[i].object;
+    if (o.userData.t === 'door') { enterDoor(o.userData.idx); return; }
+    if (o.userData.t === 'photo') { showPhoto(o.userData.idx); return; }
+  }
+});
+document.addEventListener('pointerlockchange', function() {
+  locked = document.pointerLockElement === ren.domElement;
+  ren.domElement.style.cursor = locked ? 'none' : 'default';
+  var ch = document.getElementById('crosshair');
+  if (ch) ch.style.display = locked ? 'block' : 'none';
+});
+document.addEventListener('mousemove', function(e) {
+  if (!locked) return;
+  yaw -= e.movementX * 0.003;
+  pitch -= e.movementY * 0.003;
+  if (pitch > 1.4) pitch = 1.4;
+  if (pitch < -1.4) pitch = -1.4;
+});
+
+function resetCam() {
+  var fy = state.room ? -state.room.config.h / 2 : -1.75;
+  fp.set(0, fy + 1.6, 0);
+  yaw = 0; pitch = 0;
+}
+function updCam(dt) {
+  // Movement (works always, even without pointer lock)
+  var d = new T.Vector3();
+  if (keys.KeyW || keys.ArrowUp) d.z -= 1;
+  if (keys.KeyS || keys.ArrowDown) d.z += 1;
+  if (keys.KeyA || keys.ArrowLeft) d.x -= 1;
+  if (keys.KeyD || keys.ArrowRight) d.x += 1;
+  if (d.length() > 0) {
+    d.normalize();
+    d.applyQuaternion(cam.quaternion);
+    d.y = 0;
+    if (d.length() > 0) d.normalize();
+    var speed = spd * dt * (keys.ShiftLeft || keys.ShiftRight || mobileRunning ? 2.5 : 1);
+    fp.x += d.x * speed;
+    fp.z += d.z * speed;
+  }
+  if (state.room) {
+    var hw = state.room.config.w / 2 - 0.25;
+    var hd = state.room.config.d / 2 - 0.25;
+    fp.x = Math.max(-hw, Math.min(hw, fp.x));
+    fp.z = Math.max(-hd, Math.min(hd, fp.z));
+    fp.y = -state.room.config.h / 2 + 1.6;
+  }
+  cam.position.copy(fp);
+  cam.quaternion.setFromEuler(new T.Euler(pitch, yaw, 0, 'YXZ'));
+}
+
+// ============ RAYCASTER (used by click handler above) ============
+var ray = new T.Raycaster();
+
+window.addEventListener('resize', function() {
+  cam.aspect = window.innerWidth / window.innerHeight;
+  cam.updateProjectionMatrix();
+  ren.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ============ ROOM BUILD ============
+var BT = T;
+var WALLS = [
+  {n:'l', p:[-1,0,0], r:[0,Math.PI/2,0]},
+  {n:'r', p:[1,0,0],  r:[0,-Math.PI/2,0]},
+  {n:'b', p:[0,0,-1], r:[0,0,0]},
+  {n:'f', p:[0,0,1],  r:[0,Math.PI,0]}
+];
+
+function mkRoom(cfg, eid) {
+  if (state.room) dispose(state.room);
+  var g = new T.Group();
+  var clicks = [];
+  var phs = [];
+  var dms = [];
+  var lbls = [];
+  var w = cfg.w, d = cfg.d, h = cfg.h;
+
+  // Floor
+  var fl = new T.Mesh(new T.PlaneGeometry(w+0.2,d+0.2), new T.MeshStandardMaterial({color:cfg.floorColor,roughness:0.8}));
+  fl.rotation.x = -Math.PI/2;
+  fl.position.y = -h/2;
+  g.add(fl);
+  // Ceiling
+  var cl = new T.Mesh(new T.PlaneGeometry(w+0.2,d+0.2), new T.MeshStandardMaterial({color:cfg.ceilColor,roughness:0.9,side:T.DoubleSide}));
+  cl.rotation.x = Math.PI/2;
+  cl.position.y = h/2;
+  g.add(cl);
+
+  // Walls
+  var wMat = new T.MeshStandardMaterial({color:cfg.wallColor,roughness:0.7,metalness:0.05,side:T.DoubleSide});
+  var wDefs = [
+    {n:'l', p:[-w/2,0,0], r:[0,Math.PI/2,0], sz:[d,h]},
+    {n:'r', p:[w/2,0,0],  r:[0,-Math.PI/2,0], sz:[d,h]},
+    {n:'b', p:[0,0,-d/2], r:[0,0,0],           sz:[w,h]},
+    {n:'f', p:[0,0,d/2],  r:[0,Math.PI,0],     sz:[w,h]}
+  ];
+  var dData = [];
+  for (var i = 0; i < cfg.doorWalls.length; i++) {
+    var dw = cfg.doorWalls[i];
+    var def = null;
+    for (var j = 0; j < wDefs.length; j++) { if (wDefs[j].n === dw.wall) { def = wDefs[j]; break; } }
+    if (!def) continue;
+    dData.push({def:def, t:dw.t, wall:dw.wall});
+  }
+  for (var i = 0; i < wDefs.length; i++) {
+    var def = wDefs[i];
+    var drs = [];
+    for (var j = 0; j < dData.length; j++) { if (dData[j].wall === def.n) drs.push(dData[j]); }
+    var wm = new T.Mesh(new T.PlaneGeometry(def.sz[0], def.sz[1]), wMat);
+    wm.position.set(def.p[0], def.p[1], def.p[2]);
+    wm.rotation.set(def.r[0], def.r[1], def.r[2]);
+    g.add(wm);
+    for (var j = 0; j < drs.length; j++) {
+      var dd = drs[j];
+      var dw2 = 1.8, dh2 = 2.8;
+      var px = def.p[0], pz = def.p[2];
+      if (def.n === 'l' || def.n === 'r') pz = -d/2 + dd.t * d;
+      else px = -w/2 + dd.t * w;
+      var py = -h/2 + dh2/2;
+      // Glow
+      var gl = new T.Mesh(new T.PlaneGeometry(dw2, dh2), new T.MeshBasicMaterial({color:0x0f0,transparent:true,opacity:0.12,side:T.DoubleSide}));
+      var of = def.n === 'l' ? 0.01 : def.n === 'r' ? -0.01 : def.n === 'b' ? 0.01 : -0.01;
+      if (def.n === 'l' || def.n === 'r') gl.position.set(px + of, py, pz);
+      else gl.position.set(px, py, pz + of);
+      if (def.n === 'l' || def.n === 'r') gl.rotation.y = Math.PI/2;
+      g.add(gl);
+      // Door label
+      var dl = makeLabel('[ DOOR ]', 'click or walk through');
+      dl.scale.set(1.8, 0.5, 1);
+      dl.position.set(def.n === 'l' ? px+0.02 : def.n === 'r' ? px-0.02 : px, py - dh2/2 - 0.15, def.n === 'b' ? pz+0.02 : def.n === 'f' ? pz-0.02 : pz);
+      g.add(dl);
+      // Clickable
+      var cm = new T.Mesh(new T.PlaneGeometry(dw2*0.8, dh2*0.8), new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}));
+      cm.position.set(def.n === 'l' ? px+0.01 : def.n === 'r' ? px-0.01 : px, py, def.n === 'b' ? pz+0.01 : def.n === 'f' ? pz-0.01 : pz);
+      if (def.n === 'l' || def.n === 'r') cm.rotation.y = Math.PI/2;
+      cm.userData = {t:'door', idx:dData.indexOf(dd)};
+      g.add(cm);
+      clicks.push(cm);
+      dms.push({mesh:cm, glow:gl});
+    }
+  }
+
+  // Lights
+  g.add(new T.AmbientLight(cfg.ambientColor, cfg.ambientIntensity));
+  var pls = [];
+  for (var i = 0; i < cfg.lights.length; i++) {
+    var l = cfg.lights[i];
+    var pl = new T.PointLight(l.color, l.intensity, Math.max(w,d)*0.8);
+    pl.position.set(l.x, l.y, l.z);
+    g.add(pl);
+    pls.push(pl);
+    var blb = new T.Mesh(new T.SphereGeometry(0.06,6,6), new T.MeshBasicMaterial({color:l.color}));
+    blb.position.copy(pl.position);
+    g.add(blb);
+  }
+
+  // Photos — smart placement with no overlap
+  var photos = cfg.photoPool || [];
+  var phCnt = cfg.useAllPhotos ? photos.length : Math.min(Math.max(4, Math.floor(Math.random() * 6) + 2), photos.length);
+  // Scale room to fit number of photos
+  var wallsNeeded = Math.ceil(phCnt / 3);
+  var minDim = 7 + (wallsNeeded - 1) * 2;
+  if (minDim > cfg.w) cfg.w = minDim;
+  if (minDim > cfg.d) cfg.d = minDim;
+  w = cfg.w; d = cfg.d;
+  // Generate sizes first
+  var phSizeData = [];
+  for (var i = 0; i < phCnt && i < photos.length; i++) {
+    var maxH = h - 0.8;
+    var pw = 1.8 + Math.random() * 3.5;
+    var phh = pw * (0.65 + Math.random() * 0.35);
+    if (phh > maxH) { phh = maxH; pw = phh / (0.65 + Math.random() * 0.35); }
+    phSizeData.push({idx:i, pw:pw, phh:phh});
+  }
+  // Distribute across walls evenly
+  var perWall = Math.ceil(phSizeData.length / 4);
+  var wallGroups = {};
+  for (var i = 0; i < phSizeData.length; i++) {
+    var wi = Math.min(Math.floor(i / perWall), 3);
+    var def = wDefs[wi];
+    if (!wallGroups[def.n]) wallGroups[def.n] = {def:def, items:[], wallDim:(def.n === 'l' || def.n === 'r') ? d : w};
+    wallGroups[def.n].items.push(phSizeData[i]);
+  }
+  var assign = [];
+  var wgn = Object.keys(wallGroups);
+  for (var gi = 0; gi < wgn.length; gi++) {
+    var wg = wallGroups[wgn[gi]];
+    var wDim = wg.wallDim;
+    var usable = wDim - 1.0;
+    var marginOff = 0.5 / wDim;
+
+    // Build free-space segments: split by doors with clearance
+    var doorPositions = [];
+    for (var dd = 0; dd < dData.length; dd++) {
+      if (dData[dd].wall === wg.def.n) doorPositions.push(dData[dd].t);
+    }
+    var segments = [{start:marginOff, end:1.0-marginOff}];
+    for (var dd = 0; dd < doorPositions.length; dd++) {
+      var dp = doorPositions[dd];
+      var dClear = (1.8 + 0.6) / wDim; // door width + clearance
+      var dl = Math.max(0, dp - dClear/2);
+      var dr = Math.min(1, dp + dClear/2);
+      var newSegs = [];
+      for (var si = 0; si < segments.length; si++) {
+        var seg = segments[si];
+        if (seg.start >= dr || seg.end <= dl) { newSegs.push(seg); continue; }
+        if (seg.start < dl) newSegs.push({start:seg.start, end:dl});
+        if (seg.end > dr) newSegs.push({start:dr, end:seg.end});
+      }
+      segments = newSegs;
+    }
+
+    // Sort photos by width descending, place largest in largest segment
+    var sorted = [].concat(wg.items);
+    sorted.sort(function(a,b){return b.pw - a.pw;});
+    for (var si = 0; si < sorted.length; si++) {
+      var item = sorted[si];
+      // Find best segment for this photo
+      var bestSeg = null, bestFit = 0;
+      for (var sj = 0; sj < segments.length; sj++) {
+        var segW = (segments[sj].end - segments[sj].start) * wDim;
+        if (segW >= item.pw + 0.3 && segW > bestFit) { bestFit = segW; bestSeg = sj; }
+      }
+      if (bestSeg === null) {
+        // No segment fits, shrink photo
+        if (segments.length > 0) {
+          var maxSeg = 0;
+          for (var sj = 1; sj < segments.length; sj++) {
+            var sw = (segments[sj].end - segments[sj].start) * wDim;
+            if (sw > (segments[maxSeg].end - segments[maxSeg].start) * wDim) maxSeg = sj;
+          }
+          var maxW = (segments[maxSeg].end - segments[maxSeg].start) * wDim - 0.3;
+          if (maxW < 0.5) break;
+          item.pw = maxW;
+          item.phh = maxW * 0.7;
+          bestSeg = maxSeg;
+        } else break;
+      }
+      var seg = segments[bestSeg];
+      var t = (seg.start + seg.end) / 2;
+      assign.push({def:wg.def, t:t, idx:item.idx, pw:item.pw, phh:item.phh});
+      // Split segment: photo occupies center, remaining space on sides
+      var photoHalf = item.pw / 2 / wDim;
+      var mid = (seg.start + seg.end) / 2;
+      var gap = 0.15 / wDim;
+      if (mid - photoHalf - gap > seg.start + gap) segments.push({start:seg.start, end:mid - photoHalf - gap});
+      if (mid + photoHalf + gap < seg.end - gap) segments.push({start:mid + photoHalf + gap, end:seg.end});
+      segments.splice(bestSeg, 1);
+    }
+  }
+  for (var i = 0; i < assign.length; i++) {
+    var a = assign[i];
+    var ph = photos[a.idx];
+    if (!ph) continue;
+    var def = a.def;
+    var pw = a.pw, phh = a.phh;
+    var margin = 0.5;
+    var px, pz;
+    if (def.n === 'l' || def.n === 'r') { pz = -d/2 + margin + a.t * (d - 2*margin); px = def.p[0]; }
+    else { px = -w/2 + margin + a.t * (w - 2*margin); pz = def.p[2]; }
+    var py = -h/2 + phh/2 + 0.3 + Math.random() * Math.max(0.1, h - phh - 0.8);
+
+    // Photo — canvas fallback with green border, then real image loads on top
+    var pcv = document.createElement('canvas');
+    pcv.width = 400; pcv.height = 300;
+    var pctx = pcv.getContext('2d');
+    var bgH = Math.random() * 360;
+    pctx.fillStyle = 'hsl(' + bgH + ',60%,35%)';
+    pctx.fillRect(0, 0, 400, 300);
+    pctx.strokeStyle = '#00ff00';
+    pctx.lineWidth = 4;
+    pctx.strokeRect(8, 8, 384, 284);
+    pctx.fillStyle = '#ffffff';
+    pctx.textAlign = 'center';
+    pctx.textBaseline = 'middle';
+    pctx.font = 'bold 22px monospace';
+    pctx.fillText((ph.title || 'Untitled').substring(0,28), 200, 130);
+    pctx.font = '15px monospace';
+    pctx.fillStyle = '#00ff00';
+    pctx.fillText((ph.author || ''), 200, 175);
+    var tmpTex = new T.CanvasTexture(pcv);
+    var pMat = new T.MeshBasicMaterial({ map: tmpTex, side: T.DoubleSide });
+
+    var pMesh = new T.Mesh(new T.PlaneGeometry(pw, phh), pMat);
+
+    // Load real image as texture replacement
+    if (ph.url) {
+      (function(mat, mesh, pw, phh) {
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          var tex = new T.Texture(img);
+          tex.needsUpdate = true;
+          mat.map = tex;
+          mat.needsUpdate = true;
+          // Scale mesh to show entire image (contain within bounds)
+          var aspect = img.naturalWidth / img.naturalHeight;
+          var planeAspect = pw / phh;
+          if (aspect > planeAspect) {
+            mesh.scale.x = 1;
+            mesh.scale.y = planeAspect / aspect;
+          } else {
+            mesh.scale.x = aspect / planeAspect;
+            mesh.scale.y = 1;
+          }
+        };
+        img.src = ph.url;
+      })(pMat, pMesh, pw, phh);
+    }
+    var off = 0.08;
+    if (def.n === 'l') pMesh.position.set(px + off, py, pz);
+    else if (def.n === 'r') pMesh.position.set(px - off, py, pz);
+    else if (def.n === 'b') pMesh.position.set(px, py, pz + off);
+    else pMesh.position.set(px, py, pz - off);
+    pMesh.rotation.set(def.r[0], def.r[1], def.r[2]);
+    g.add(pMesh);
+
+    // Clickable
+    var pc = new T.Mesh(new T.PlaneGeometry(pw, phh), new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}));
+    pc.position.copy(pMesh.position);
+    pc.rotation.copy(pMesh.rotation);
+    pc.userData = {t:'photo', idx:phs.length};
+    g.add(pc);
+    clicks.push(pc);
+
+    // Label
+    var lbl = makeLabel((ph.title || 'Untitled').substring(0,45), ph.author || '');
+    var ly = py - phh/2 - 0.15;
+    if (def.n === 'l') lbl.position.set(px + off, ly, pz);
+    else if (def.n === 'r') lbl.position.set(px - off, ly, pz);
+    else if (def.n === 'b') lbl.position.set(px, ly, pz + off);
+    else lbl.position.set(px, ly, pz - off);
+    g.add(lbl);
+    lbls.push(lbl);
+
+    phs.push(Object.assign({}, ph, {w:pw, h:phh}));
+  }
+
+  var rid = eid || ('R-' + String(state.roomIdC++).padStart(4,'0'));
+  if (!eid) localStorage.setItem('lk_roomCnt', String(state.roomIdC));
+  var rm = {group:g, config:cfg, photoData:phs, clicks:clicks, doorData:dData, doorMeshes:dms, labelObjects:lbls, pointLights:pls, id:rid};
+  scene.add(g);
+  state.room = rm;
+  saveGraph(rid, cfg, phs);
+  pushHist(rid);
+  updInfo(rm);
+  return rm;
+}
+
+function dispose(r) {
+  scene.remove(r.group);
+  r.group.traverse(function(c) {
+    if (c.isMesh) {
+      c.geometry && c.geometry.dispose();
+      if (Array.isArray(c.material)) c.material.forEach(function(m){m.dispose();});
+      else if (c.material) c.material.dispose();
+    }
+  });
+}
+
+function updInfo(r) {
+  document.getElementById('room-id').textContent = r.id;
+  document.getElementById('room-size').textContent = r.config.w.toFixed(1) + 'x' + r.config.d.toFixed(1) + 'x' + r.config.h.toFixed(1);
+  document.getElementById('room-photos').textContent = r.photoData.length + ' PHOTOS';
+  document.getElementById('room-doors').textContent = r.doorData.length + ' DOORS';
+}
+
+// ============ GENERATE CONFIG ============
+function genCfg(phPool) {
+  var w = 6 + Math.random() * 15;
+  var d = 6 + Math.random() * 15;
+  var h = 3 + Math.random() * 4;
+  var wh = Math.random() * 360;
+  var wallC = new T.Color('hsl(' + wh + ',' + (15+Math.random()*25) + '%,' + (20+Math.random()*20) + '%)');
+  var flC = new T.Color('hsl(' + ((wh+30+Math.random()*60)%360) + ',30%,' + (8+Math.random()*10) + '%)');
+  var clC = new T.Color('hsl(' + ((wh+180)%360) + ',10%,' + (30+Math.random()*15) + '%)');
+  var dc = 2 + Math.floor(Math.random() * 2); // 2-3 doors
+  var dws = [];
+  var wl = ['l','r','b','f'];
+  for (var i = 0; i < wl.length; i++) { var j = Math.floor(Math.random()*(i+1)); var t = wl[i]; wl[i] = wl[j]; wl[j] = t; }
+  for (var i = 0; i < dc && i < 4; i++) dws.push({wall:wl[i], t:0.15+Math.random()*0.5});
+  var nl = 1 + Math.floor(Math.random() * 2);
+  var lts = [];
+  for (var i = 0; i < nl; i++) {
+    lts.push({
+      color: new T.Color('hsl(' + (Math.random()*360) + ',' + (30+Math.random()*40) + '%,' + (40+Math.random()*40) + '%)').getHex(),
+      intensity: 0.6 + Math.random() * 1.2,
+      x: (Math.random()-0.5)*w*0.6, z: (Math.random()-0.5)*d*0.6, y: h*0.5-0.3
+    });
+  }
+  return {
+    w:w, d:d, h:h, wallColor:wallC.getHex(), floorColor:flC.getHex(), ceilColor:clC.getHex(),
+    doorWalls:dws, lights:lts,
+    ambientColor: new T.Color('hsl(' + ((wh+180+Math.random()*60)%360) + ',10%,18%)').getHex(),
+    ambientIntensity: 0.3 + Math.random() * 0.3,
+    photoPool: phPool || null
+  };
+}
+
+// ============ DOOR ============
+function getDoorWorldPos(w, d, h, doorData) {
+  // Returns {x,z} position in front of a door (for spawning)
+  var def = doorData.def;
+  var px, pz;
+  if (def.n === 'l' || def.n === 'r') {
+    pz = -d/2 + doorData.t * d;
+    px = def.p[0];
+  } else {
+    px = -w/2 + doorData.t * w;
+    pz = def.p[2];
+  }
+  if (def.n === 'l') px += 1.8;
+  else if (def.n === 'r') px -= 1.8;
+  else if (def.n === 'b') pz += 1.8;
+  else pz -= 1.8;
+  return {x:px, z:pz};
+}
+
+function getDoorCenter(w, d, doorData) {
+  // Returns {x,z} position of the door center on the wall (for proximity)
+  var def = doorData.def;
+  if (def.n === 'l' || def.n === 'r') {
+    return {x: def.p[0], z: -d/2 + doorData.t * d};
+  } else {
+    return {x: -w/2 + doorData.t * w, z: def.p[2]};
+  }
+}
+
+async function enterDoor(di) {
+  if (state.trans) return;
+  state.trans = true;
+  try {
+    var curId = state.room.id;
+    var door = state.room.doorData[di];
+    if (!door) { state.trans = false; return; }
+    var ck = curId + ':' + di;
+    var ex = graph.conns[ck];
+    await fade(300);
+    if (ex && ex.targetRoomId !== curId) {
+      // Follow existing connection (back-track or previously explored)
+      doorCooldown = 0.6;
+      await goRoom(ex.targetRoomId, false);
+      var cfg2 = state.room.config;
+      var bd = state.room.doorData[ex.targetDoorIdx];
+      if (bd) { var p2 = getDoorWorldPos(cfg2.w, cfg2.d, cfg2.h, bd); fp.set(p2.x, -cfg2.h/2+1.6, p2.z); setYawToCenter(bd); }
+      await unfade(300);
+      state.trans = false;
+      return;
+    }
+    var cfg = genCfg();
+    cfg.photoPool = pickRoomPhotos();
+    doorCooldown = 0.6;
+    await mkRoom(cfg);
+    var nid = state.room.id;
+    var bdi = Math.floor(Math.random() * Math.max(1, cfg.doorWalls.length));
+    // Save back-connection only, forward is always fresh
+    graph.conns[nid + ':' + bdi] = {targetRoomId:curId, targetDoorIdx:di};
+    var backDoor = state.room.doorData[bdi];
+    if (backDoor) { var p2 = getDoorWorldPos(cfg.w, cfg.d, cfg.h, backDoor); fp.set(p2.x, -cfg.h/2+1.6, p2.z); setYawToCenter(backDoor); }
+    else resetCam();
+    await unfade(300);
+  } catch(e) { toast('Door error: ' + e.message, 'error'); console.error(e); await unfade(100); }
+  state.trans = false;
+}
+
+function setYawToCenter(doorData) {
+  var n = doorData.def ? doorData.def.n : doorData.wall;
+  if (n === 'l') yaw = -Math.PI/2;
+  else if (n === 'r') yaw = Math.PI/2;
+  else if (n === 'b') yaw = Math.PI;
+  else yaw = 0;
+  pitch = 0;
+}
+
+function showGenCatDialog() {
+  var cats = state.photoCatalogues;
+  var names = Object.keys(cats);
+  if (names.length === 0) { toast('No photo catalogues exist.', 'warning'); return; }
+  if (names.length === 1) { genFromPh(names[0]); return; }
+  var msg = 'Generate room from which catalogue?\n' + names.map(function(n,i){return ' [' + (i+1) + '] ' + n + ' (' + cats[n].photos.length + ' photos)';}).join('\n');
+  var choice = prompt(msg);
+  if (!choice) return;
+  var idx = parseInt(choice) - 1;
+  if (!isNaN(idx) && idx >= 0 && idx < names.length) { genFromPh(names[idx]); return; }
+  for (var i = 0; i < names.length; i++) {
+    if (names[i].toLowerCase().indexOf(choice.toLowerCase()) >= 0) { genFromPh(names[i]); return; }
+  }
+  toast('Catalogue not found.', 'warning');
+}
+
+async function goRoom(id, trans) {
+  if (!graph.rooms[id]) return;
+  if (trans !== false) await fade(300);
+  var data = graph.rooms[id];
+  var cfg = genCfg(data.photos);
+  cfg.photoPool = data.photos;
+  cfg.w = data.config.w; cfg.d = data.config.d; cfg.h = data.config.h;
+  cfg.wallColor = data.config.wallColor; cfg.floorColor = data.config.floorColor; cfg.ceilColor = data.config.ceilColor;
+  cfg.doorWalls = data.config.doorWalls;
+  cfg.lights = data.config.lights; cfg.ambientColor = data.config.ambientColor; cfg.ambientIntensity = data.config.ambientIntensity;
+  await mkRoom(cfg, id);
+  resetCam();
+  if (trans !== false) await unfade(300);
+}
+
+function goBack() {
+  if (histIdx <= 0 || state.trans) return;
+  histIdx--;
+  state.trans = true;
+  goRoom(roomHist[histIdx]).then(function() { state.trans = false; navBtns(); });
+}
+function goNext() {
+  if (histIdx >= roomHist.length - 1 || state.trans) return;
+  histIdx++;
+  state.trans = true;
+  goRoom(roomHist[histIdx]).then(function() { state.trans = false; navBtns(); });
+}
+
+function genNewRoom() {
+  if (state.trans) return;
+  state.trans = true;
+  fade(300).then(function() {
+    var cfg = genCfg();
+    cfg.photoPool = pickRoomPhotos();
+    return mkRoom(cfg);
+  }).then(function() { resetCam(); return unfade(300); }).then(function() { state.trans = false; });
+}
+
+// ============ FADE ============
+var fadeEl = null;
+function fadeElm() {
+  if (!fadeEl) {
+    fadeEl = document.createElement('div');
+    fadeEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:50;opacity:0;pointer-events:none;transition:opacity 0s';
+    document.body.appendChild(fadeEl);
+  }
+  return fadeEl;
+}
+function fade(ms) {
+  return new Promise(function(r) {
+    var el = fadeElm();
+    el.style.transition = 'none';
+    el.style.opacity = '0';
+    requestAnimationFrame(function() {
+      el.style.transition = 'opacity ' + ms + 'ms';
+      el.style.opacity = '1';
+    });
+    setTimeout(r, ms);
+  });
+}
+function unfade(ms) {
+  return new Promise(function(r) {
+    var el = fadeElm();
+    el.style.transition = 'opacity ' + ms + 'ms';
+    el.style.opacity = '0';
+    setTimeout(r, ms);
+  });
+}
+
+// ============ PHOTO/SAVE ============
+function showPhoto(idx) {
+  var data = state.room && state.room.photoData[idx];
+  if (!data) return;
+  state.curPhoto = Object.assign({}, data, {roomId:state.room.id, idx:idx});
+  document.getElementById('photo-modal-title').textContent = '[PHOTO] ' + data.title;
+  document.getElementById('photo-detail-img').src = data.url || '';
+  document.getElementById('photo-modal-author').textContent = 'By: ' + (data.author || '');
+  document.getElementById('photo-modal-desc').textContent = (data.description || '').substring(0, 200);
+  document.getElementById('photo-modal-actions').innerHTML = '<button class="btn" onclick="svPh()">SAVE TO CATALOGUE</button><button class="btn" onclick="clPh()">CLOSE</button>';
+  document.getElementById('photo-modal').classList.add('active');
+}
+window.closePhotoModal = window.clPh = function() { document.getElementById('photo-modal').classList.remove('active'); state.curPhoto = null; };
+window.svPh = function() {
+  if (!state.curPhoto) return;
+  var d = state.curPhoto;
+  var ap = activePhotos();
+  var e = {id:'PHOTO-'+String(state.phIdC++).padStart(4,'0'), title:d.title||'Untitled', author:d.author||'Unknown', url:d.url||'', description:d.description||'', thumbnail:d.url||'', timestamp:Date.now(), sourceRoom:d.roomId||''};
+  localStorage.setItem('lk_phCnt', String(state.phIdC));
+  ap.push(e);
+  if (ap.length > 500) ap.shift();
+  saveCats();
+  toast('Photo "' + e.title + '" by ' + e.author + ' saved.');
+  clPh();
+};
+
+function saveRoom(name) {
+  if (!state.room) { toast('No room to save.','error'); return; }
+  try {
+    var os = new T.Vector2();
+    ren.getSize(os);
+    ren.setSize(320, 200, false);
+    ren.render(scene, cam);
+    var tn = ren.domElement.toDataURL('image/jpeg',0.7);
+    ren.setSize(os.x, os.y, false);
+    var r = state.room;
+    var e = {
+      id:r.id, name:name||r.id, timestamp:Date.now(), thumbnail:tn,
+      config:{w:r.config.w,d:r.config.d,h:r.config.h,wallColor:r.config.wallColor,floorColor:r.config.floorColor,ceilColor:r.config.ceilColor,doorWalls:r.config.doorWalls,lights:r.config.lights,ambientColor:r.config.ambientColor,ambientIntensity:r.config.ambientIntensity},
+      photos:r.photoData.map(function(p){return {title:p.title,author:p.author,url:p.url,description:p.description,w:p.w,h:p.h};})
+    };
+    state.rooms.push(e);
+    if (state.rooms.length > 100) state.rooms.shift();
+    localStorage.setItem('lk_rooms', JSON.stringify(state.rooms));
+    toast('Room "' + e.name + '" saved.');
+  } catch(e) { toast('Save error: ' + e.message, 'error'); }
+}
+
+async function loadRoom(idx) {
+  var e = state.rooms[idx];
+  if (!e) { toast('Room not found.', 'error'); return; }
+  if (state.trans) return;
+  state.trans = true;
+  await fade(300);
+  var cfg = Object.assign({}, e.config, {photoPool:e.photos.map(function(p){return {title:p.title,author:p.author,url:p.url,description:p.description||''};})});
+  await mkRoom(cfg);
+  resetCam();
+  toast('Loaded room "' + e.name + '".');
+  await unfade(300);
+  state.trans = false;
+}
+
+async function genFromPh(catName) {
+  var ap = catName ? (state.photoCatalogues[catName] || {photos:[]}).photos : activePhotos();
+  if (ap.length === 0) { toast('Photo catalogue is empty.', 'warning'); return; }
+  if (state.trans) return;
+  state.trans = true;
+  await fade(300);
+  var phs = ap.map(function(p){return {title:p.title,author:p.author,url:p.url,description:p.description||''};});
+  var cfg = genCfg(phs);
+  // Scale room to fit all photos
+  var photosNeeded = phs.length;
+  var wallsNeeded = Math.ceil(photosNeeded / 3); // ~3 photos per wall
+  var minDim = 7 + (wallsNeeded - 1) * 2.5;
+  if (minDim > cfg.w) { cfg.w = minDim; }
+  if (minDim > cfg.d) { cfg.d = minDim; }
+  // Increase height for taller rooms with more photos
+  cfg.h = Math.max(cfg.h, 3.5 + Math.min(wallsNeeded, 4) * 0.5);
+  cfg.photoPool = phs;
+  cfg.useAllPhotos = true;
+  await mkRoom(cfg);
+  resetCam();
+  toast('Room generated from catalogue' + (catName ? ' "' + catName + '".' : '.'));
+  await unfade(300);
+  state.trans = false;
+}
+
+// ============ CATALOGUE ============
+function showRooms() {
+  var modal = document.getElementById('catalogue-modal');
+  document.getElementById('catalogue-modal-title').textContent = 'ROOM CATALOGUE [' + state.rooms.length + ']';
+  var body = document.getElementById('catalogue-modal-body');
+  if (state.rooms.length === 0) { body.innerHTML = '<div class="cat-empty">no rooms saved</div>'; }
+  else {
+    var h = '<div class="cat-grid">';
+    for (var i = state.rooms.length-1; i >= 0; i--) {
+      var r = state.rooms[i];
+      h += '<div class="cat-item" style="position:relative" onclick="ldRm(' + i + ')">';
+      h += '<img src="' + r.thumbnail + '" alt="">';
+      h += '<div class="name">' + r.name + '</div>';
+      h += '<div class="sub">' + r.photos.length + ' photos</div>';
+      h += '<button class="btn" onclick="event.stopPropagation();delRm(' + i + ')" style="position:absolute;top:2px;right:2px;font-size:9px;padding:1px 5px;border-color:#a00;color:#f00">X</button>';
+      h += '</div>';
+    }
+    h += '</div>';
+    body.innerHTML = h;
+  }
+  modal.classList.add('active');
+}
+window.delRm = function(i) {
+  if (i < 0 || i >= state.rooms.length) return;
+  if (!confirm('Delete saved room "' + state.rooms[i].name + '"?')) return;
+  state.rooms.splice(i, 1);
+  localStorage.setItem('lk_rooms', JSON.stringify(state.rooms));
+  showRooms();
+};
+window.ldRm = function(i) {
+  document.getElementById('catalogue-modal').classList.remove('active');
+  setTimeout(function(){loadRoom(i);}, 100);
+};
+function showPhs() {
+  var modal = document.getElementById('catalogue-modal');
+  document.getElementById('catalogue-modal-title').textContent = 'PHOTO CATALOGUES';
+  var body = document.getElementById('catalogue-modal-body');
+  var cats = state.photoCatalogues;
+  var catNames = Object.keys(cats);
+  var h = '<div style="margin-bottom:12px;display:flex;gap:4px;flex-wrap:wrap;align-items:center">';
+  h += '<span style="color:#0a0;font-size:11px;margin-right:4px">Catalogue:</span>';
+  for (var ci = 0; ci < catNames.length; ci++) {
+    var cn = catNames[ci];
+    var act = cn === state.activeCat ? ';background:#0f0;color:#000' : '';
+    h += '<button class="btn" onclick="selCat(\'' + cn.replace(/'/g,"\\'") + '\')" style="font-size:10px;padding:3px 8px' + act + '">' + cn + '</button>';
+  }
+  h += '<button class="btn" onclick="newCat()" style="font-size:10px;padding:3px 8px">+ NEW</button>';
+  h += '</div>';
+  var ap = activePhotos();
+  h += '<div style="color:#060;font-size:10px;margin-bottom:8px">' + ap.length + ' photos in "' + state.activeCat + '"';
+  if (catNames.length > 1) h += ' | <a href="#" onclick="delCat()" style="color:#f00">delete this catalogue</a>';
+  h += '</div>';
+  if (ap.length === 0) { h += '<div class="cat-empty">no photos saved</div>'; }
+  else {
+    h += '<div class="cat-grid">';
+    for (var i = ap.length-1; i >= 0; i--) {
+      var p = ap[i];
+      h += '<div class="cat-item" style="position:relative" onclick="vwPh(' + i + ')">';
+      h += '<img src="' + (p.thumbnail||'') + '" alt="">';
+      h += '<div class="name">' + p.title + '</div>';
+      h += '<div class="sub">' + p.author + '</div>';
+      h += '<button class="btn" onclick="event.stopPropagation();delPh(' + i + ')" style="position:absolute;top:2px;right:2px;font-size:9px;padding:1px 5px;border-color:#a00;color:#f00">X</button>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+  body.innerHTML = h;
+  modal.classList.add('active');
+}
+window.selCat = function(n) { state.activeCat = n; localStorage.setItem('lk_activeCat', n); showPhs(); };
+window.newCat = function() {
+  var n = prompt('New catalogue name:');
+  if (!n) return;
+  if (state.photoCatalogues[n]) { toast('Catalogue "' + n + '" already exists.', 'warning'); return; }
+  state.photoCatalogues[n] = { name:n, photos:[], timestamp:Date.now() };
+  state.activeCat = n;
+  localStorage.setItem('lk_activeCat', n);
+  saveCats();
+  showPhs();
+};
+window.delCat = function() {
+  var cats = state.photoCatalogues;
+  var n = state.activeCat;
+  if (Object.keys(cats).length <= 1) { toast('Cannot delete the last catalogue.', 'warning'); return; }
+  if (!confirm('Delete catalogue "' + n + '" and all its photos?')) return;
+  delete cats[n];
+  var remaining = Object.keys(cats);
+  state.activeCat = remaining[0];
+  localStorage.setItem('lk_activeCat', state.activeCat);
+  saveCats();
+  showPhs();
+};
+window.delPh = function(idx) {
+  var ap = activePhotos();
+  if (idx < 0 || idx >= ap.length) return;
+  if (!confirm('Delete this photo?')) return;
+  ap.splice(idx, 1);
+  saveCats();
+  showPhs();
+};
+window.vwPh = function(i) {
+  var ap = activePhotos();
+  var p = ap[i]; if (!p) return;
+  document.getElementById('catalogue-modal').classList.remove('active');
+  setTimeout(function(){
+    document.getElementById('photo-modal-title').textContent = '[PHOTO] ' + p.title;
+    document.getElementById('photo-detail-img').src = p.url || '';
+    document.getElementById('photo-modal-author').textContent = 'By: ' + p.author;
+    document.getElementById('photo-modal-desc').textContent = (p.description||'').substring(0,200);
+    document.getElementById('photo-modal-actions').innerHTML = '<button class="btn" onclick="clPh()">CLOSE</button>';
+    document.getElementById('photo-modal').classList.add('active');
+  }, 100);
+};
+window.closeCatalogueModal = function() { document.getElementById('catalogue-modal').classList.remove('active'); };
+
+// ============ TOAST ============
+var toastTimer = null;
+function toast(msg, type) {
+  var el = document.getElementById('toast-msg');
+  if (!el) return;
+  el.textContent = '> ' + msg;
+  el.style.color = type === 'error' ? '#f00' : type === 'warning' ? '#ff0' : '#0f0';
+  var parent = document.getElementById('toast');
+  parent.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { parent.classList.remove('show'); }, 4000);
+}
+
+// ============ KEYBOARD SHORTCUTS ============
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay.active').forEach(function(m){m.classList.remove('active');}); }
+  if (!locked && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    if (e.key === '[' || e.key === 'z') { e.preventDefault(); goBack(); }
+    if (e.key === ']' || e.key === 'x') { e.preventDefault(); goNext(); }
+  }
+});
+
+// ============ MOBILE CONTROLS ============
+function togglePad() {
+  var p = document.getElementById('m-pad');
+  p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+}
+var touchId = null, touchStart = null;
+ren.domElement.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 1 && !state.trans) {
+    touchId = e.touches[0].identifier;
+    touchStart = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+  }
+}, {passive:true});
+ren.domElement.addEventListener('touchmove', function(e) {
+  for (var i = 0; i < e.touches.length; i++) {
+    if (e.touches[i].identifier === touchId) {
+      var dx = e.touches[i].clientX - touchStart.x;
+      var dy = e.touches[i].clientY - touchStart.y;
+      touchStart = {x: e.touches[i].clientX, y: e.touches[i].clientY};
+      yaw -= dx * 0.005;
+      pitch += dy * 0.005;
+      if (pitch > 1.4) pitch = 1.4;
+      if (pitch < -1.4) pitch = -1.4;
+      break;
+    }
+  }
+}, {passive:true});
+ren.domElement.addEventListener('touchend', function(e) {
+  if (e.changedTouches.length === 1 && touchId !== null) {
+    var t = e.changedTouches[0];
+    if (t.identifier === touchId) {
+      var dist = Math.abs(t.clientX - touchStart.x) + Math.abs(t.clientY - touchStart.y);
+      if (dist < 10) {
+        var rect = ren.domElement.getBoundingClientRect();
+        var mx = ((t.clientX - rect.left) / rect.width) * 2 - 1;
+        var my = -((t.clientY - rect.top) / rect.height) * 2 + 1;
+        ray.setFromCamera(new T.Vector2(mx, my), cam);
+        var hits = ray.intersectObjects(state.room ? state.room.clicks : []);
+        for (var hi = 0; hi < hits.length; hi++) {
+          var o = hits[hi].object;
+          if (o.userData.t === 'door') { enterDoor(o.userData.idx); return; }
+          if (o.userData.t === 'photo') { showPhoto(o.userData.idx); return; }
+        }
+      }
+      touchId = null;
+    }
+  }
+}, {passive:true});
+document.querySelectorAll('#m-pad .m-btn').forEach(function(el) {
+  var k = el.getAttribute('data-key');
+  el.addEventListener('touchstart', function(e) { e.preventDefault(); keys[k] = true; el.classList.add('active'); });
+  el.addEventListener('touchend', function(e) { e.preventDefault(); keys[k] = false; el.classList.remove('active'); });
+  el.addEventListener('touchcancel', function(e) { keys[k] = false; el.classList.remove('active'); });
+});
+var runBtn = document.getElementById('m-run');
+runBtn.addEventListener('touchstart', function(e) { e.preventDefault(); mobileRunning = !mobileRunning; runBtn.classList.toggle('active', mobileRunning); });
+
+// ============ INIT ============
+toast('LightKeepers v1.0 -- AI Gallery Explorer');
+toast('Credits: AAPL');
+toast('Right-click to look around, WASD to walk');
+toast('Click doors to explore, [] for history');
+toast('Initializing...');
+
+async function init() {
+  toast('Generating rooms...');
+  try {
+    toast('Fetching images from Wikimedia Commons...', 'info');
+    await refillPool();
+    toast('Pool has ' + state.photoPool.length + ' images.', 'info');
+    var cfg = genCfg(pickRoomPhotos());
+    await mkRoom(cfg);
+    resetCam();
+    toast('Ready. Explore the galleries.');
+  } catch(e) { toast('Init error: ' + e.message, 'error'); console.error(e); }
+}
+
+window.addEventListener('error', function(e) {
+  var t = document.getElementById('terminal-output');
+  if (t) { var l = document.createElement('div'); l.className = 'line error'; l.textContent = '> [ERR] ' + (e.message||e.error?.message||'?'); t.appendChild(l); }
+});
+
+init();
+
+// ============ ANIMATION ============
+var lt = 0;
+function anim(time) {
+  requestAnimationFrame(anim);
+  var dt = Math.min((time - lt) / 1000, 0.05);
+  lt = time;
+  updCam(dt);
+// ============ WALK-THROUGH DOORS ============
+var doorCooldown = 0;
+
+  // Walk-through door proximity check (with cooldown)
+  if (!state.trans && state.room) {
+    doorCooldown = Math.max(0, doorCooldown - dt);
+    if (doorCooldown <= 0) {
+      var rm = state.room;
+      for (var di = 0; di < rm.doorData.length; di++) {
+        var dd = rm.doorData[di];
+        var dp = getDoorCenter(rm.config.w, rm.config.d, dd);
+        var dx = fp.x - dp.x, dz = fp.z - dp.z;
+        if (dx*dx + dz*dz < 1.5) { doorCooldown = 0.6; enterDoor(di); break; }
+      }
+    }
+  }
+  ren.render(scene, cam);
+}
+anim();
+</script>
+</body>
+</html>
