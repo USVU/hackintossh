@@ -628,29 +628,59 @@ function mkRoom(cfg, eid) {
 
     var pMesh = new T.Mesh(new T.PlaneGeometry(pw, phh), pMat);
 
-    // Load real image as texture replacement
+    // Load real image as texture replacement (fetch via blob to avoid CORS issues on mobile file://)
     if (ph.url) {
-      (function(mat, mesh, pw, phh) {
-        var img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = function() {
-          var tex = new T.Texture(img);
-          tex.needsUpdate = true;
-          mat.map = tex;
-          mat.needsUpdate = true;
-          // Scale mesh to show entire image (contain within bounds)
-          var aspect = img.naturalWidth / img.naturalHeight;
-          var planeAspect = pw / phh;
-          if (aspect > planeAspect) {
-            mesh.scale.x = 1;
-            mesh.scale.y = planeAspect / aspect;
-          } else {
-            mesh.scale.x = aspect / planeAspect;
-            mesh.scale.y = 1;
-          }
+      (function(mat, mesh, pw, phh, url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'blob';
+        xhr.onload = function() {
+          if (xhr.status !== 200) return;
+          var blob = xhr.response;
+          var blobUrl = URL.createObjectURL(blob);
+          var img = new Image();
+          img.onload = function() {
+            var tex = new T.Texture(img);
+            tex.needsUpdate = true;
+            mat.map = tex;
+            mat.needsUpdate = true;
+            var aspect = img.naturalWidth / img.naturalHeight;
+            var planeAspect = pw / phh;
+            if (aspect > planeAspect) {
+              mesh.scale.x = 1;
+              mesh.scale.y = planeAspect / aspect;
+            } else {
+              mesh.scale.x = aspect / planeAspect;
+              mesh.scale.y = 1;
+            }
+            URL.revokeObjectURL(blobUrl);
+          };
+          img.onerror = function() { URL.revokeObjectURL(blobUrl); };
+          img.src = blobUrl;
         };
-        img.src = ph.url;
-      })(pMat, pMesh, pw, phh);
+        xhr.onerror = function() {
+          // Fallback: try direct image with crossOrigin
+          var img2 = new Image();
+          img2.crossOrigin = 'anonymous';
+          img2.onload = function() {
+            var tex = new T.Texture(img2);
+            tex.needsUpdate = true;
+            mat.map = tex;
+            mat.needsUpdate = true;
+            var aspect = img2.naturalWidth / img2.naturalHeight;
+            var planeAspect = pw / phh;
+            if (aspect > planeAspect) {
+              mesh.scale.x = 1;
+              mesh.scale.y = planeAspect / aspect;
+            } else {
+              mesh.scale.x = aspect / planeAspect;
+              mesh.scale.y = 1;
+            }
+          };
+          img2.src = url;
+        };
+        xhr.send();
+      })(pMat, pMesh, pw, phh, ph.url);
     }
     var off = 0.08;
     if (def.n === 'l') pMesh.position.set(px + off, py, pz);
