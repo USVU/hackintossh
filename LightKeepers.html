@@ -94,8 +94,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Co
     <button class="btn" onclick="showGenCatDialog()">GEN FROM PHOTOS</button>
     <span class="sep" style="flex:1"></span>
     <button class="btn" onclick="if(state.room&&state.room.photoData[0])showPhoto(0)">PHOTO INFO</button>
+    <button class="btn" onclick="openHelp()">?</button>
   </div>
   <div id="toast"><div class="msg" id="toast-msg"></div></div>
+  <div class="modal-overlay" id="help-modal">
+    <div class="modal" style="max-width:500px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+        <h2 style="margin:0;font-size:14px;color:#0f0;flex:1">LIGHTKEEPERS v1.0</h2>
+        <span class="close-btn" onclick="closeHelp()" style="flex-shrink:0">X</span>
+      </div>
+      <p style="color:#0a0;font-size:12px;line-height:1.6;margin-bottom:12px">
+        AI-generated 3D gallery explorer. Walk procedurally-lit rooms filled with random photographs from Wikimedia Commons.
+      </p>
+      <p style="color:#0a0;font-size:12px;line-height:1.6;margin-bottom:6px"><strong style="color:#0f0">Controls</strong></p>
+      <p style="color:#0a0;font-size:11px;line-height:1.6;margin-bottom:4px">WASD / Arrows — Walk &nbsp;|&nbsp; Shift — Run</p>
+      <p style="color:#0a0;font-size:11px;line-height:1.6;margin-bottom:4px">Right-click + drag — Look around</p>
+      <p style="color:#0a0;font-size:11px;line-height:1.6;margin-bottom:4px">Left-click — Interact with doors &amp; photos</p>
+      <p style="color:#0a0;font-size:11px;line-height:1.6;margin-bottom:4px">[ ] or z x — Previous / Next room history</p>
+      <p style="color:#0a0;font-size:11px;line-height:1.6;margin-bottom:12px">Walk into doors — Enter new rooms</p>
+      <p style="color:#0a0;font-size:12px;line-height:1.6;margin-bottom:6px"><strong style="color:#0f0">About</strong></p>
+      <p style="color:#0a0;font-size:11px;line-height:1.6;margin-bottom:4px">
+        Rooms, lighting, and layouts are procedurally generated.
+        Photos are fetched live from Wikimedia Commons.
+        Save rooms and photos to local catalogues stored in your browser.
+      </p>
+      <p style="color:#060;font-size:10px;line-height:1.6;margin-top:12px">Credits: AAPL (title) &middot; Three.js &middot; Wikimedia Commons</p>
+    </div>
+  </div>
   <button id="mobile-btn" onclick="togglePad()">-</button>
   <div id="m-pad">
     <div class="row"><div class="m-btn" data-key="KeyW">W</div></div>
@@ -1098,8 +1123,12 @@ document.addEventListener('keydown', function(e) {
   if (!locked && !e.ctrlKey && !e.metaKey && !e.altKey) {
     if (e.key === '[' || e.key === 'z') { e.preventDefault(); goBack(); }
     if (e.key === ']' || e.key === 'x') { e.preventDefault(); goNext(); }
+    if (e.key === '?') { openHelp(); }
   }
 });
+
+function openHelp() { document.getElementById('help-modal').classList.add('active'); }
+function closeHelp() { document.getElementById('help-modal').classList.remove('active'); }
 
 // ============ MOBILE CONTROLS ============
 // Hide mobile controls on desktop (mouse/keyboard devices)
