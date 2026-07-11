@@ -628,58 +628,45 @@ function mkRoom(cfg, eid) {
 
     var pMesh = new T.Mesh(new T.PlaneGeometry(pw, phh), pMat);
 
-    // Load real image as texture replacement (fetch via blob to avoid CORS issues on mobile file://)
+    // Load real image as texture replacement
     if (ph.url) {
       (function(mat, mesh, pw, phh, url) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'blob';
-        xhr.onload = function() {
-          if (xhr.status !== 200) return;
-          var blob = xhr.response;
-          var blobUrl = URL.createObjectURL(blob);
-          var img = new Image();
-          img.onload = function() {
-            var tex = new T.Texture(img);
-            tex.needsUpdate = true;
-            mat.map = tex;
-            mat.needsUpdate = true;
-            var aspect = img.naturalWidth / img.naturalHeight;
-            var planeAspect = pw / phh;
-            if (aspect > planeAspect) {
-              mesh.scale.x = 1;
-              mesh.scale.y = planeAspect / aspect;
-            } else {
-              mesh.scale.x = aspect / planeAspect;
-              mesh.scale.y = 1;
-            }
-            URL.revokeObjectURL(blobUrl);
+        function applyTex(img) {
+          var tex = new T.Texture(img);
+          tex.needsUpdate = true;
+          mat.map = tex;
+          mat.needsUpdate = true;
+          var aspect = img.naturalWidth / img.naturalHeight;
+          var planeAspect = pw / phh;
+          if (aspect > planeAspect) {
+            mesh.scale.x = 1;
+            mesh.scale.y = planeAspect / aspect;
+          } else {
+            mesh.scale.x = aspect / planeAspect;
+            mesh.scale.y = 1;
+          }
+        }
+        // Primary: crossOrigin (works on most browsers)
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() { applyTex(img); };
+        img.onerror = function() {
+          // Fallback: load without crossOrigin, draw to canvas, use canvas as texture
+          // (bypasses CORS for WebGL on some mobile browsers)
+          var raw = new Image();
+          raw.onload = function() {
+            try {
+              var c = document.createElement('canvas');
+              c.width = raw.naturalWidth;
+              c.height = raw.naturalHeight;
+              c.getContext('2d').drawImage(raw, 0, 0);
+              applyTex(c);
+            } catch(e) { /* canvas taint, keep placeholder */ }
           };
-          img.onerror = function() { URL.revokeObjectURL(blobUrl); };
-          img.src = blobUrl;
+          raw.onerror = function() { /* all failed, keep placeholder */ };
+          raw.src = url;
         };
-        xhr.onerror = function() {
-          // Fallback: try direct image with crossOrigin
-          var img2 = new Image();
-          img2.crossOrigin = 'anonymous';
-          img2.onload = function() {
-            var tex = new T.Texture(img2);
-            tex.needsUpdate = true;
-            mat.map = tex;
-            mat.needsUpdate = true;
-            var aspect = img2.naturalWidth / img2.naturalHeight;
-            var planeAspect = pw / phh;
-            if (aspect > planeAspect) {
-              mesh.scale.x = 1;
-              mesh.scale.y = planeAspect / aspect;
-            } else {
-              mesh.scale.x = aspect / planeAspect;
-              mesh.scale.y = 1;
-            }
-          };
-          img2.src = url;
-        };
-        xhr.send();
+        img.src = url;
       })(pMat, pMesh, pw, phh, ph.url);
     }
     var off = 0.08;
