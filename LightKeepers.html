@@ -1051,6 +1051,7 @@ function showPhs() {
       h += '<div class="name">' + p.title + '</div>';
       h += '<div class="sub">' + p.author + '</div>';
       h += '<button class="btn" onclick="event.stopPropagation();delPh(' + i + ')" style="position:absolute;top:2px;right:2px;font-size:9px;padding:1px 5px;border-color:#a00;color:#f00">X</button>';
+      h += '<button class="btn" onclick="event.stopPropagation();movePh(' + i + ')" style="position:absolute;bottom:2px;right:2px;font-size:8px;padding:1px 4px">MOVE</button>';
       h += '</div>';
     }
     h += '</div>';
@@ -1087,6 +1088,27 @@ window.delPh = function(idx) {
   if (!confirm('Delete this photo?')) return;
   ap.splice(idx, 1);
   saveCats();
+  showPhs();
+};
+window.movePh = function(idx) {
+  var ap = activePhotos();
+  if (idx < 0 || idx >= ap.length) return;
+  var cats = state.photoCatalogues;
+  var names = Object.keys(cats).filter(function(n){return n !== state.activeCat;});
+  if (names.length === 0) { toast('No other catalogues to move to.', 'warning'); return; }
+  var msg = 'Move to which catalogue?\n' + names.map(function(n,i){return ' [' + (i+1) + '] ' + n;}).join('\n');
+  var choice = prompt(msg);
+  if (!choice) return;
+  var ci = parseInt(choice) - 1;
+  var target = (!isNaN(ci) && ci >= 0 && ci < names.length) ? names[ci] : null;
+  if (!target) {
+    for (var ni = 0; ni < names.length; ni++) {
+      if (names[ni].toLowerCase().indexOf(choice.toLowerCase()) >= 0) { target = names[ni]; break; }
+    }
+  }
+  if (!target) { toast('Catalogue not found.', 'warning'); return; }
+  var photo = ap.splice(idx, 1)[0];
+  if (photo) { cats[target].photos.push(photo); saveCats(); }
   showPhs();
 };
 window.vwPh = function(i) {
@@ -1145,23 +1167,23 @@ function togglePad() {
   if (r) r.style.display = hidden ? 'flex' : 'none';
   b.textContent = hidden ? '-' : '+';
 }
-var touchId = null, touchStart = null;
+var touchId = null, touchMoved = false, touchStart = null;
 ren.domElement.addEventListener('touchstart', function(e) {
   if (e.touches.length === 1 && !state.trans) {
     touchId = e.touches[0].identifier;
     touchStart = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+    touchMoved = false;
   }
 }, {passive:true});
 ren.domElement.addEventListener('touchmove', function(e) {
   for (var i = 0; i < e.touches.length; i++) {
     if (e.touches[i].identifier === touchId) {
-      var dx = e.touches[i].clientX - touchStart.x;
-      var dy = e.touches[i].clientY - touchStart.y;
+      yaw -= (e.touches[i].clientX - touchStart.x) * 0.005;
+      pitch -= (e.touches[i].clientY - touchStart.y) * 0.005;
       touchStart = {x: e.touches[i].clientX, y: e.touches[i].clientY};
-      yaw -= dx * 0.005;
-      pitch -= dy * 0.005;
       if (pitch > 1.4) pitch = 1.4;
       if (pitch < -1.4) pitch = -1.4;
+      touchMoved = true;
       break;
     }
   }
@@ -1170,21 +1192,21 @@ ren.domElement.addEventListener('touchend', function(e) {
   if (e.changedTouches.length === 1 && touchId !== null) {
     var t = e.changedTouches[0];
     if (t.identifier === touchId) {
-      var dist = Math.abs(t.clientX - touchStart.x) + Math.abs(t.clientY - touchStart.y);
-      if (dist < 10) {
+      if (touchMoved) { e.preventDefault(); }
+      else {
         var rect = ren.domElement.getBoundingClientRect();
-        var mx = ((t.clientX - rect.left) / rect.width) * 2 - 1;
-        var my = -((t.clientY - rect.top) / rect.height) * 2 + 1;
-        ray.setFromCamera(new T.Vector2(mx, my), cam);
-        var hits = ray.intersectObjects(state.room ? state.room.clicks : []);
-        for (var hi = 0; hi < hits.length; hi++) {
-          var o = hits[hi].object;
-          if (o.userData.t === 'door') { enterDoor(o.userData.idx); return; }
-          if (o.userData.t === 'photo') { showPhoto(o.userData.idx); return; }
-        }
+      var mx = ((t.clientX - rect.left) / rect.width) * 2 - 1;
+      var my = -((t.clientY - rect.top) / rect.height) * 2 + 1;
+      ray.setFromCamera(new T.Vector2(mx, my), cam);
+      var hits = ray.intersectObjects(state.room ? state.room.clicks : []);
+      for (var hi = 0; hi < hits.length; hi++) {
+        var o = hits[hi].object;
+        if (o.userData.t === 'door') { enterDoor(o.userData.idx); return; }
+        if (o.userData.t === 'photo') { showPhoto(o.userData.idx); return; }
       }
-      touchId = null;
     }
+    touchId = null;
+  }
   }
 }, {passive:true});
 document.querySelectorAll('#m-pad .m-btn').forEach(function(el) {
