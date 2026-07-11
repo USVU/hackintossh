@@ -53,15 +53,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Co
 #toast{position:fixed;bottom:44px;left:50%;transform:translateX(-50%);z-index:25;pointer-events:none;transition:opacity .3s;opacity:0}
 #toast.show{opacity:1}
 #toast .msg{background:rgba(0,0,0,0.9);border:1px solid #0f0;padding:6px 16px;font:12px monospace;color:#0f0;white-space:nowrap}
-#mobile-btn{position:fixed;bottom:44px;right:4px;z-index:30;background:rgba(0,0,0,0.7);border:1px solid #0f0;color:#0f0;font:18px monospace;cursor:pointer;padding:4px 8px;display:none;touch-action:none}
-#m-pad{position:fixed;bottom:90px;left:8px;z-index:30;display:none;flex-direction:column;align-items:center;gap:3px;touch-action:none}
+#mobile-btn{position:fixed;bottom:44px;right:4px;z-index:30;background:rgba(0,0,0,0.7);border:1px solid #0f0;color:#0f0;font:18px monospace;cursor:pointer;padding:4px 8px;display:block}
+#m-pad{position:fixed;bottom:90px;left:8px;z-index:30;display:flex;flex-direction:column;align-items:center;gap:3px;touch-action:none}
 #m-pad .row{display:flex;gap:3px;justify-content:center}
 #m-pad .m-btn{width:44px;height:44px;background:rgba(0,0,0,0.65);border:1px solid #0f0;color:#0f0;font:16px monospace;text-align:center;line-height:44px;border-radius:4px;touch-action:none;user-select:none;-webkit-user-select:none}
 #m-pad .m-btn:active{background:rgba(0,255,0,0.25)}
 #m-pad .m-btn.active{background:rgba(0,255,0,0.25)}
-#m-run{width:44px;height:44px;background:rgba(0,0,0,0.65);border:1px solid #0f0;color:#0f0;font:11px monospace;text-align:center;line-height:44px;border-radius:4px;touch-action:none;user-select:none;-webkit-user-select:none}
+#m-run{position:fixed;bottom:90px;right:8px;z-index:30;width:52px;height:52px;background:rgba(0,0,0,0.65);border:1px solid #0f0;color:#0f0;font:11px monospace;text-align:center;line-height:52px;border-radius:4px;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center}
 #m-run.active{background:rgba(0,255,0,0.25)}
-@media(hover:none)and(pointer:coarse){#mobile-btn{display:block}body{padding-bottom:80px}}
+@media(hover:hover)and(pointer:fine){#m-pad,#m-run{display:none}}
 #photo-detail-img{max-width:100%;max-height:50vh;width:auto;height:auto;object-fit:contain;margin:8px 0;border:1px solid #0a0;background:#000}
 </style>
 </head>
@@ -96,12 +96,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Co
     <button class="btn" onclick="if(state.room&&state.room.photoData[0])showPhoto(0)">PHOTO INFO</button>
   </div>
   <div id="toast"><div class="msg" id="toast-msg"></div></div>
-  <button id="mobile-btn" ontouchstart="event.stopPropagation();togglePad()">+</button>
+  <button id="mobile-btn" onclick="togglePad()">-</button>
   <div id="m-pad">
     <div class="row"><div class="m-btn" data-key="KeyW">W</div></div>
     <div class="row"><div class="m-btn" data-key="KeyA">A</div><div class="m-btn" data-key="KeyS">S</div><div class="m-btn" data-key="KeyD">D</div></div>
-    <div class="row"><div id="m-run" data-key="ShiftLeft">RUN</div></div>
   </div>
+  <div id="m-run" data-key="ShiftLeft">RUN</div>
 </div>
 <div id="photo-modal" class="modal-overlay">
   <div class="modal">
@@ -308,6 +308,8 @@ ren.domElement.addEventListener('contextmenu', function(e) { e.preventDefault();
 // Left-click: interact with doors/photos (always available)
 ren.domElement.addEventListener('click', function(e) {
   if (e.button !== 0 || state.trans || !state.room) return;
+  // Ignore clicks while right button is held (looking around)
+  if (e.buttons & 2) return;
   var rect = ren.domElement.getBoundingClientRect();
   var mx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   var my = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -391,6 +393,13 @@ function mkRoom(cfg, eid) {
   var dms = [];
   var lbls = [];
   var w = cfg.w, d = cfg.d, h = cfg.h;
+  // Scale room to fit number of photos (before building geometry)
+  var phCnt = cfg.useAllPhotos ? (cfg.photoPool||[]).length : Math.min(Math.max(4, Math.floor(Math.random() * 6) + 2), (cfg.photoPool||[]).length);
+  var wallsNeeded = Math.ceil(phCnt / 3);
+  var minDim = 7 + (wallsNeeded - 1) * 2;
+  if (minDim > w) w = minDim;
+  if (minDim > d) d = minDim;
+  cfg.w = w; cfg.d = d;
 
   // Floor
   var fl = new T.Mesh(new T.PlaneGeometry(w+0.2,d+0.2), new T.MeshStandardMaterial({color:cfg.floorColor,roughness:0.8}));
@@ -474,12 +483,6 @@ function mkRoom(cfg, eid) {
   // Photos — smart placement with no overlap
   var photos = cfg.photoPool || [];
   var phCnt = cfg.useAllPhotos ? photos.length : Math.min(Math.max(4, Math.floor(Math.random() * 6) + 2), photos.length);
-  // Scale room to fit number of photos
-  var wallsNeeded = Math.ceil(phCnt / 3);
-  var minDim = 7 + (wallsNeeded - 1) * 2;
-  if (minDim > cfg.w) cfg.w = minDim;
-  if (minDim > cfg.d) cfg.d = minDim;
-  w = cfg.w; d = cfg.d;
   // Generate sizes first
   var phSizeData = [];
   for (var i = 0; i < phCnt && i < photos.length; i++) {
@@ -1099,9 +1102,19 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ============ MOBILE CONTROLS ============
+// Hide mobile controls on desktop (mouse/keyboard devices)
+if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+  document.getElementById('m-pad').style.display = 'none';
+  document.getElementById('m-run').style.display = 'none';
+}
 function togglePad() {
   var p = document.getElementById('m-pad');
-  p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+  var r = document.getElementById('m-run');
+  var b = document.getElementById('mobile-btn');
+  var hidden = p.style.display === 'none' || getComputedStyle(p).display === 'none';
+  p.style.display = hidden ? 'flex' : 'none';
+  if (r) r.style.display = hidden ? 'flex' : 'none';
+  b.textContent = hidden ? '-' : '+';
 }
 var touchId = null, touchStart = null;
 ren.domElement.addEventListener('touchstart', function(e) {
@@ -1117,7 +1130,7 @@ ren.domElement.addEventListener('touchmove', function(e) {
       var dy = e.touches[i].clientY - touchStart.y;
       touchStart = {x: e.touches[i].clientX, y: e.touches[i].clientY};
       yaw -= dx * 0.005;
-      pitch += dy * 0.005;
+      pitch -= dy * 0.005;
       if (pitch > 1.4) pitch = 1.4;
       if (pitch < -1.4) pitch = -1.4;
       break;
@@ -1147,12 +1160,14 @@ ren.domElement.addEventListener('touchend', function(e) {
 }, {passive:true});
 document.querySelectorAll('#m-pad .m-btn').forEach(function(el) {
   var k = el.getAttribute('data-key');
-  el.addEventListener('touchstart', function(e) { e.preventDefault(); keys[k] = true; el.classList.add('active'); });
-  el.addEventListener('touchend', function(e) { e.preventDefault(); keys[k] = false; el.classList.remove('active'); });
-  el.addEventListener('touchcancel', function(e) { keys[k] = false; el.classList.remove('active'); });
+  function down(e) { e.preventDefault(); keys[k] = true; el.classList.add('active'); }
+  function up(e) { e.preventDefault(); keys[k] = false; el.classList.remove('active'); }
+  el.addEventListener('mousedown', down); el.addEventListener('mouseup', up); el.addEventListener('mouseleave', up);
+  el.addEventListener('touchstart', down, {passive:false}); el.addEventListener('touchend', up, {passive:false}); el.addEventListener('touchcancel', up);
 });
 var runBtn = document.getElementById('m-run');
-runBtn.addEventListener('touchstart', function(e) { e.preventDefault(); mobileRunning = !mobileRunning; runBtn.classList.toggle('active', mobileRunning); });
+function runDown(e) { e.preventDefault(); mobileRunning = !mobileRunning; runBtn.classList.toggle('active', mobileRunning); }
+runBtn.addEventListener('mousedown', runDown); runBtn.addEventListener('touchstart', runDown, {passive:false});
 
 // ============ INIT ============
 toast('LightKeepers v1.0 -- AI Gallery Explorer');
