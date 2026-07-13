@@ -94,7 +94,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Co
     <button class="btn" onclick="showGenCatDialog()">GEN FROM PHOTOS</button>
     <span class="sep" style="flex:1"></span>
     <button class="btn" onclick="if(state.room&&state.room.photoData[0])showPhoto(0)">PHOTO INFO</button>
+    <button class="btn" onclick="exportData()">EXPORT</button>
+    <button class="btn" onclick="document.getElementById('import-input').click()">IMPORT</button>
     <button class="btn" onclick="openHelp()">?</button>
+    <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(this.files[0])">
   </div>
   <div id="toast"><div class="msg" id="toast-msg"></div></div>
   <div class="modal-overlay" id="help-modal">
@@ -128,6 +131,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Co
   </div>
   <div id="m-run" data-key="ShiftLeft">RUN</div>
 </div>
+<div id="catalogue-modal" class="modal-overlay">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <h2 id="catalogue-modal-title" style="margin:0;font-size:14px;color:#0f0;flex:1;padding-right:8px">CATALOGUE</h2>
+      <span class="close-btn" onclick="closeCatalogueModal()" style="flex-shrink:0">X</span>
+    </div>
+    <div id="catalogue-modal-body"></div>
+  </div>
+</div>
 <div id="photo-modal" class="modal-overlay">
   <div class="modal">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
@@ -138,15 +150,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Co
     <p id="photo-modal-author"></p>
     <p id="photo-modal-desc"></p>
     <div id="photo-modal-actions"></div>
-  </div>
-</div>
-<div id="catalogue-modal" class="modal-overlay">
-  <div class="modal">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
-      <h2 id="catalogue-modal-title" style="margin:0;font-size:14px;color:#0f0;flex:1;padding-right:8px">CATALOGUE</h2>
-      <span class="close-btn" onclick="closeCatalogueModal()" style="flex-shrink:0">X</span>
-    </div>
-    <div id="catalogue-modal-body"></div>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -189,32 +192,37 @@ function makeLabel(text, sub) {
 
 
 // ============ STATE ============
+function lsAvail() { try { localStorage.setItem('_lk_test','1'); localStorage.removeItem('_lk_test'); return true; } catch(e) { return false; } }
+var _lsOk = lsAvail();
+function getJSON(key, def) { try { var v = localStorage.getItem(key); if (v === null) return def; var p = JSON.parse(v); return p !== null && typeof p === 'object' ? p : def; } catch(e) { return def; } }
+function getStr(key, def) { try { var v = localStorage.getItem(key); return v !== null ? v : def; } catch(e) { return def; } }
+function getInt(key, def) { try { var v = localStorage.getItem(key); return v !== null ? parseInt(v) || def : def; } catch(e) { return def; } }
+function setItem(key, val) { try { localStorage.setItem(key, val); } catch(e) { /* storage full or unavailable */ } }
+
 var state = {
-  room: null, rooms: JSON.parse(localStorage.getItem('lk_rooms') || '[]'),
-  // Photo catalogues: { name: {name:string, photos:[...], timestamp:n}, ... }
-  photoCatalogues: JSON.parse(localStorage.getItem('lk_photoCats') || '{}'),
-  activeCat: localStorage.getItem('lk_activeCat') || 'Default',
-  roomIdC: parseInt(localStorage.getItem('lk_roomCnt') || '0'),
-  phIdC: parseInt(localStorage.getItem('lk_phCnt') || '0'),
+  room: null, rooms: getJSON('lk_rooms', []),
+  photoCatalogues: getJSON('lk_photoCats', {}),
+  activeCat: getStr('lk_activeCat', 'Default'),
+  roomIdC: getInt('lk_roomCnt', 0),
+  phIdC: getInt('lk_phCnt', 0),
   trans: false, curPhoto: null,
   photoPool: [],
-  usedPoolIdx: [] // indices into photoPool already shown in previous rooms
+  usedPoolIdx: []
 };
 // Migrate old single-list photos to catalogues if needed
 (function() {
   var cats = state.photoCatalogues;
+  if (typeof cats !== 'object' || cats === null) cats = state.photoCatalogues = {};
   var catNames = Object.keys(cats);
   if (catNames.length === 0) {
-    var old = JSON.parse(localStorage.getItem('lk_photos') || '[]');
+    var old = [];
+    try { old = JSON.parse(localStorage.getItem('lk_photos') || '[]'); } catch(e) { old = []; }
     cats['Default'] = { name:'Default', photos:old, timestamp:Date.now() };
-    if (old.length === 0) {
-      cats['Default'].photos = [];
-    }
   }
   if (!cats[state.activeCat]) state.activeCat = catNames[0] || 'Default';
   if (!cats[state.activeCat]) { cats[state.activeCat] = { name:state.activeCat, photos:[], timestamp:Date.now() }; }
 })();
-function saveCats() { localStorage.setItem('lk_photoCats', JSON.stringify(state.photoCatalogues)); }
+function saveCats() { if (!_lsOk) return; setItem('lk_photoCats', JSON.stringify(state.photoCatalogues)); }
 function activePhotos() { return (state.photoCatalogues[state.activeCat] || {photos:[]}).photos; }
 var graph = { rooms: {}, conns: {} };
 var roomHist = [];
@@ -699,7 +707,7 @@ function mkRoom(cfg, eid) {
   }
 
   var rid = eid || ('R-' + String(state.roomIdC++).padStart(4,'0'));
-  if (!eid) localStorage.setItem('lk_roomCnt', String(state.roomIdC));
+  if (!eid) setItem('lk_roomCnt', String(state.roomIdC));
   var rm = {group:g, config:cfg, photoData:phs, clicks:clicks, doorData:dData, doorMeshes:dms, labelObjects:lbls, pointLights:pls, id:rid};
   scene.add(g);
   state.room = rm;
@@ -937,7 +945,7 @@ window.svPh = function() {
   var d = state.curPhoto;
   var ap = activePhotos();
   var e = {id:'PHOTO-'+String(state.phIdC++).padStart(4,'0'), title:d.title||'Untitled', author:d.author||'Unknown', url:d.url||'', description:d.description||'', thumbnail:d.url||'', timestamp:Date.now(), sourceRoom:d.roomId||''};
-  localStorage.setItem('lk_phCnt', String(state.phIdC));
+  setItem('lk_phCnt', String(state.phIdC));
   ap.push(e);
   if (ap.length > 500) ap.shift();
   saveCats();
@@ -962,7 +970,7 @@ function saveRoom(name) {
     };
     state.rooms.push(e);
     if (state.rooms.length > 100) state.rooms.shift();
-    localStorage.setItem('lk_rooms', JSON.stringify(state.rooms));
+setItem('lk_rooms', JSON.stringify(state.rooms));
     toast('Room "' + e.name + '" saved.');
   } catch(e) { toast('Save error: ' + e.message, 'error'); }
 }
@@ -1032,7 +1040,7 @@ window.delRm = function(i) {
   if (i < 0 || i >= state.rooms.length) return;
   if (!confirm('Delete saved room "' + state.rooms[i].name + '"?')) return;
   state.rooms.splice(i, 1);
-  localStorage.setItem('lk_rooms', JSON.stringify(state.rooms));
+  setItem('lk_rooms', JSON.stringify(state.rooms));
   showRooms();
 };
 window.ldRm = function(i) {
@@ -1076,14 +1084,14 @@ function showPhs() {
   body.innerHTML = h;
   modal.classList.add('active');
 }
-window.selCat = function(n) { state.activeCat = n; localStorage.setItem('lk_activeCat', n); showPhs(); };
+window.selCat = function(n) { state.activeCat = n; setItem('lk_activeCat', n); showPhs(); };
 window.newCat = function() {
   var n = prompt('New catalogue name:');
   if (!n) return;
   if (state.photoCatalogues[n]) { toast('Catalogue "' + n + '" already exists.', 'warning'); return; }
   state.photoCatalogues[n] = { name:n, photos:[], timestamp:Date.now() };
   state.activeCat = n;
-  localStorage.setItem('lk_activeCat', n);
+setItem('lk_activeCat', n);
   saveCats();
   showPhs();
 };
@@ -1095,7 +1103,7 @@ window.delCat = function() {
   delete cats[n];
   var remaining = Object.keys(cats);
   state.activeCat = remaining[0];
-  localStorage.setItem('lk_activeCat', state.activeCat);
+  setItem('lk_activeCat', state.activeCat);
   saveCats();
   showPhs();
 };
@@ -1131,15 +1139,12 @@ window.movePh = function(idx) {
 window.vwPh = function(i) {
   var ap = activePhotos();
   var p = ap[i]; if (!p) return;
-  document.getElementById('catalogue-modal').classList.remove('active');
-  setTimeout(function(){
-    document.getElementById('photo-modal-title').textContent = '[PHOTO] ' + p.title;
-    document.getElementById('photo-detail-img').src = p.url || '';
-    document.getElementById('photo-modal-author').textContent = 'By: ' + p.author;
-    document.getElementById('photo-modal-desc').textContent = (p.description||'').substring(0,200);
-    document.getElementById('photo-modal-actions').innerHTML = '<button class="btn" onclick="clPh()">CLOSE</button>';
-    document.getElementById('photo-modal').classList.add('active');
-  }, 100);
+  document.getElementById('photo-modal-title').textContent = '[PHOTO] ' + p.title;
+  document.getElementById('photo-detail-img').src = p.url || '';
+  document.getElementById('photo-modal-author').textContent = 'By: ' + p.author;
+  document.getElementById('photo-modal-desc').textContent = (p.description||'').substring(0,200);
+  document.getElementById('photo-modal-actions').innerHTML = '<button class="btn" onclick="clPh()">CLOSE</button><button class="btn" onclick="movePh(' + i + ')">MOVE</button>';
+  document.getElementById('photo-modal').classList.add('active');
 };
 window.closeCatalogueModal = function() { document.getElementById('catalogue-modal').classList.remove('active'); };
 
@@ -1154,6 +1159,47 @@ function toast(msg, type) {
   parent.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(function() { parent.classList.remove('show'); }, 4000);
+}
+
+// ============ EXPORT / IMPORT ============
+function exportData() {
+  var data = {};
+  for (var key in localStorage) {
+    if (key.indexOf('lk_') === 0) data[key] = localStorage.getItem(key);
+  }
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lightkeepers-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  toast('Exported ' + Object.keys(data).length + ' storage keys.');
+}
+function importData(file) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      var count = 0;
+      for (var key in data) {
+        if (key.indexOf('lk_') === 0) { localStorage.setItem(key, data[key]); count++; }
+      }
+      toast('Imported ' + count + ' keys. Reload to apply.');
+      // Reload state in-memory
+      if (data['lk_rooms']) state.rooms = JSON.parse(data['lk_rooms']);
+      if (data['lk_photoCats']) state.photoCatalogues = JSON.parse(data['lk_photoCats']);
+      if (data['lk_activeCat']) state.activeCat = data['lk_activeCat'];
+      if (data['lk_roomCnt']) state.roomIdC = parseInt(data['lk_roomCnt']) || 0;
+      if (data['lk_phCnt']) state.phIdC = parseInt(data['lk_phCnt']) || 0;
+      toast('State updated. Open ROOMS or PHOTOS to see imported data.');
+    } catch(err) { toast('Import error: ' + err.message, 'error'); }
+  };
+  reader.readAsText(file);
+  // Reset the input so the same file can be re-imported
+  document.getElementById('import-input').value = '';
 }
 
 // ============ KEYBOARD SHORTCUTS ============
@@ -1245,6 +1291,13 @@ toast('Click doors to explore, [] for history');
 toast('Initializing...');
 
 async function init() {
+  if (!_lsOk) {
+    toast('WARNING: Storage unavailable. Saved data will NOT persist!', 'warning');
+    toast('Open from a web server (http://) for persistent saves.', 'warning');
+  } else if (window.location.protocol === 'file:') {
+    toast('Note: file:// storage may not persist on all mobile browsers.', 'warning');
+    toast('For reliable saves, serve via http:// (e.g. python -m http.server).', 'warning');
+  }
   toast('Generating rooms...');
   try {
     toast('Fetching images from Wikimedia Commons...', 'info');
