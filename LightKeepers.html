@@ -1183,22 +1183,44 @@ function importData(file) {
   reader.onload = function(e) {
     try {
       var data = JSON.parse(e.target.result);
-      var count = 0;
-      for (var key in data) {
-        if (key.indexOf('lk_') === 0) { localStorage.setItem(key, data[key]); count++; }
+      // Merge rooms: existing rooms keep their id, incoming rooms with new ids are appended
+      if (data['lk_rooms']) {
+        var incoming = JSON.parse(data['lk_rooms']);
+        var existing = state.rooms.slice();
+        var merged = [];
+        var ids = {};
+        for (var i = 0; i < existing.length; i++) { var id = existing[i].id; if (!ids[id]) { merged.push(existing[i]); ids[id] = true; } }
+        for (var i = 0; i < incoming.length; i++) { var id = incoming[i].id; if (!ids[id]) { merged.push(incoming[i]); ids[id] = true; } }
+        state.rooms = merged;
+        setItem('lk_rooms', JSON.stringify(merged));
       }
-      toast('Imported ' + count + ' keys. Reload to apply.');
-      // Reload state in-memory
-      if (data['lk_rooms']) state.rooms = JSON.parse(data['lk_rooms']);
-      if (data['lk_photoCats']) state.photoCatalogues = JSON.parse(data['lk_photoCats']);
-      if (data['lk_activeCat']) state.activeCat = data['lk_activeCat'];
-      if (data['lk_roomCnt']) state.roomIdC = parseInt(data['lk_roomCnt']) || 0;
-      if (data['lk_phCnt']) state.phIdC = parseInt(data['lk_phCnt']) || 0;
-      toast('State updated. Open ROOMS or PHOTOS to see imported data.');
+      // Merge photo catalogues: incoming catalogues merged into existing, photos deduped by id
+      if (data['lk_photoCats']) {
+        var incoming = JSON.parse(data['lk_photoCats']);
+        var existing = JSON.parse(JSON.stringify(state.photoCatalogues));
+        for (var catName in incoming) {
+          if (!existing[catName]) { existing[catName] = incoming[catName]; continue; }
+          var inPhotos = incoming[catName].photos || [];
+          var exPhotos = existing[catName].photos || [];
+          var exIds = {};
+          for (var i = 0; i < exPhotos.length; i++) { if (exPhotos[i].id) exIds[exPhotos[i].id] = true; }
+          for (var i = 0; i < inPhotos.length; i++) {
+            if (!inPhotos[i].id || !exIds[inPhotos[i].id]) { exPhotos.push(inPhotos[i]); }
+          }
+          existing[catName].photos = exPhotos;
+          existing[catName].timestamp = Math.max(existing[catName].timestamp || 0, incoming[catName].timestamp || 0);
+        }
+        state.photoCatalogues = existing;
+        setItem('lk_photoCats', JSON.stringify(existing));
+      }
+      // Counters: take the higher of existing vs imported
+      if (data['lk_roomCnt']) { var rc = parseInt(data['lk_roomCnt']) || 0; if (rc > state.roomIdC) { state.roomIdC = rc; setItem('lk_roomCnt', String(rc)); } }
+      if (data['lk_phCnt']) { var pc = parseInt(data['lk_phCnt']) || 0; if (pc > state.phIdC) { state.phIdC = pc; setItem('lk_phCnt', String(pc)); } }
+      if (data['lk_activeCat'] && state.photoCatalogues[data['lk_activeCat']]) { state.activeCat = data['lk_activeCat']; setItem('lk_activeCat', state.activeCat); }
+      toast('Import merged: ' + state.rooms.length + ' rooms, ' + Object.keys(state.photoCatalogues).length + ' catalogues.');
     } catch(err) { toast('Import error: ' + err.message, 'error'); }
   };
   reader.readAsText(file);
-  // Reset the input so the same file can be re-imported
   document.getElementById('import-input').value = '';
 }
 
