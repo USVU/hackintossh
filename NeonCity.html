@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEON FUTURE — Cyber Hacker Life</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;display:flex;justify-content:center;align-items:center}
+#game{display:flex;gap:4px;padding:6px;background:#0a0a18;border:1px solid #2a2a4a;border-radius:4px;box-shadow:0 0 80px rgba(0,255,255,0.05);width:98vw;height:96vh;max-width:1400px}
+#sidebar-l{width:160px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+#sidebar-r{width:180px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+#center-col{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.panel{background:#08081a;border:1px solid #1a1a3a;border-radius:2px;padding:4px 6px;font-size:11px;line-height:1.5}
+.panel .label{color:#666;font-size:9px;letter-spacing:1px}
+.panel .val{color:#0ff}
+.panel .val-gold{color:#fd0}
+.panel .val-green{color:#0f0}
+.panel .val-red{color:#f44}
+.panel .val-mag{color:#f0f}
+.panel .val-cya{color:#0ff}
+.hp-bg{height:5px;background:#1a0a0a;border-radius:2px;overflow:hidden;margin:1px 0}
+.hp-fill{height:100%;background:linear-gradient(90deg,#f44,#f80);border-radius:2px;transition:width 0.15s}
+.en-bg{height:5px;background:#0a0a1a;border-radius:2px;overflow:hidden;margin:1px 0}
+.en-fill{height:100%;background:linear-gradient(90deg,#08f,#0ff);border-radius:2px;transition:width 0.15s}
+#display{border:1px solid #1a1a3a;cursor:pointer;image-rendering:pixelated;background:#050510;width:100%;flex:1;min-height:0}
+#msg-log{padding:4px 8px;background:#08081a;border:1px solid #1a1a3a;border-radius:2px;font-size:13px;line-height:1.5;overflow-y:auto;height:120px;flex-shrink:0}
+#msg-log .msg{color:#888}
+#msg-log .msg:last-child{color:#0f0}
+#msg-log .msg.highlight{color:#fd0}
+#msg-log .msg.cyber{color:#f0f}
+#msg-log .msg.danger{color:#f44}
+#msg-log .msg.heal{color:#0ff}
+#overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:100;display:none;justify-content:center;align-items:center}
+#overlay-box{background:#08081a;border:2px solid #2a2a5a;padding:16px 22px;min-width:320px;max-width:480px;max-height:80vh;overflow-y:auto;border-radius:4px;box-shadow:0 0 40px rgba(0,255,255,0.1)}
+#overlay-box h2{color:#f0f;font-size:14px;letter-spacing:5px;margin-bottom:12px;text-align:center;text-shadow:0 0 10px rgba(255,0,255,0.3)}
+#overlay-box .entry{padding:4px 7px;cursor:pointer;color:#c8c8c8;font-size:12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #12122a}
+#overlay-box .entry:hover{background:#0f0f2a;color:#fff}
+#overlay-box .entry .key{color:#555;font-size:9px;border:1px solid #2a2a4a;padding:1px 4px;border-radius:2px}
+#overlay-box .hint{color:#555;font-size:9px;text-align:center;margin-top:8px;letter-spacing:1px}
+#overlay-box .desc{color:#999;font-size:10px;padding:3px 0}
+#help-text{color:#9a9acc;font-size:10px;line-height:1.6;padding:4px 0}
+#help-text b{color:#0ff}
+#title-bar{display:flex;justify-content:space-between;align-items:center;padding:2px 6px;background:#08081a;border:1px solid #1a1a3a;font-size:10px;letter-spacing:2px;color:#f0f;text-shadow:0 0 6px rgba(255,0,255,0.2);flex-shrink:0}
+#weapon-bar{display:flex;gap:6px;padding:2px 0;font-size:10px}
+.weapon-opt{padding:1px 8px;border:1px solid #1a1a3a;border-radius:2px;color:#666;cursor:pointer}
+.weapon-opt.active{color:#0ff;border-color:#0ff;background:#0a0a2a}
+.skill-row{display:flex;justify-content:space-between;font-size:10px;padding:1px 0}
+.skill-row .sl{color:#888}
+.skill-row .sv{color:#0ff}
+.item-count{color:#666;font-size:9px}
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="sidebar-l">
+    <div class="panel" style="border-color:#2a0a4a">
+      <div style="font-size:13px;color:#f0f;text-align:center;letter-spacing:3px;margin-bottom:3px">⏣ NEON</div>
+      <div><span class="label">ID </span><span class="val" id="p-name">GHOST</span></div>
+      <div><span class="label">¥ </span><span class="val-gold" id="p-credits">1000</span></div>
+      <div style="margin-top:3px"><span class="label">HEALTH</span></div>
+      <div class="hp-bg"><div class="hp-fill" id="hp-fill" style="width:100%"></div></div>
+      <div><span class="val" id="hp-text" style="font-size:9px">100/100</span></div>
+      <div style="margin-top:3px"><span class="label">ENERGY</span></div>
+      <div class="en-bg"><div class="en-fill" id="en-fill" style="width:100%"></div></div>
+      <div><span class="val-cya" id="en-text" style="font-size:9px">100/100</span></div>
+      <div style="margin-top:3px"><span class="label">HACK LV </span><span class="val-mag" id="p-hacklv">1</span></div>
+      <div><span class="label">REP </span><span class="val-green" id="p-rep">0</span></div>
+      <div style="margin-top:3px" id="ammo-display"><span class="label">AMMO </span><span class="val-gold" id="p-ammo">0</span></div>
+    </div>
+    <div class="panel" style="flex:1">
+      <div class="label">SKILLS</div>
+      <div class="skill-row"><span class="sl">Hack</span><span class="sv" id="sk-hack">10</span></div>
+      <div class="skill-row"><span class="sl">Combat</span><span class="sv" id="sk-combat">5</span></div>
+      <div class="skill-row"><span class="sl">Social</span><span class="sv" id="sk-social">5</span></div>
+      <div class="skill-row"><span class="sl">Tech</span><span class="sv" id="sk-tech">5</span></div>
+    </div>
+  </div>
+  <div id="center-col">
+    <div id="title-bar">
+      <span>⏣ NEON CITY</span><span style="color:#555;font-size:8px;letter-spacing:0">  by tderk</span>
+      <span id="weapon-bar">
+        <span class="weapon-opt active" data-w="deck">⌂ DECK</span>
+        <span class="weapon-opt" data-w="katana">🗡 KATANA</span>
+        <span class="weapon-opt" data-w="gun">🔫 PISTOL</span>
+      </span>
+      <span id="disp-time">DAY 1 06:00</span>
+    </div>
+    <canvas id="display"></canvas>
+    <div id="msg-log"></div>
+  </div>
+  <div id="sidebar-r">
+    <div class="panel">
+      <div class="label">INVENTORY</div>
+      <div id="inv-panel" style="font-size:10px;line-height:1.5;margin-top:2px"><div style="color:#666">(empty)</div></div>
+    </div>
+    <div class="panel" style="flex:1">
+      <div class="label">MISSION</div>
+      <div id="mission-panel" style="font-size:10px;line-height:1.4;margin-top:2px;color:#888">None. Find a fixer (◆).</div>
+    </div>
+    <div class="panel">
+      <div class="label">DISTRICT</div>
+      <div style="font-size:10px;color:#0ff;margin-top:2px" id="dist-info">Shibuya — Trendy</div>
+      <div style="font-size:9px;color:#666;margin-top:1px" id="dist-desc">Neon streets, data rich</div>
+    </div>
+  </div>
+</div>
+<div id="overlay"><div id="overlay-box"></div></div>
+<script>
+// === CONFIG ===
+let CW=16,CH=20,VW=40,VH=22;
+const BW=20,BH=15;
+
+function recalcLayout(){
+  try{
+    const cont=document.getElementById('center-col');
+    const canvas=document.getElementById('display');
+    if(!cont||!canvas)return;
+    const availW=Math.max(200,cont.clientWidth-4);
+    const nonCanvas=125; // title(~20) + gap(4) + msglog(100) + gap(4) = ~128
+    const availH=Math.max(150,cont.clientHeight-4-nonCanvas);
+    canvas.width=availW;canvas.height=availH;
+    VW=Math.max(20,Math.floor(availW/14));
+    VH=Math.max(15,Math.floor(availH/18));
+    CW=Math.floor(availW/VW);
+    CH=Math.floor(availH/VH);
+  }catch(e){console.error('Layout error:',e);}
+}
+
+const T={VOID:{ch:' ',bg:'#050510',fg:'#050510',blk:1,opq:1},
+  ROAD:{ch:'.',bg:'#0c0c1e',fg:'#6688aa',blk:0,opq:0},
+  WALL:{ch:'#',bg:'#111128',fg:'#8899bb',blk:1,opq:1},
+  DOOR:{ch:'+',bg:'#0c0c1e',fg:'#ddaa44',blk:0,opq:0},
+  SHOP:{ch:'$',bg:'#0c0c1e',fg:'#ffdd00',blk:0,opq:0},
+  CAFE:{ch:'☼',bg:'#0c0c1e',fg:'#44eeff',blk:0,opq:0},
+  NODE:{ch:'♦',bg:'#0c0c1e',fg:'#ff44ff',blk:0,opq:0},
+  HUB_WALL:{ch:'#',bg:'#0a1a0a',fg:'#44aa66',blk:1,opq:1},
+  HUB_FLOOR:{ch:'.',bg:'#0a1a0a',fg:'#66dd88',blk:0,opq:0},
+  HUB_DOOR:{ch:'+',bg:'#0a1a0a',fg:'#88ffaa',blk:0,opq:0},
+  DATA:{ch:'◊',bg:'#0c0c1e',fg:'#44ff88',blk:0,opq:0},
+  ENEMY:{ch:'!',bg:'#1a0a0a',fg:'#ff5555',blk:1,opq:1},
+  NPC:{ch:'○',bg:'#0c0c1e',fg:'#ffdd44',blk:0,opq:0},
+  FIXER:{ch:'◆',bg:'#0c0c1e',fg:'#44eeff',blk:0,opq:0},
+  BARRIER:{ch:'≡',bg:'#0c0c1e',fg:'#6688ff',blk:1,opq:1},
+  GRASS:{ch:',',bg:'#080c0a',fg:'#55aa55',blk:0,opq:0}};
+
+const DISTRICTS=['SHIBUYA','SHINJUKU','AKIHABARA','ROPPONGI','MINATO','DAIKANYAMA','HARAJUKU'];
+const DIST_INFO={'SHIBUYA':['Shibuya — Trendy Hub','Neon crossings, data rich','#f0f'],
+  'SHINJUKU':['Shinjuku — Business Core','Corporate data, high security','#0ff'],
+  'AKIHABARA':['Akihabara — Tech District','Hardware shops, net cafes','#0f0'],
+  'ROPPONGI':['Roppongi — Night Sector','Black market, dark deals','#f44'],
+  'MINATO':['Minato — Waterfront','Port terminals, smugglers','#44f'],
+  'DAIKANYAMA':['Daikanyama — Uptown','Elite data, social hubs','#fd0'],
+  'HARAJUKU':['Harajuku — Culture Zone','Street hackers, creatives','#f0f']};
+
+// === WORLD ===
+const world={tiles:{},loaded:new Set(),_items:{}};
+function tileKey(x,y){return x+','+y}
+function hash2(a,b){return ((a*374761393+b*668265263)&0x7fffffff)/0x7fffffff}
+function noise(x,y){
+  return Math.sin(x*0.07+y*0.09)*0.5+Math.sin(x*0.15+y*0.11)*0.3+Math.sin(x*0.023+y*0.031)*1.0;
+}
+function getDistrict(bx,by){
+  const n=noise(bx*0.5+3.7,by*0.5+1.3);
+  return DISTRICTS[Math.max(0,Math.min(DISTRICTS.length-1,Math.floor((n+1.5)/3*DISTRICTS.length)))];}
+
+// Build a physical hub building: enclosed walls + interior floor + door
+function placeHubBuilding(cx,cy){
+  const w=5+Math.floor(hash2(cx*7+3,cy*11+5)*2); // 5-6 wide
+  const h2=5+Math.floor(hash2(cx*13+7,cy*17+11)*2); // 5-6 tall
+  const dx=Math.floor(hash2(cx*23+11,cy*29+17)*3)-1;
+  const dy=Math.floor(hash2(cx*31+13,cy*37+19)*3)-1;
+  for(let y=0;y<h2;y++)for(let x=0;x<w;x++){
+    const wx=cx+x+dx,wy=cy+y+dy;
+    const k=tileKey(wx,wy);
+    if(x===0||x===w-1||y===0||y===h2-1)world.tiles[k]=T.HUB_WALL;
+    else world.tiles[k]=T.HUB_FLOOR;
+  }
+  // Door on south wall
+  const doorX=cx+Math.floor(w/2)+dx,doorY=cy+(h2-1)+dy;
+  const dk=tileKey(doorX,doorY);
+  if(world.tiles[dk]===T.HUB_WALL)world.tiles[dk]=T.HUB_DOOR;
+  // Also clear outside door area
+  const dk2=tileKey(doorX,doorY+1);
+  if(world.tiles[dk2]&&world.tiles[dk2].blk)world.tiles[dk2]=T.ROAD;
+}
+
+function ensureBlock(bx,by){
+  const k=bx+','+by;
+  if(world.loaded.has(k))return;
+  world.loaded.add(k);
+  const dist=getDistrict(bx,by);
+  const ox=bx*BW,oy=by*BH;
+  for(let y=0;y<BH;y++)for(let x=0;x<BW;x++){
+    const wx=ox+x,wy=oy+y;
+    const n=noise(wx*0.3+5.1,wy*0.3+2.7);
+    let t=T.ROAD;
+    if(n>0.3)t=T.WALL;if(n>0.6)t=T.BARRIER;
+    if(x%5===0||y%5===0)t=T.ROAD;
+    world.tiles[tileKey(wx,wy)]=t;
+  }
+  const h=hash2(bx*13+7,by*17+11);
+  for(let i=0;i<Math.floor(h*10)+4;i++){
+    const px=ox+Math.floor(hash2(bx*100+i*37+3,by*100+i*41+7)*BW);
+    const py=oy+Math.floor(hash2(bx*100+i*43+11,by*100+i*47+13)*BH);
+    const pk=tileKey(px,py);
+    if(!world.tiles[pk]||world.tiles[pk].blk)continue;
+    const r=hash2(bx*100+i*53,by*100+i*59);
+    if(i===0)world.tiles[pk]=T.CAFE;
+    else if(r<0.22)world.tiles[pk]=T.SHOP;
+    else if(r<0.42)world.tiles[pk]=T.CAFE;
+    else if(r<0.57)world.tiles[pk]=T.NODE;
+    else if(r<0.67){placeHubBuilding(px,py);}
+    else if(r<0.77)world.tiles[pk]=T.FIXER;
+    else world.tiles[pk]=T.DATA;
+  }
+  if(bx===0&&by===0)for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)world.tiles[tileKey(2+dx,2+dy)]=T.ROAD;
+}
+
+// === ENTITIES ===
+let entities=[],mission=null,day=1,hour=6,minute=0,gameOver=false;
+let currentWeapon='deck',bullets=15;
+
+const player={x:2,y:2,hp:100,mhp:100,en:100,men:100,credits:1000,
+  hackLv:1,rep:0,inventory:{},skills:{hack:10,combat:5,social:5,tech:5}};
+
+function entAt(x,y){for(const e of entities)if(e.x===x&&e.y===y&&!e.dead)return e;return null;}
+
+function getItems(x,y){const k=tileKey(x,y);return world._items&&world._items[k]?world._items[k]:[];}
+function clearItems(x,y){const k=tileKey(x,y);if(world._items)delete world._items[k];}
+
+// === ENEMY SPAWNING ===
+function spawnEnemy(x,y,type){
+  const configs={drone:{ch:'!',fg:'#f44',hp:20,dmg:6,spd:1,behave:'chase',xp:15},
+    guard:{ch:'G',fg:'#ff0',hp:35,dmg:10,spd:0.7,behave:'patrol',xp:25},
+    hacker:{ch:'ℏ',fg:'#f0f',hp:25,dmg:8,spd:0.6,behave:'ambush',xp:20}};
+  const c=configs[type]||configs.drone;
+  entities.push({x,y,type,ch:c.ch,fg:c.fg,hp:c.hp,mhp:c.hp,dmg:c.dmg,spd:c.spd,
+    behave:c.behave,xp:c.xp,dead:false,aggro:false,stuck:0,
+    patrolTx:x+Math.floor((Math.random()-0.5)*8),patrolTy:y+Math.floor((Math.random()-0.5)*8)});
+}
+
+function ensureEntities(bx,by){
+  const ox=bx*BW,oy=by*BH;
+  const ec=Math.floor(hash2(bx*61+3,by*67+5)*4)+1;
+  for(let i=0;i<ec;i++){
+    const ex=ox+Math.floor(hash2(bx*100+i*71+7,by*100+i*73+11)*BW);
+    const ey=oy+Math.floor(hash2(bx*100+i*79+13,by*100+i*83+17)*BH);
+    const k=tileKey(ex,ey);
+    if(!world.tiles[k]||world.tiles[k].blk||entAt(ex,ey))continue;
+    const r=hash2(bx*100+i*89,by*100+i*97);
+    // Spawn enemies (65%) or NPCs (35%)
+    if(r<0.65){
+      const types=['drone','drone','guard','hacker'];
+      spawnEnemy(ex,ey,types[Math.floor(r*4%4)]);
+    }else{
+      const npcTypes=['citizen','hacker','merchant','vagrant','fixer'];
+      spawnNPC(ex,ey,npcTypes[Math.floor((r-0.65)*5/0.35)%npcTypes.length]);
+    }
+  }
+}
+
+// === NPC SYSTEM ===
+const NPC_TYPES={
+  citizen:{ch:'○',fg:'#dddd88',msgs:['"Neon keeps the city alive."','"Stay out of the dark sectors."','"The net hums tonight."','"Have you been to the hub?"']},
+  hacker:{ch:'ℏ',fg:'#44ff88',msgs:['"I almost cracked Node Sigma."','"The fixer owes me creds."','"Watch for ICE patrols."','"Your deck needs an upgrade."']},
+  merchant:{ch:'M',fg:'#ffdd44',msgs:['"Got data chips, cheap."','"I know a guy who knows a guy."','"Special prices for you."','"Business is slow today."']},
+  vagrant:{ch:'○',fg:'#aa8866',msgs:['"Spare some creds?"','"They took everything."','"The system chews you up."','"I used to be a hacker."']},
+  fixer:{ch:'◆',fg:'#44eeff',msgs:['"Always work in the shadows."','"I hear the corps are hiring."','"Risk vs reward, always."','"You want in on a job?"']}
+};
+
+function spawnNPC(x,y,type){
+  const c=NPC_TYPES[type]||NPC_TYPES.citizen;
+  entities.push({x,y,type,ch:c.ch,fg:c.fg,msgs:c.msgs,
+    dead:false,friendly:true,wander:Math.random()*10,
+    patrolX:x+Math.floor((Math.random()-0.5)*6),
+    patrolY:y+Math.floor((Math.random()-0.5)*6)});
+}
+
+function talkToNPC(){
+  const dirs=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];
+  for(const d of dirs){
+    const e=entAt(player.x+d[0],player.y+d[1]);
+    if(e&&!e.dead&&e.friendly){
+      const msgs=e.msgs||['"Hello."'];
+      addMsg(e.ch+' '+msgs[Math.floor(Math.random()*msgs.length)],'');
+      // Social skill gain
+      if(Math.random()<0.3)player.skills.social=Math.min(100,player.skills.social+1);
+      updateStats();
+      return true;
+    }
+  }
+  return false;
+}
+
+// === INVENTORY ===
+const ITEM_NAMES={data_chip:'Data Chip',software:'Software',energy_drink:'Energy Drink',
+  credit_chip:'Credit Chip',ram:'RAM Module',firewall:'Firewall',virus:'Virus',bullets:'Ammo'};
+const ITEM_DESC={data_chip:'Sell for credits',software:'+3 Hack',
+  energy_drink:'+30 EN',credit_chip:'Worth ¥250',
+  ram:'+1 Hack Level',firewall:'+2 Tech',virus:'+2 Combat',bullets:'+10 ammo'};
+const ITEM_VALUE={data_chip:80,software:200,energy_drink:50,credit_chip:250,ram:500,firewall:300,virus:150,bullets:60};
+
+// === NANO LEXICON ===
+const NANO_WORDS=['the','neon','city','ghost','data','stream','hack','cyber','core','node','system',
+  'net','void','code','signal','pulse','digital','shadow','blade','wire','circuit','flux','kernel',
+  'shell','root','access','token','packet','relay','phase','quantum','echo','drift','surge','bypass',
+  'spike','trace','mask','shift','grid','link','sync','crash','loop','stack','cache','buffer','proxy',
+  'firewall','gate','route','scan','decode','encrypt','compile','execute','inject','breach','spawn',
+  'daemon','agent','ghost','shell','matrix','neural','optic','plasma','solar','static','digital',
+  'border','nexus','vertex','axiom','vector','terra','lunar','solar','void','ether','cypher','mantis',
+  'viper','python','raven','tiger','dragon','phoenix','ghost','shadow','night','blade','storm',
+  'engage','switch','dispatch','forge','bootstrap','launch','deploy','mount','unpack','link',
+  'render','bind','mount','unfold','rotate','mirror','fold','purge','flush','wipe',
+  'idle','sleep','wake','boot','halt','reset','trigger','release','capture','record',
+  'monitor','watch','track','follow','hunt','stalk','patrol','guard','shield','defend',
+  'attack','strike','pierce','thrust','slash','cut','break','shatter','fracture','crack',
+  'scan','probe','sense','feel','touch','see','watch','listen','hear','smell',
+  'think','dream','recall','remember','forget','erase','format','clear','blank','zero',
+  'build','construct','shape','mold','forge','craft','weave','spin','twist','bend',
+  'rise','fall','ascend','descend','climb','drop','float','sink','dive','soar',
+  'run','walk','crawl','creep','sneak','slip','slide','glide','roll','turn',
+  'merge','fuse','blend','mix','combine','split','divide','separate','part','crack',
+  'grow','expand','spread','extend','reach','stretch','shrink','contract','compress','crush',
+  'open','close','lock','seal','bar','block','shut','cover','hide','reveal',
+  'find','seek','search','look','examine','inspect','study','learn','know','understand',
+  'begin','start','end','finish','stop','cease','halt','pause','continue','persist',
+  'live','die','survive','exist','fade','vanish','disappear','appear','emerge','arise',
+  'ancient','old','new','young','fresh','stale','worn','broken','fixed','patched',
+  'deep','shallow','high','low','wide','narrow','thick','thin','heavy','light',
+  'fast','slow','quick','rapid','swift','sudden','gradual','steady','constant','brief',
+  'bright','dark','dim','clear','faint','vivid','dull','sharp','blunt','keen',
+  'hard','soft','rough','smooth','coarse','fine','dense','sparse','solid','hollow',
+  'hot','cold','warm','cool','burn','freeze','heat','chill','thaw','melt',
+  'wet','dry','damp','moist','arid','bare','empty','full','rich','poor',
+  'clean','dirty','pure','tainted','pristine','corrupt','flawed','perfect','raw','refined',
+  'safe','danger','calm','chaos','order','noise','silence','sound','voice','word',
+  'truth','lie','real','fake','genuine','false','honest','deceive','trust','doubt',
+  'friend','foe','ally','enemy','kin','stranger','neighbor','rival','partner','solo',
+  'dawn','dusk','day','night','morning','evening','noon','midnight','twilight','aurora',
+  'star','moon','sun','comet','asteroid','nebula','galaxy','orbit','eclipse','solstice',
+  'iron','steel','bronze','silver','gold','copper','tin','lead','crystal','glass',
+  'stone','rock','brick','clay','sand','dust','ash','cinder','char','soot',
+  'flame','spark','ember','glow','fire','smoke','fume','vapor','mist','fog',
+  'rain','snow','ice','hail','sleet','storm','wind','gust','breeze','calm',
+  'wave','tide','surf','foam','spray','current','whirl','eddy','flow','stream',
+  'root','stem','branch','leaf','bloom','wilt','seed','fruit','thorn','vine',
+  'predator','hunter','prey','scavenger','pack','herd','flock','swarm','school','pride',
+  'falcon','eagle','hawk','vulture','crow','raven','owl','sparrow','finch','dove',
+  'wolf','fox','bear','stag','boar','lynx','puma','panther','jaguar','leopard',
+  'shark','whale','dolphin','seal','otter','eel','ray','crab','lobster','clam',
+  'silent','moving','still','restless','awake','asleep','aware','blank','focused','lost',
+  'urban','rural','dense','sprawling','vertical','spiral','labyrinth','maze','tunnel','cavern',
+  'throne','crown','scepter','jewel','gem','treasure','cache','vault','shrine','altar',
+  'oracle','prophet','vision','omen','curse','blessing','fate','destiny','doom','salvation',
+  'toxic','radioactive','bio','gene','dna','rna','cell','organ','limb','nerve',
+  'server','router','switch','modem','antenna','tower','dish','cable','fiber','optic',
+  'binary','octal','decimal','hex','bit','byte','word','page','block','sector',
+  'ping','traceroute','handshake','protocol','ssl','tls','ssh','vpn','lan','wan',
+  'python','ruby','java','crystal','rust','go','lua','perl','haskell','erlang',
+  'sword','shield','spear','axe','knife','dagger','staff','wand','bow','crossbow',
+  'secret','hidden','lost','found','broken','mended','open','shut','locked','sealed',
+  'azure','crimson','emerald','violet','amber','jade','onyx','ruby','sapphire','topaz',
+  'anvil','forge','hammer','chisel','tongs','lathe','drill','press','cutter','welder',
+  'volt','amp','ohm','watt','hertz','farad','henry','siemens','tesla','weber',
+  'alpha','beta','gamma','delta','epsilon','zeta','eta','theta','iota','kappa',
+  'one','two','three','four','five','six','seven','eight','nine','ten',
+  'null','nil','zero','none','empty','full','half','double','triple','quad',
+  'plus','minus','times','divide','sum','total','delta','ratio','percent','fraction',
+  'random','chaotic','ordered','stable','wild','tame','fierce','gentle','brutal','kind',
+  'north','south','east','west','center','edge','corner','side','face','spine',
+  'path','road','trail','track','way','route','course','line','orbit','arc',
+  'forward','backward','inward','outward','upward','downward','sideways','around','across','through',
+  'first','last','next','previous','current','future','past','present','always','never',
+  'possible','impossible','certain','unknown','likely','rare','common','strange','normal','weird',
+  'free','bound','loose','tight','wild','tame','holy','cursed','pure','tainted',
+  'mortal','divine','earthly','celestial','infernal','aetherial','primal','ultimate','eternal','brief',
+  'dream','vision','trance','trance','wake','sleep','rest','move','pause','stop',
+  'live','die','born','kill','heal','hurt','help','harm','make','break',
+  'question','answer','problem','solve','puzzle','riddle','mystery','secret','truth','lie',
+  'ancient','elder','young','newborn','old','aged','timeless','fleeting','lasting','moment',
+  'sky','earth','sea','fire','wind','void','light','dark','life','death',
+  'order','chaos','balance','ruin','create','destroy','build','raze','grow','wither',
+  'rise','fall','triumph','defeat','victory','loss','gain','waste','spend','save',
+  'wilderness','city','ruins','temple','tower','fortress','dungeon','cave','forest','desert',
+  'mountain','valley','river','lake','ocean','plain','plateau','canyon','volcano','icecap',
+  'noble','common','royal','peasant','knight','mage','rogue','ranger','bard','druid',
+  'dragon','wyrm','serpent','basilisk','griffin','phoenix','thunder','lightning','earthquake','storm',
+  'midnight','sunrise','sunset','horizon','zenith','nadir','apex','base','peak','floor',
+  'crystal','gem','stone','shard','fragment','piece','chip','flake','dust','powder',
+  'healing','poison','fire','frost','shock','acid','sonic','psychic','radiant','necro',
+  'sakura','ronin','shogun','daimyo','kensei','bushido','katana','wakizashi','tanto','naginata',
+  'yumi','shuriken','ninja','shinobi','samurai','sashimono','yari','bo','staff','jo',
+  'kimono','hakama','obi','geta','zori','haori','jinbaori','yoroi','kabuto','menpo',
+  'dojo','sensei','seiza','zazen','kata','kumite','ki','rei','bow','meditation',
+  'zen','satori','koan','mushin','zanshin','wabi','sabi','monoaware','yugen','okami',
+  'torii','shrine','temple','pagoda','garden','stone','lantern','bridge','koi','pond',
+  'bamboo','pine','cherry','blossom','maple','moss','willow','lotus','iris','chrysanthemum',
+  'sake','rice','miso','tofu','soba','ramen','udon','tempura','sushi','wasabi',
+  'shibuya','shinjuku','akihabara','roppongi','ginza','ueno','asakusa','harajuku','omotesando','daikanyama',
+  'tokyo','osaka','kyoto','nara','kobe','nagoya','sapporo','fukuoka','yokohama','kawasaki',
+  'meguro','setagaya','shinagawa','bunkyo','chiyoda','chuo','taito','sumida','koto','edogawa',
+  'cloud','binary','vector','array','hash','tree','graph','heap','stack','queue',
+  'compile','interpret','parse','lex','tokenize','transpile','minify','bundle','pack','deploy',
+  'agile','scrum','sprint','backlog','standup','retro','devops','ci','cd','pipeline',
+  'api','rest','graphql','socket','webhook','callback','promise','async','await','yield',
+  'merge','branch','commit','push','pull','rebase','stash','clone','fork','pr',
+  'real','virtual','augmented','mixed','hyper','ultra','mega','giga','tera','peta',
+  'micro','nano','pico','femto','atto','zepto','yocto','yotta','zetta','exa',
+  'zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve',
+  'thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty','thirty','forty','fifty',
+  'sixty','seventy','eighty','ninety','hundred','thousand','million','billion','trillion','infinity',
+  'login','logout','auth','session','cookie','jwt','oauth','saml','ldap','kerberos',
+  'docker','kubernetes','pod','service','ingress','configmap','secret','volume','deployment','replica',
+  'linux','unix','bsd','windows','macos','android','ios','chrome','firefox','safari'];
+
+function nanoGen(){
+  const n=Math.floor(Math.random()*6)+2;
+  const words=[];
+  for(let i=0;i<n;i++)words.push(NANO_WORDS[Math.floor(Math.random()*NANO_WORDS.length)]);
+  return '$ '+words.join(' ')+'   ['+('0x'+(Math.floor(Math.random()*0xFFFF)+1).toString(16).toUpperCase())+']';
+}
+
+function invAdd(t){if(!player.inventory[t])player.inventory[t]=0;player.inventory[t]++;}
+function invRemove(t){
+  if(!player.inventory[t]||player.inventory[t]<=0)return false;
+  player.inventory[t]--;if(player.inventory[t]<=0)delete player.inventory[t];return true;}
+
+// === RENDERING ===
+const canvas=document.getElementById('display');
+const ctx=canvas?canvas.getContext('2d'):null;
+
+function render(){
+  if(!canvas||!ctx){console.warn('Canvas not ready');return;}
+  ctx.fillStyle='#050510';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.font=CH+'px "Courier New",Consolas,monospace';
+  ctx.textBaseline='top';
+  
+  const cx=player.x-Math.floor(VW/2),cy=player.y-Math.floor(VH/2);
+  
+  for(let row=0;row<VH;row++)for(let col=0;col<VW;col++){
+    const wx=cx+col,wy=cy+row;
+    const k=tileKey(wx,wy);
+    const x=col*CW,y=row*CH;
+    let tile=world.tiles[k]||T.VOID;
+    ctx.fillStyle=tile.bg;
+    ctx.fillRect(x,y,CW,CH);
+    ctx.fillStyle=tile.fg;
+    ctx.fillText(tile.ch,x+1,y+1);
+  }
+  
+  for(const e of entities){
+    if(e.dead)continue;
+    const sx=e.x-cx,sy=e.y-cy;
+    if(sx<0||sx>=VW||sy<0||sy>=VH)continue;
+    ctx.fillStyle=e.fg;
+    ctx.fillText(e.ch,sx*CW+1,sy*CH+1);
+    if(!e.friendly&&e.hp<e.mhp){
+      const bw=CW-4,hpw=Math.floor(bw*(e.hp/e.mhp));
+      ctx.fillStyle='#300';ctx.fillRect(sx*CW+2,sy*CH+CH-4,bw,2);
+      ctx.fillStyle='#c00';ctx.fillRect(sx*CW+2,sy*CH+CH-4,hpw,2);
+    }
+  }
+  
+  if(world._items)for(const k in world._items){
+    const [gx,gy]=k.split(',').map(Number);
+    if(entAt(gx,gy)||(gx===player.x&&gy===player.y))continue;
+    const sx=gx-cx,sy=gy-cy;
+    if(sx<0||sx>=VW||sy<0||sy>=VH)continue;
+    ctx.fillStyle='#0f0';ctx.fillText('◊',sx*CW+1,sy*CH+1);
+  }
+  
+  const px=(player.x-cx)*CW,py=(player.y-cy)*CH;
+  if(px>=0&&px<canvas.width&&py>=0&&py<canvas.height){
+    ctx.shadowColor='rgba(0,255,255,0.4)';ctx.shadowBlur=10;
+    ctx.fillStyle='#0ff';ctx.fillText('@',px+1,py+1);
+    ctx.shadowBlur=0;
+  }
+  
+  // Show a welcome message if nothing is visible
+  if(!world.tiles||Object.keys(world.tiles).length===0){
+    ctx.fillStyle='#f0f';
+    ctx.font='20px monospace';
+    ctx.textAlign='center';
+    ctx.fillText('⏣ NEON FUTURE',canvas.width/2,canvas.height/2-20);
+    ctx.fillStyle='#0ff';
+    ctx.font='14px monospace';
+    ctx.fillText('Initializing...',canvas.width/2,canvas.height/2+10);
+    ctx.textAlign='left';
+  }
+}
+
+// === UI ===
+let messages=[];
+function addMsg(msg,cls){
+  messages.push({text:msg,cls:cls||''});
+  if(messages.length>100)messages.shift();renderMessages();}
+function renderMessages(){
+  const el=document.getElementById('msg-log');
+  if(!el)return;
+  el.innerHTML='';
+  const start=Math.max(0,messages.length-12);
+  for(let i=start;i<messages.length;i++){
+    const m=messages[i],d=document.createElement('div');
+    d.className='msg'+(m.cls?' '+m.cls:'');d.textContent=m.text;el.appendChild(d);}
+  el.scrollTop=el.scrollHeight;}
+
+function $(id){const e=document.getElementById(id);if(!e)console.warn('Missing element:',id);return e;}
+function setText(id,v){const e=$(id);if(e)e.textContent=v;}
+function setStyle(id,p,v){const e=$(id);if(e)e.style[p]=v;}
+
+function updateStats(){
+  // Guard against NaN values
+  if(typeof player.hp!=='number'||isNaN(player.hp))player.hp=player.mhp||100;
+  if(typeof player.mhp!=='number'||isNaN(player.mhp)||player.mhp<1)player.mhp=100;
+  if(typeof player.en!=='number'||isNaN(player.en))player.en=player.men||100;
+  if(typeof player.men!=='number'||isNaN(player.men)||player.men<1)player.men=100;
+  player.hp=Math.max(0,Math.min(player.mhp,player.hp));
+  player.en=Math.max(0,Math.min(player.men,player.en));
+  
+  setStyle('hp-fill','width',Math.max(0,player.hp/player.mhp*100)+'%');
+  setText('hp-text',Math.floor(player.hp)+'/'+player.mhp);
+  setStyle('en-fill','width',Math.max(0,player.en/player.men*100)+'%');
+  setText('en-text',Math.floor(player.en)+'/'+player.men);
+  setText('p-credits',player.credits);
+  setText('p-hacklv',player.hackLv);
+  setText('p-rep',player.rep);
+  setText('p-ammo',bullets);
+  setText('sk-hack',player.skills.hack);
+  setText('sk-combat',player.skills.combat);
+  setText('sk-social',player.skills.social);
+  setText('sk-tech',player.skills.tech);
+  setText('disp-time','DAY '+day+' '+String(hour).padStart(2,'0')+':'+String(Math.floor(minute)).padStart(2,'0'));
+  
+  try{
+    document.querySelectorAll('.weapon-opt').forEach(el=>{
+      el.classList.toggle('active',el.dataset.w===currentWeapon);});
+  }catch(e){}
+  setStyle('ammo-display','display',currentWeapon==='gun'?'block':'none');
+  
+  const bx=Math.floor(player.x/BW),by=Math.floor(player.y/BH);
+  const dist=getDistrict(bx,by);
+  setText('disp-district',dist);
+  const info=DIST_INFO[dist];
+  if(info){
+    setText('dist-info',info[0]);
+    setStyle('dist-info','color',info[2]);
+    setText('dist-desc',info[1]);}
+  
+  const ip=$('inv-panel');
+  if(ip){
+    const keys=Object.keys(player.inventory);
+    if(keys.length===0)ip.innerHTML='<div style="color:#666">(empty)</div>';
+    else{
+      let h='';
+      for(const k of keys)h+='<div style="display:flex;justify-content:space-between"><span>'+(ITEM_NAMES[k]||k)+'</span><span class="item-count">×'+player.inventory[k]+'</span></div>';
+      ip.innerHTML=h;}}
+  
+  const mp=$('mission-panel');
+  if(mp){
+    if(mission)mp.innerHTML='<div style="color:#0ff">'+mission.name+'</div><div style="color:#888;font-size:9px">'+mission.desc+'</div><div style="color:#fd0;font-size:9px;margin-top:2px">¥'+mission.reward+'</div>';
+    else mp.innerHTML='<div style="color:#666">No mission. Find a fixer (◆).</div>';}
+}
+
+// === OVERLAY ===
+function showOverlay(html,onClose){const ov=document.getElementById('overlay');document.getElementById('overlay-box').innerHTML=html;ov.style.display='flex';ov._onClose=onClose;}
+function hideOverlay(){const ov=document.getElementById('overlay');ov.style.display='none';if(ov._onClose)ov._onClose();ov._onClose=null;dropMode=false;}
+
+let dropMode=false;
+
+function showInventory(){
+  const keys=Object.keys(player.inventory);
+  if(keys.length===0){showOverlay('<h2>— INVENTORY —</h2><div style="color:#555;text-align:center;padding:20px">(empty)</div><div class="hint">[i] close | [u] use</div>');return;}
+  let html='<h2>— INVENTORY —</h2>';
+  const letters='abcdefghijklmnopqrstuvwxyz';
+  let idx=0;
+  for(const type of keys){
+    html+='<div class="entry" data-type="'+type+'" onclick="useItem(\''+type+'\')">'+
+      '<span class="desc"><span class="key">'+letters[idx]+'</span>'+(ITEM_NAMES[type]||type)+
+      '<br><span style="color:#666;font-size:9px">'+(ITEM_DESC[type]||'')+'</span></span>'+
+      '<span style="color:#888">×'+player.inventory[type]+'</span></div>';idx++;}
+  html+='<div class="hint">click or press letter to use | [i] close | [d] drop</div>';
+  showOverlay(html);}
+
+function useItem(type){
+  if(dropMode){dropMode=false;hideOverlay();if(invRemove(type)){spawnItemOnGround(type);addMsg('Dropped '+ITEM_NAMES[type]+'.','');}return;}
+  hideOverlay();
+  if(!player.inventory[type]||player.inventory[type]<=0)return;
+  if(type==='energy_drink'){player.en=Math.min(player.men,player.en+30);invRemove(type);addMsg('Drank Energy Drink (+30 EN)','heal');}
+  else if(type==='data_chip'){player.credits+=ITEM_VALUE.data_chip;invRemove(type);addMsg('Uploaded data chip: ¥'+ITEM_VALUE.data_chip,'highlight');}
+  else if(type==='credit_chip'){player.credits+=ITEM_VALUE.credit_chip;invRemove(type);addMsg('Cashed credit chip: ¥'+ITEM_VALUE.credit_chip,'highlight');}
+  else if(type==='software'){player.skills.hack+=3;invRemove(type);addMsg('Installed software (+3 Hack)','cyber');}
+  else if(type==='ram'){player.hackLv++;player.mhp+=5;player.men+=5;player.hp=Math.min(player.mhp,player.hp+10);player.en=Math.min(player.men,player.en+10);invRemove(type);addMsg('RAM upgraded! Hack Level '+player.hackLv+' (+5 max HP/EN)','highlight');}
+  else if(type==='firewall'){player.skills.tech+=2;invRemove(type);addMsg('Firewall deployed (+2 Tech)','cyber');}
+  else if(type==='virus'){player.skills.combat+=2;invRemove(type);addMsg('Virus loaded (+2 Combat)','danger');}
+  else if(type==='bullets'){bullets+=10;invRemove(type);addMsg('+10 ammo','info');}
+  updateStats();render();}
+
+function spawnItemOnGround(t){const k=tileKey(player.x,player.y);if(!world._items[k])world._items[k]=[];world._items[k].push(t);}
+
+// === SHOP ===
+function openShop(){
+  const items=[{type:'energy_drink',price:80},{type:'software',price:300},{type:'bullets',price:120},
+    {type:'ram',price:800},{type:'firewall',price:500},{type:'virus',price:350},{type:'credit_chip',price:200}];
+  const letters='abcdefgh';
+  let html='<h2>— DATA MARKET —</h2>';
+  items.forEach((it,i)=>{
+    const canBuy=player.credits>=it.price;
+    html+='<div class="entry" onclick="buyItem('+i+')" style="'+(canBuy?'':'opacity:0.4')+'">'+
+      '<span class="desc"><span class="key">'+letters[i]+'</span>'+(ITEM_NAMES[it.type]||it.type)+
+      '<br><span style="color:#666;font-size:9px">'+(ITEM_DESC[it.type]||'')+'</span></span>'+
+      '<span style="color:'+(canBuy?'#fd0':'#666')+'">¥'+it.price+'</span></div>';});
+  html+='<div class="hint">choose item to buy | [Esc] exit</div>';
+  window._shopItems=items;showOverlay(html);}
+function buyItem(i){
+  const it=window._shopItems[i];
+  if(!it)return;
+  // Social skill gives discount: up to 40% off at social 100
+  const discount=1-Math.min(0.4,player.skills.social*0.004);
+  const price=Math.ceil(it.price*discount);
+  if(player.credits<price){addMsg('Need ¥'+price+'. Not enough credits.','danger');return;}
+  player.credits-=price;
+  if(it.type==='bullets'){bullets+=10;addMsg('Bought ammo (+10) for ¥'+price,'highlight');}
+  else{invAdd(it.type);addMsg('Bought '+ITEM_NAMES[it.type]+' for ¥'+price,'highlight');}
+  player.skills.social+=1;
+  updateStats();openShop();}
+
+function openCafe(){
+  if(player.en>=player.men){addMsg('Energy is full.','');return;}
+  if(player.credits<30){addMsg('Need ¥30 to rest.','danger');return;}
+  player.credits-=30;player.en=player.men;advanceTime(30);
+  addMsg('Rested at net cafe. Energy restored. (¥30)','heal');updateStats();render();}
+
+// === HACKING ===
+function hackNode(){
+  const dirs=[[-1,0],[1,0],[0,-1],[0,1]];
+  for(const d of dirs){
+    const nx=player.x+d[0],ny=player.y+d[1];
+    if(world.tiles[tileKey(nx,ny)]===T.NODE){
+      if(player.en<15){addMsg('Too tired to hack.','danger');return;}
+      player.en-=15;
+      const nodeLv=Math.floor(Math.abs(nx)*0.1+Math.abs(ny)*0.1)+1;
+      if(player.skills.hack+Math.random()*20>nodeLv*10){
+        const reward=50+Math.floor(Math.random()*100)+nodeLv*20;
+        player.credits+=reward;player.skills.hack+=Math.max(1,Math.floor(5/nodeLv));
+        addMsg('Node cracked! +¥'+reward+' (+Hack)','highlight');
+        if(Math.random()<0.4){const drops=['data_chip','data_chip','software','energy_drink','credit_chip','bullets'];
+          const d2=drops[Math.floor(Math.random()*drops.length)];
+          if(d2==='bullets'){bullets+=5;addMsg('Looted: ammo','cyber');}else{invAdd(d2);addMsg('Looted: '+ITEM_NAMES[d2],'cyber');}}
+        if(player.skills.hack>=player.hackLv*20+10){player.hackLv++;player.mhp+=5;player.men+=5;player.hp=Math.min(player.mhp,player.hp+10);player.en=Math.min(player.men,player.en+10);addMsg('** HACK LEVEL UP! ** Now '+player.hackLv+' (+5 max HP/EN)','highlight');}
+      }else{
+        addMsg('Hack failed. Security ICE deployed!','danger');
+        const ed=dirs[Math.floor(Math.random()*4)];
+        if(!entAt(nx+ed[0],ny+ed[1])&&world.tiles[tileKey(nx+ed[0],ny+ed[1])]&&!world.tiles[tileKey(nx+ed[0],ny+ed[1])].blk)
+          spawnEnemy(nx+ed[0],ny+ed[1],'drone');
+      }
+      advanceTime(1);updateStats();render();return;
+    }
+  }
+  addMsg('No hack node (♦) adjacent.','');}
+
+// === HACKER HUB (SAFE ZONE) ===
+function enterHub(){
+  let html='<h2>— HACKER HUB ⌂ —</h2><div style="color:#44ff88;font-size:11px;text-align:center;padding:4px">Safe zone — enemies cannot enter</div>'+
+    '<div class="entry" onclick="hubRest()"><span class="desc"><span class="key">r</span>Rest & Recover</span><span style="color:#0ff">Free (full HP/EN)</span></div>'+
+    '<div class="entry" onclick="hubPractice()"><span class="desc"><span class="key">p</span>Practice Hacking</span><span style="color:#0ff">-15 EN, +2 Hack</span></div>'+
+    '<div class="entry" onclick="hubTrain()"><span class="desc"><span class="key">t</span>Combat Training</span><span style="color:#0ff">-15 EN, +2 Combat</span></div>'+
+    '<div class="entry" onclick="hubBBS()"><span class="desc"><span class="key">b</span>Browse BBS</span><span style="color:#0ff">Messages & rumors</span></div>'+
+    '<div class="entry" onclick="hubExit()" style="border:none"><span class="desc"><span class="key">x</span>Exit Hub</span><span style="color:#888">Return to street</span></div>'+
+    '<div class="hint">click or press key | [Esc] exit</div>';
+  const letters='rptbx';
+  window._hubKeys=letters;
+  showOverlay(html);}
+
+function hubRest(){
+  if(player.credits<20){addMsg('Need ¥20 for a cot.','danger');return;}
+  player.credits-=20;
+  player.hp=player.mhp;player.en=player.men;
+  addMsg('Restored fully at the hub. (¥20)','heal');
+  advanceTime(30);hideOverlay();updateStats();render();ensurePlayerBlocks();cleanupBlocks();updateAI();}
+
+function hubPractice(){
+  if(player.en<15){addMsg('Too tired to practice.','danger');return;}
+  player.en-=15;player.skills.hack+=2;
+  addMsg('Practiced hacking. (+2 Hack)','cyber');
+  advanceTime(15);hideOverlay();updateStats();render();}
+
+function hubTrain(){
+  if(player.en<15){addMsg('Too tired to train.','danger');return;}
+  player.en-=15;player.skills.combat+=2;
+  addMsg('Trained combat. (+2 Combat)','cyber');
+  advanceTime(15);hideOverlay();updateStats();render();}
+
+function hubBBS(){
+  const msgs=['"Heard Node Sigma is heavily guarded."','"Rumor: new ICE variant in Shinjuku."',
+    '"The fixer in Akihabara pays top creds."','"Someone cracked the central server last night."',
+    '"Avoid Roppongi after midnight."','"Data chip prices are up 20%. Good time to sell."',
+    '"The old hacker said: the city is alive."','"A new protocol is spreading. Patch your deck."'];
+  const msg=msgs[Math.floor(Math.random()*msgs.length)];
+  addMsg('BBS: '+msg,'cyber');
+  hideOverlay();advanceTime(5);updateStats();render();}
+
+function hubExit(){
+  addMsg('Left the hacker hub. Back on the street.','');
+  hideOverlay();advanceTime(1);updateStats();render();}
+
+// === TIME & MISSION ===
+function advanceTime(m){minute+=m;while(minute>=60){minute-=60;hour++;}while(hour>=24){hour-=24;day++;}if(mission&&mission.deadlineDay<day){addMsg('Mission expired!','danger');mission=null;player.rep=Math.max(0,player.rep-10);}}
+
+function talkToFixer(){
+  for(const d of[[-1,0],[1,0],[0,-1],[0,1]]){
+    const nx=player.x+d[0],ny=player.y+d[1];
+    if(world.tiles[tileKey(nx,ny)]===T.FIXER){
+      if(mission){addMsg('Fixer: "Finish your current job."','');return;}
+      const targets=['Node Sigma','Server Beta','Core Alpha','Ghost Net','Dark Route'];
+      const rewards=[300,600,1200,2500];
+      const lv=Math.min(3,Math.floor(player.hackLv/3));
+      const idx=Math.min(lv+Math.floor(Math.random()*2),3);
+      // Social skill improves mission rewards
+      const socialBonus=1+player.skills.social*0.005;
+      const finalReward=Math.floor(rewards[idx]*socialBonus);
+      mission={name:'Hack '+targets[Math.floor(Math.random()*targets.length)],desc:'Level: '+['Easy','Medium','Hard','Expert'][idx],reward:finalReward,deadlineDay:day+Math.ceil(2+Math.random()*3)};
+      addMsg('Fixer: "Job accepted. ¥'+finalReward+'"'+(socialBonus>1?' (social bonus)':''),'highlight');
+      player.skills.social+=2;
+      updateStats();return;}}
+  addMsg('No fixer (◆) nearby.','');}
+
+function completeMission(){
+  if(!mission)return;
+  player.credits+=mission.reward;player.rep+=5;
+  addMsg('Mission complete! +¥'+mission.reward+' +5 REP','highlight');mission=null;updateStats();}
+
+// === COMBAT & ACTIONS ===
+function fireGun(dirX,dirY){
+  if(currentWeapon!=='gun'){addMsg('Equip the pistol (press 2).','');return;}
+  if(bullets<=0){addMsg('No ammo! Buy some at a shop ($).','danger');return;}
+  if(player.en<3){addMsg('Too tired to aim.','danger');return;}
+  bullets--;player.en-=3;
+  let cx=player.x+dirX,cy=player.y+dirY;
+  let hit=false;
+  while(true){
+    const k=tileKey(cx,cy);
+    const tile=world.tiles[k];
+    if(!tile||tile.blk){addMsg('The bullet hits a wall.','');break;}
+    const enemy=entAt(cx,cy);
+    if(enemy&&!enemy.dead){
+      const dmg=Math.floor(8+player.skills.combat*0.6+Math.random()*6);
+      enemy.hp-=dmg;
+      addMsg('Shot '+enemy.type+' for '+dmg+'!','danger');
+      if(enemy.hp<=0){enemy.dead=true;const r=15+Math.floor(Math.random()*20);
+        player.credits+=r;player.skills.combat+=1;
+        addMsg('Enemy eliminated! +¥'+r+' (+Combat)','highlight');updateStats();}
+      hit=true;break;
+    }
+    cx+=dirX;cy+=dirY;
+    if(Math.abs(cx-player.x)>12||Math.abs(cy-player.y)>12){addMsg('Shot misses.','');break;}
+  }
+  advanceTime(1);updateStats();render();ensurePlayerBlocks();cleanupBlocks();updateAI();
+}
+
+function playerMove(dx,dy){
+  const nx=player.x+dx,ny=player.y+dy;
+  const k=tileKey(nx,ny);
+  const tile=world.tiles[k];
+  
+  const enemy=entAt(nx,ny);
+  if(enemy&&!enemy.dead){
+    if(currentWeapon==='katana'){
+      if(player.en<4){addMsg('Too tired to fight!','danger');return;}
+      player.en-=4;
+      const dmg=Math.floor(10+player.skills.combat*0.7+Math.random()*8);
+      enemy.hp-=dmg;
+      addMsg('Katana slash! '+dmg+' dmg to '+enemy.type,'danger');
+      if(enemy.hp<=0){enemy.dead=true;const r=15+Math.floor(Math.random()*20);
+        player.credits+=r;player.skills.combat+=2;
+        addMsg(enemy.type+' slain! +¥'+r+' (+Combat)','highlight');updateStats();}
+      else{const cdmg=enemy.dmg+Math.floor(Math.random()*3)-1;player.hp-=cdmg;addMsg(enemy.type+' counters: -'+cdmg+' HP','danger');}
+    }else if(currentWeapon==='deck'){
+      if(player.en<5){addMsg('Too tired!','danger');return;}
+      player.en-=5;
+      const dmg=Math.floor(3+player.skills.hack*0.3+Math.random()*4);
+      enemy.hp-=dmg;
+      addMsg('Cyber punch! '+dmg+' dmg','danger');
+      if(enemy.hp<=0){enemy.dead=true;const r=10+Math.floor(Math.random()*15);
+        player.credits+=r;player.skills.hack+=1;
+        addMsg(enemy.type+' fried! +¥'+r,'highlight');updateStats();}
+      else{const cdmg=enemy.dmg+Math.floor(Math.random()*3)-1;player.hp-=cdmg;addMsg(enemy.type+' strikes: -'+cdmg+' HP','danger');}
+    }else{
+      addMsg('Equip katana (1) for melee or gun (2) to shoot.','');return;
+    }
+    advanceTime(1);updateStats();render();ensurePlayerBlocks();cleanupBlocks();updateAI();return;
+  }
+  
+  if(!tile||tile.blk){addMsg('Blocked.','');return;}
+  
+  const items=getItems(nx,ny);
+  if(items.length>0){for(const it of items){if(it==='bullets'){bullets+=5;addMsg('Picked up ammo (+5)','');}
+    else{invAdd(it);addMsg('Picked up '+(ITEM_NAMES[it]||it),'');}}clearItems(nx,ny);}
+  
+  player.x=nx;player.y=ny;
+  advanceTime(1);
+  player.en=Math.max(0,player.en-1);
+  if(player.en<=0){player.hp-=1;addMsg('Energy depleted! -1 HP','danger');}
+  if(player.hp<player.mhp)player.hp=Math.min(player.mhp,player.hp+1);
+  if(player.en<player.men)player.en=Math.min(player.men,player.en+0.5);
+  
+  const tileLabel={'♦':'Node','☼':'Cafe','$':'Market','◆':'Fixer','⌂':'Hub','!':'Drone','G':'Guard','ℏ':'Hacker','◊':'Data'};
+  const label=tileLabel[tile.ch];
+  if(label&&Math.random()<0.5)addMsg('['+tile.ch+'] '+label,'');
+  
+  for(const d of[[-1,0],[1,0],[0,-1],[0,1]]){
+    const ak=tileKey(player.x+d[0],player.y+d[1]);
+    const at=world.tiles[ak];
+    if(at&&at!==tile&&tileLabel[at.ch]&&Math.random()<0.3){addMsg('('+at.ch+') '+tileLabel[at.ch]+' nearby','');break;}
+  }
+  
+  if(mission&&Math.random()<0.1)completeMission();
+  
+  if(Math.random()<0.05){
+    const msgs=['Data packets whiz past.','Neon flickers overhead.','A distant siren echoes.',
+      'Someone watches from a window.','The net hums.','A drone crosses the skyline.',
+      'Underground data flows.','A vending machine flickers.','Footsteps in the distance.'];
+    addMsg(msgs[Math.floor(Math.random()*msgs.length)],'');}
+  
+  if(player.en<15&&player.hp>0&&Math.random()<0.3)addMsg('(ENERGY LOW — find a cafe ☼ / press r to rest)','danger');
+  
+  updateStats();render();ensurePlayerBlocks();cleanupBlocks();updateAI();
+}
+
+// === ENEMY AI (moves every turn) ===
+function updateAI(){
+  for(const e of entities){
+    if(e.dead)continue;
+    // NPCs wander
+    if(e.friendly){
+      e.wander=(e.wander||0)-1;
+      if(e.wander<=0){
+        e.wander=5+Math.floor(Math.random()*8);
+        const dirs=[[-1,0],[1,0],[0,-1],[0,1],[0,0]];
+        const d=dirs[Math.floor(Math.random()*dirs.length)];
+        const nx=e.x+d[0],ny=e.y+d[1];
+        const tk=tileKey(nx,ny);
+        if(world.tiles[tk]&&!world.tiles[tk].blk&&!entAt(nx,ny)&&!(nx===player.x&&ny===player.y)&&world.tiles[tk]!==T.HUB_FLOOR&&world.tiles[tk]!==T.HUB_DOOR){
+          e.x=nx;e.y=ny;}
+      }
+      continue;
+    }
+    const dist=Math.abs(e.x-player.x)+Math.abs(e.y-player.y);
+    
+    if(e.behave==='chase'){
+      if(dist>12)e.aggro=false;
+      else if(dist<=10)e.aggro=true;
+    }else if(e.behave==='patrol'){
+      if(dist<=6)e.aggro=true;
+      else e.aggro=false;
+    }else{ // ambush
+      if(dist<=4&&Math.random()<0.3)e.aggro=true;
+    }
+    
+    if(dist<=1&&e.aggro){
+      const dmg=e.dmg+Math.floor(Math.random()*3)-1;
+      player.hp-=dmg;addMsg(e.type+' hits! -'+dmg+' HP','danger');
+      if(player.hp<=0){gameOver=true;showGameOver();}continue;
+    }
+    
+    if(!e.aggro){
+      if(e.behave==='patrol'){
+        const dx=e.patrolTx-e.x,dy=e.patrolTy-e.y;
+        if(Math.abs(dx)+Math.abs(dy)>1){
+          const mx=Math.sign(dx)||0,my=Math.sign(dy)||0;
+          const moves=[[mx,0],[0,my]];
+          for(const m of moves){
+            const nx=e.x+m[0],ny=e.y+m[1];
+            const tk=tileKey(nx,ny);
+            const t=world.tiles[tk];
+            if(t&&!t.blk&&!entAt(nx,ny)&&!(nx===player.x&&ny===player.y)){e.x=nx;e.y=ny;break;}
+          }
+        }else{e.patrolTx=e.x+Math.floor((Math.random()-0.5)*8);e.patrolTy=e.y+Math.floor((Math.random()-0.5)*8);}
+      }else if(Math.random()<0.15){
+        const dirs=[[-1,0],[1,0],[0,-1],[0,1],[0,0]];
+        const d=dirs[Math.floor(Math.random()*5)];
+        const nx=e.x+d[0],ny=e.y+d[1];
+        const tk=tileKey(nx,ny);const t=world.tiles[tk];
+        if(t&&!t.blk&&!entAt(nx,ny)&&!(nx===player.x&&ny===player.y)){e.x=nx;e.y=ny;}
+      }
+      continue;
+    }
+    
+    // Chase player
+    const dx=player.x-e.x,dy=player.y-e.y;
+    const moves=[[Math.sign(dx),0],[0,Math.sign(dy)]];
+    if(Math.abs(dx)<Math.abs(dy))moves.reverse();
+    let moved=false;
+    for(const m of moves){
+      const nx=e.x+m[0],ny=e.y+m[1];
+      const tk=tileKey(nx,ny);const t=world.tiles[tk];
+      if(t&&!t.blk&&!entAt(nx,ny)&&!(nx===player.x&&ny===player.y)){e.x=nx;e.y=ny;moved=true;break;}
+    }
+    if(!moved){e.stuck++;if(e.stuck>5){e.aggro=false;e.stuck=0;}}
+    
+    // Enemies cannot enter hub tiles
+    if(e.x!==undefined){const ekt=tileKey(e.x,e.y);if(world.tiles[ekt]===T.HUB_FLOOR||world.tiles[ekt]===T.HUB_DOOR){
+      const pushDirs=[[-1,0],[1,0],[0,-1],[0,1]];
+      for(const pd of pushDirs){const pk=tileKey(e.x+pd[0],e.y+pd[1]);
+        if(world.tiles[pk]&&!world.tiles[pk].blk&&!entAt(e.x+pd[0],e.y+pd[1])&&world.tiles[pk]!==T.HUB_FLOOR&&world.tiles[pk]!==T.HUB_DOOR&&world.tiles[pk]!==T.HUB_WALL){e.x+=pd[0];e.y+=pd[1];break;}}
+    }}
+  }
+}
+
+// === WORLD MANAGEMENT ===
+function ensurePlayerBlocks(){
+  const bx=Math.floor(player.x/BW),by=Math.floor(player.y/BH);
+  for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){ensureBlock(bx+dx,by+dy);ensureEntities(bx+dx,by+dy);}}
+
+function cleanupBlocks(){
+  const bx=Math.floor(player.x/BW),by=Math.floor(player.y/BH);
+  const toDel=[];
+  for(const k of world.loaded){const [x,y]=k.split(',').map(Number);
+    if(Math.abs(x-bx)>=4||Math.abs(y-by)>=4)toDel.push(k);}
+  for(const k of toDel){
+    world.loaded.delete(k);const [x,y]=k.split(',').map(Number);
+    const ox=x*BW,oy=y*BH;
+    for(let dy=0;dy<BH;dy++)for(let dx=0;dx<BW;dx++)delete world.tiles[tileKey(ox+dx,oy+dy)];}
+  for(let i=entities.length-1;i>=0;i--){
+    const e=entities[i];
+    if(e.dead){entities.splice(i,1);continue;}
+    const ex=Math.floor(e.x/BW),ey=Math.floor(e.y/BH);
+    if(Math.abs(ex-bx)>=4||Math.abs(ey-by)>=4)entities.splice(i,1);}
+  if(world._items)for(const k in world._items){
+    const [x,y]=k.split(',').map(Number);
+    const ix=Math.floor(x/BW),iy=Math.floor(y/BH);
+    if(Math.abs(ix-bx)>=4||Math.abs(iy-by)>=4)delete world._items[k];}}
+
+// === SAVE/LOAD ===
+function saveGame(){
+  try{
+    const data={
+      px:player.x,py:player.y,hp:player.hp,mhp:player.mhp,
+      en:player.en,men:player.men,credits:player.credits,
+      hackLv:player.hackLv,rep:player.rep,
+      skills:{...player.skills},inventory:{...player.inventory},
+      bullets,day,hour,minute,
+      msgs:messages.slice(-10)
+    };
+    if(mission)data.mission={name:mission.name,desc:mission.desc,reward:mission.reward,deadlineDay:mission.deadlineDay};
+    localStorage.setItem('neon_save',JSON.stringify(data));
+    addMsg('Game saved. (Shift+K)','highlight');
+  }catch(e){addMsg('Save failed: '+e.message,'danger');}
+}
+
+function loadGame(){
+  try{
+    const raw=localStorage.getItem('neon_save');
+    if(!raw){addMsg('No save file found.','danger');return;}
+    const d=JSON.parse(raw);
+    player.x=d.px;player.y=d.py;player.hp=d.hp;player.mhp=d.mhp;
+    player.en=d.en;player.men=d.men;player.credits=d.credits;
+    player.hackLv=d.hackLv;player.rep=d.rep||0;
+    player.skills=d.skills||{hack:10,combat:5,social:5,tech:5};
+    player.inventory=d.inventory||{};
+    bullets=d.bullets||0;day=d.day||1;hour=d.hour||6;minute=d.minute||0;
+    mission=d.mission||null;
+    messages=d.msgs?d.msgs.map(m=>(typeof m==='string'?{text:m,cls:''}:m)):[];
+    // Regenerate world around player
+    cleanupBlocks();ensurePlayerBlocks();
+    addMsg('Game loaded. (L key)','highlight');
+    recalcLayout();updateStats();render();
+  }catch(e){addMsg('Load failed: '+e.message,'danger');}
+}
+
+// === GAME OVER ===
+function showGameOver(){
+  const html='<h2>— SYSTEM FAILURE —</h2><div style="text-align:center;padding:20px;color:#f44">Your neural link has been severed.</div><div style="text-align:center;color:#888">Day '+day+' | ¥'+player.credits+' | Hack Lv '+player.hackLv+'</div><div class="hint">[R] restart | [Esc] exit</div>';
+  showOverlay(html);}
+
+// === INPUT ===
+const dirMap={'w':[0,-1],'s':[0,1],'a':[-1,0],'d':[1,0],'ArrowUp':[0,-1],'ArrowDown':[0,1],'ArrowLeft':[-1,0],'ArrowRight':[1,0]};
+let aimMode=false;
+
+document.addEventListener('keydown',e=>{
+  const key=e.key;
+  if(gameOver){if(key==='r'||key==='R')location.reload();e.preventDefault();return;}
+  
+  if(document.getElementById('overlay').style.display==='flex'){
+    if(key==='i'||key==='I'||key==='Escape'||key==='?'){hideOverlay();e.preventDefault();return;}
+    if(key==='d'||key==='D'){dropMode=true;const ob=document.querySelector('#overlay-box .hint');if(ob){ob.textContent='choose item to drop';ob.style.color='#f44';}e.preventDefault();return;}
+    if(/^[a-z]$/.test(key)){
+      // Hub menu uses specific keys
+      if(window._hubKeys&&window._hubKeys.includes(key)){
+        const idx=window._hubKeys.indexOf(key);
+        const es=document.querySelectorAll('.entry');
+        if(idx>=0&&idx<es.length)es[idx].click();
+      }else{
+        const es=document.querySelectorAll('.entry');
+        const i=key.charCodeAt(0)-97;
+        if(i>=0&&i<es.length)es[i].click();}
+    }
+    e.preventDefault();return;
+  }
+  
+  if(aimMode){
+    const d=dirMap[key];
+    if(d){fireGun(d[0],d[1]);aimMode=false;e.preventDefault();return;}
+    if(key==='Escape'||key===' '){aimMode=false;e.preventDefault();return;}
+    e.preventDefault();return;
+  }
+  
+  const d=dirMap[key];
+  if(d){playerMove(d[0],d[1]);e.preventDefault();return;}
+  
+  // Nano terminal (Enter with deck equipped)
+  if(key==='Enter'&&currentWeapon==='deck'){
+    addMsg(nanoGen(),'cyber');
+    advanceTime(1);
+    updateStats();render();ensurePlayerBlocks();cleanupBlocks();updateAI();
+    e.preventDefault();return;}
+  
+  // Weapon switching
+  if(key==='1'){
+    currentWeapon='katana';addMsg('Katana drawn. Bump enemies to slash.','cyber');
+    updateStats();e.preventDefault();return;}
+  if(key==='2'){
+    currentWeapon='gun';
+    addMsg('Pistol ready. Press f to fire.','cyber');
+    updateStats();e.preventDefault();return;}
+  if(key==='3'){
+    currentWeapon='deck';
+    addMsg('Cyberdeck active. h to hack nodes.','cyber');
+    updateStats();e.preventDefault();return;}
+  
+  if(key==='h'||key==='H'){hackNode();e.preventDefault();return;}
+  if(key==='f'||key==='F'){
+    if(currentWeapon==='gun'){if(bullets<=0)addMsg('No ammo!','danger');else{aimMode=true;addMsg('Aim with direction key.','');}}
+    else if(currentWeapon==='deck')hackNode();
+    else addMsg('Equip gun (2) to fire.','');
+    e.preventDefault();return;}
+  
+  if(key==='g'||key==='G'||key===','){
+    const items=getItems(player.x,player.y);
+    if(items.length>0){for(const it of items){
+      if(it==='bullets'){bullets+=5;addMsg('Picked up ammo (+5)','');}
+      else{invAdd(it);addMsg('Picked up '+(ITEM_NAMES[it]||it),'');}}
+      clearItems(player.x,player.y);updateStats();render();
+    }else addMsg('Nothing here to pick up.','');
+    e.preventDefault();return;}
+  
+  if(key==='e'||key==='E'){
+    if(!talkToNPC())talkToFixer();
+    e.preventDefault();return;}
+  if(key==='i'||key==='I'){showInventory();e.preventDefault();return;}
+  if(key==='S'||key==='K'){saveGame();e.preventDefault();return;}
+  if(key==='L'){loadGame();e.preventDefault();return;}
+  if(key==='b'||key==='B'){
+    for(const d2 of[[-1,0],[1,0],[0,-1],[0,1]]){
+      if(world.tiles[tileKey(player.x+d2[0],player.y+d2[1])]===T.SHOP){openShop();e.preventDefault();return;}}
+    addMsg('No shop ($) nearby.','');e.preventDefault();return;}
+  if(key==='r'||key==='R'){
+    for(const d2 of[[-1,0],[1,0],[0,-1],[0,1]]){
+      if(world.tiles[tileKey(player.x+d2[0],player.y+d2[1])]===T.CAFE){openCafe();e.preventDefault();return;}}
+    // Rest anywhere (less effective)
+    if(player.credits>=20){
+      player.credits-=20;player.en=Math.min(player.men,player.en+40);
+      player.hp=Math.min(player.mhp,player.hp+20);
+      addMsg('Rested in the street. (+40 EN, +20 HP, ¥20)','heal');
+      advanceTime(20);updateStats();render();ensurePlayerBlocks();cleanupBlocks();updateAI();
+    }else addMsg('Need ¥20 to find shelter.','danger');
+    e.preventDefault();return;}
+  if(key==='u'||key==='U'){
+    const pt=tileKey(player.x,player.y);
+    const tile=world.tiles[pt];
+    if(tile===T.HUB_FLOOR||tile===T.HUB_DOOR){enterHub();e.preventDefault();return;}
+    // Also check adjacent for hub door
+    for(const d2 of[[-1,0],[1,0],[0,-1],[0,1]]){
+      if(world.tiles[tileKey(player.x+d2[0],player.y+d2[1])]===T.HUB_DOOR){
+        addMsg('Enter through the hub door (+).','');e.preventDefault();return;}}
+    addMsg('Not inside a hacker hub. Find a building with green walls.','');e.preventDefault();return;}
+  
+  if(key==='m'||key==='M'){
+    if(mission)showOverlay('<h2>— MISSION —</h2><div style="color:#0ff;padding:6px">'+mission.name+'</div><div class="desc" style="padding:0 6px">'+mission.desc+'</div><div style="color:#fd0;padding:6px">Reward: ¥'+mission.reward+'</div><div class="hint">[Esc] close</div>');
+    else addMsg('No active mission. Find a fixer (◆).','');
+    e.preventDefault();return;}
+  
+  if(key===' '||key==='.'){
+    advanceTime(1);player.en=Math.min(player.men,player.en+5);
+    if(player.hp<player.mhp)player.hp=Math.min(player.mhp,player.hp+2);
+    addMsg('Resting... (+5 EN, +2 HP)','heal');
+    updateStats();render();ensurePlayerBlocks();cleanupBlocks();updateAI();
+    e.preventDefault();return;}
+  
+  if(key==='l'||key==='L'){
+    const dirs2=[[-1,0,'W'],[1,0,'E'],[0,-1,'N'],[0,1,'S']];
+    let desc='You are at ('+player.x+','+player.y+').';
+    const tile=world.tiles[tileKey(player.x,player.y)];
+    if(tile)desc+=' Ground: '+tile.ch+'.';
+    const near=[];
+    for(const d2 of dirs2){const at=world.tiles[tileKey(player.x+d2[0],player.y+d2[1])];if(at&&at.ch!=='.'&&at.ch!=='#'&&at.ch!==',')near.push(at.ch+'('+d2[2]+')');}
+    if(near.length>0)desc+=' Adjacent: '+near.join(', ')+'.';
+    const items2=getItems(player.x,player.y);
+    if(items2.length>0)desc+=' Ground items: '+items2.map(i=>ITEM_NAMES[i]||i).join(',')+'.';
+    addMsg('LOOK: '+desc,'cyber');
+    e.preventDefault();return;}
+  
+  if(key==='?'){
+    e.preventDefault();
+    const ov=document.getElementById('overlay');if(ov.style.display==='flex'){hideOverlay();return;}
+    showOverlay('<h2>— NEON GUIDE —</h2><div id="help-text">'+
+      '<b>WASD / Arrows</b> Move (bump=melee)<br>'+
+      '<b>1 2 3</b> Katana / Pistol / Deck<br>'+
+      '<b>Enter</b> Nano terminal (deck only)<br>'+
+      '<b>f</b> Fire pistol (then direction)<br>'+
+      '<b>h</b> Hack adjacent node (♦)<br>'+
+      '<b>e</b> Talk to NPCs (○) & fixers (◆)<br>'+
+      '<b>b</b> Buy at data market ($)<br>'+
+      '<b>r</b> Rest (adjacent cafe, or street)<br>'+
+      '<b>u</b> Hub menu (stand inside hub building)<br>'+
+      '<b>g / ,</b> Pick up ground items<br>'+
+      '<b>i</b> Inventory (click/letter to use)<br>'+
+      '<b>l</b> Look around<br>'+
+      '<b>m</b> View current mission<br>'+
+      '<b>Space / .</b> Wait (+5 EN +2 HP)<br>'+
+      '<b>Shift+K</b> Save game<br>'+
+      '<b>L</b> Load game<br>'+
+      '<b>?</b> / <b>Esc</b> Open / Close help</div>'+
+      '<div class="hint">[Esc] close</div>');
+    return;}
+  
+  if(key==='0'){player.hp=player.mhp;player.en=player.men;addMsg('DEBUG: healed','');updateStats();render();e.preventDefault();}
+});
+
+// === INIT ===
+window.addEventListener('resize',()=>{setTimeout(()=>{recalcLayout();updateStats();render();},100);});
+
+function init(){
+  try{
+    // Force layout recalc with safe defaults
+    const canvas=document.getElementById('display');
+    const cont=document.getElementById('center-col');
+    if(canvas&&(canvas.width<10||canvas.height<10)){
+      canvas.width=Math.max(400,window.innerWidth-400);
+      canvas.height=Math.max(300,window.innerHeight-160);
+    }
+    
+    ensureBlock(0,0);ensureEntities(0,0);
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){ensureBlock(dx,dy);ensureEntities(dx,dy);}
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)world.tiles[tileKey(2+dx,2+dy)]=T.ROAD;
+    player.x=2;player.y=2;
+    invAdd('energy_drink');invAdd('energy_drink');invAdd('data_chip');bullets+=10;
+    
+  addMsg('> NEON CITY v1.0 — Initializing...','cyber');
+  addMsg('> A cyber-hacker life-sim by tderk','highlight');
+  addMsg('> 1=Katana 2=Pistol 3=Deck | ? for help','');
+    recalcLayout();updateStats();render();
+    
+    setTimeout(()=>{recalcLayout();updateStats();render();},100);
+  }catch(e){
+    console.error('Init error:',e.message);
+    // Try once more after a delay
+    setTimeout(()=>{
+      try{updateStats();render();}catch(e2){
+        document.body.innerHTML='<div style="color:#f44;padding:40px;font-family:monospace">Init error: '+e.message+'<br>Check console (F12)</div>';
+      }
+    },200);
+  }
+}
+
+// Start after DOM is ready
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+else init();
+</script>
+</body>
+</html>
