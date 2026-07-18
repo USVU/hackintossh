@@ -8,7 +8,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden}
 body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;display:flex;justify-content:center;align-items:center}
-#game{display:flex;gap:4px;padding:6px;background:#0a0a18;border:1px solid #2a2a4a;border-radius:4px;box-shadow:0 0 80px rgba(0,255,255,0.05);width:98vw;height:96vh;max-width:1400px}
+#game{display:flex;gap:4px;padding:6px;background:#0a0a18;border:1px solid #2a2a4a;border-radius:4px;box-shadow:0 0 80px rgba(0,255,255,0.05);max-width:1400px;width:100vw;height:100dvh;overflow:hidden}@supports not (height:100dvh){#game{height:100vh}}
 #sidebar-l{width:160px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 #sidebar-r{width:180px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 #center-col{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
