@@ -1265,13 +1265,14 @@ if(fsBtn){
   fsBtn.addEventListener('click',e=>{e.preventDefault();toggleFS();});
   fsBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleFS();},{passive:false});}
 
-// Keyboard: visible bar appears, focuses (triggers keyboard), then hides to save space
-let kbDismissTimer=null;
+// Keyboard input (persistent element, show/hide only)
+let kbFadeTimer=null;
 const kbBtn=document.getElementById('mob-kb-btn');
-const mkInput=()=>document.getElementById('mob-kb-float')||null;
+
+function getKB(){return document.getElementById('mob-kb-float');}
 
 function ensureKB(){
-  let el=mkInput();
+  let el=getKB();
   if(!el){
     el=document.createElement('input');
     el.id='mob-kb-float';
@@ -1285,29 +1286,26 @@ function ensureKB(){
       for(let i=0;i<s.length;i++)
         document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
       el.value='';});
-    el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key==='Escape'||ev.key==='Done')dismissKB();});
-    el.addEventListener('blur',()=>dismissKB());
+    el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key==='Escape'||ev.key==='Done')hideKB();});
+    el.addEventListener('blur',()=>hideKB());
   }
-  el.value='';
   el.style.display='block';
   el.style.opacity='1';
   el.style.height='44px';
+  el.style.border='2px solid #0ff';
+  el.style.padding='8px 12px';
+  el.value='';
   el.focus();
-  // After keyboard is triggered, fade to invisible (but keep focus)
-  clearTimeout(kbDismissTimer);
-  setTimeout(()=>{
+  clearTimeout(kbFadeTimer);
+  kbFadeTimer=setTimeout(()=>{
     if(el===document.activeElement&&el.style.display!=='none'){
-      el.style.opacity='0';
-      el.style.height='1px';
-      el.style.border='none';
-      el.style.padding='0';
-    }},500);
+      el.style.opacity='0';el.style.height='1px';el.style.border='none';el.style.padding='0';}},500);
 }
 
-function dismissKB(){
-  clearTimeout(kbDismissTimer);
-  const el=mkInput();
-  if(el&&el.parentNode)el.remove();}
+function hideKB(){
+  clearTimeout(kbFadeTimer);
+  const el=getKB();
+  if(el)el.style.display='none';}
 
 if(kbBtn){
   kbBtn.addEventListener('touchstart',e=>{e.preventDefault();ensureKB();},{passive:false});
