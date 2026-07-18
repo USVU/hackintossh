@@ -1265,60 +1265,34 @@ if(fsBtn){
   fsBtn.addEventListener('click',e=>{e.preventDefault();toggleFS();});
   fsBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleFS();},{passive:false});}
 
-// Keyboard: fixed overlay with textarea (reliable on all mobile, no dismiss issue)
+// Keyboard: tiny invisible input, re-created each press (reliable on mobile)
 const kbBtn=document.getElementById('mob-kb-btn');
-let kbOverlay=null;
 
-function showKBOverlay(){
-  // Remove old one if any
-  if(kbOverlay){kbOverlay.remove();kbOverlay=null;}
-  // Create overlay
-  const ov=document.createElement('div');
-  ov.id='mob-kb-ov';
-  ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:9998;background:rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:20px';
-  const ta=document.createElement('textarea');
-  ta.id='mob-kb-ta';
-  ta.placeholder='type keys here...';
-  ta.style.cssText='width:90%;max-width:400px;height:50px;font-size:18px;background:#111;color:#0ff;border:2px solid #0ff;padding:10px;border-radius:6px;outline:none;font-family:monospace;resize:none';
-  ta.autocomplete='off';ta.autocorrect='off';ta.autocapitalize='off';ta.spellcheck=false;
-  const btnRow=document.createElement('div');
-  btnRow.style.cssText='display:flex;gap:10px;margin-top:8px;width:90%;max-width:400px';
-  const doneBtn=document.createElement('button');
-  doneBtn.textContent='DONE';
-  doneBtn.style.cssText='flex:1;padding:10px;font-size:16px;background:#0ff;color:#000;border:none;border-radius:4px;font-weight:bold';
-  const closeBtn=document.createElement('button');
-  closeBtn.textContent='✕';
-  closeBtn.style.cssText='padding:10px 16px;font-size:16px;background:rgba(255,50,50,0.3);color:#f88;border:1px solid rgba(255,100,100,0.2);border-radius:4px';
-  
-  ov.appendChild(ta);
-  btnRow.appendChild(doneBtn);
-  btnRow.appendChild(closeBtn);
-  ov.appendChild(btnRow);
-  document.body.appendChild(ov);
-  
-  ta.focus();
-  
-  doneBtn.addEventListener('click',()=>{if(ov.parentNode)ov.remove();kbOverlay=null;});
-  doneBtn.addEventListener('touchstart',()=>{if(ov.parentNode)ov.remove();kbOverlay=null;},{passive:true});
-  closeBtn.addEventListener('click',()=>{if(ov.parentNode)ov.remove();kbOverlay=null;});
-  closeBtn.addEventListener('touchstart',()=>{if(ov.parentNode)ov.remove();kbOverlay=null;},{passive:true});
-  
-  ta.addEventListener('input',()=>{
-    const s=ta.value;
+function openKB(){
+  // Kill any existing floating input
+  const old=document.getElementById('_kb');
+  if(old)old.remove();
+  // Create tiny invisible input that triggers keyboard
+  const el=document.createElement('input');
+  el.id='_kb';
+  el.type='text';
+  el.autocomplete='off';el.autocorrect='off';el.autocapitalize='off';el.spellcheck=false;
+  el.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1';
+  document.body.appendChild(el);
+  el.addEventListener('input',function(){
+    const s=this.value;
     for(let i=0;i<s.length;i++)
       document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
-    ta.value='';});
-  
-  // Auto-close when keyboard is dismissed (back button / swipe)
-  ta.addEventListener('blur',()=>{
-    setTimeout(()=>{if(ov.parentNode){ov.remove();kbOverlay=null;}},300);});
-  
-  kbOverlay=ov;
-}
+    this.value='';});
+  el.addEventListener('blur',function(){
+    // Auto-cleanup after keyboard dismisses
+    setTimeout(()=>{if(this.parentNode)this.remove();},200);});
+  // Focus on next frame so the browser renders the element first
+  requestAnimationFrame(()=>{el.focus();});}
 
 if(kbBtn){
-  kbBtn.addEventListener('touchstart',e=>{e.preventDefault();showKBOverlay();},{passive:false});
-  kbBtn.addEventListener('mousedown',e=>{e.preventDefault();showKBOverlay();});}
+  kbBtn.addEventListener('touchstart',e=>{e.preventDefault();openKB();},{passive:false});
+  kbBtn.addEventListener('mousedown',e=>{e.preventDefault();openKB();});}
 
 // === INIT ===
 window.addEventListener('resize',()=>{setTimeout(()=>{recalcLayout();updateStats();render();},100);});
