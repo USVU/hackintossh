@@ -154,10 +154,26 @@ const DIST_INFO={'SHIBUYA':['Shibuya — Trendy Hub','Neon crossings, data rich'
   'DAIKANYAMA':['Daikanyama — Uptown','Elite data, social hubs','#fd0'],
   'HARAJUKU':['Harajuku — Culture Zone','Street hackers, creatives','#f0f']};
 
+let WORLD_SEED = Math.floor(Math.random()*999999)+1;
+
+function reseed(){
+  WORLD_SEED = Math.floor(Math.random()*999999)+1;
+  world.tiles={};world.loaded=new Set();world._items={};
+  entities=[];items=[];messages=[];
+  player.x=2;player.y=2;player.hp=player.mhp;player.en=player.men;
+  player.credits=1000;player.hackLv=1;player.rep=0;
+  player.skills={hack:10,combat:5,social:5,tech:5};player.inventory={};
+  mission=null;day=1;hour=6;minute=0;bullets=15;gameOver=false;
+  invAdd('energy_drink');invAdd('energy_drink');invAdd('data_chip');bullets+=10;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){ensureBlock(dx,dy);ensureEntities(dx,dy);}
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)world.tiles[tileKey(2+dx,2+dy)]=T.ROAD;
+  addMsg('> World regenerated. Seed: '+WORLD_SEED,'cyber');
+  recalcLayout();updateStats();render();}
+
 // === WORLD ===
 const world={tiles:{},loaded:new Set(),_items:{}};
 function tileKey(x,y){return x+','+y}
-function hash2(a,b){return ((a*374761393+b*668265263)&0x7fffffff)/0x7fffffff}
+function hash2(a,b){return ((a*374761393+b*668265263+WORLD_SEED*9973)&0x7fffffff)/0x7fffffff}
 function noise(x,y){
   return Math.sin(x*0.07+y*0.09)*0.5+Math.sin(x*0.15+y*0.11)*0.3+Math.sin(x*0.023+y*0.031)*1.0;
 }
@@ -941,7 +957,7 @@ function saveGame(){
       en:player.en,men:player.men,credits:player.credits,
       hackLv:player.hackLv,rep:player.rep,
       skills:{...player.skills},inventory:{...player.inventory},
-      bullets,day,hour,minute,
+      bullets,day,hour,minute,seed:WORLD_SEED,
       msgs:messages.slice(-10)
     };
     if(mission)data.mission={name:mission.name,desc:mission.desc,reward:mission.reward,deadlineDay:mission.deadlineDay};
@@ -961,6 +977,7 @@ function loadGame(){
     player.skills=d.skills||{hack:10,combat:5,social:5,tech:5};
     player.inventory=d.inventory||{};
     bullets=d.bullets||0;day=d.day||1;hour=d.hour||6;minute=d.minute||0;
+    if(d.seed)WORLD_SEED=d.seed;
     mission=d.mission||null;
     messages=d.msgs?d.msgs.map(m=>(typeof m==='string'?{text:m,cls:''}:m)):[];
     // Regenerate world around player
@@ -1046,6 +1063,13 @@ document.addEventListener('keydown',e=>{
     }else addMsg('Nothing here to pick up.','');
     e.preventDefault();return;}
   
+  // Shift+R to regenerate world with new random seed
+  if(key==='R'){
+    const ov=document.getElementById('overlay');
+    if(ov.style.display==='flex'){hideOverlay();}
+    reseed();
+    e.preventDefault();return;}
+  
   if(key==='e'||key==='E'){
     if(!talkToNPC())talkToFixer();
     e.preventDefault();return;}
@@ -1056,7 +1080,7 @@ document.addEventListener('keydown',e=>{
     for(const d2 of[[-1,0],[1,0],[0,-1],[0,1]]){
       if(world.tiles[tileKey(player.x+d2[0],player.y+d2[1])]===T.SHOP){openShop();e.preventDefault();return;}}
     addMsg('No shop ($) nearby.','');e.preventDefault();return;}
-  if(key==='r'||key==='R'){
+  if(key==='r'){
     for(const d2 of[[-1,0],[1,0],[0,-1],[0,1]]){
       if(world.tiles[tileKey(player.x+d2[0],player.y+d2[1])]===T.CAFE){openCafe();e.preventDefault();return;}}
     // Rest anywhere (less effective)
@@ -1122,7 +1146,8 @@ document.addEventListener('keydown',e=>{
       '<b>Space / .</b> Wait (+5 EN +2 HP)<br>'+
       '<b>Shift+K</b> Save game<br>'+
       '<b>L</b> Load game<br>'+
-      '<b>?</b> / <b>Esc</b> Open / Close help</div>'+
+      '<b>Shift+R</b> Reseed world (new seed)<br>'+
+  '<b>?</b> / <b>Esc</b> Open / Close help</div>'+
       '<div class="hint">[Esc] close</div>');
     return;}
   
