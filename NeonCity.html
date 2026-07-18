@@ -50,6 +50,12 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
 .skill-row .sl{color:#888}
 .skill-row .sv{color:#0ff}
 .item-count{color:#666;font-size:9px}
+.fs-mode #sidebar-l,.fs-mode #sidebar-r{display:none!important}
+.fs-mode #game{width:100vw;height:100vh;border:none;border-radius:0;padding:0;gap:0;box-shadow:none;max-width:none}
+.fs-mode #center-col{gap:0}
+.fs-mode #title-bar{display:none}
+.fs-mode #msg-log{display:none}
+.fs-mode #display{border:none;border-radius:0}
 </style>
 </head>
 <body>
@@ -107,6 +113,56 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
   </div>
 </div>
 <div id="overlay"><div id="overlay-box"></div></div>
+<div id="mobile-controls" style="display:none">
+  <button id="mob-close-btn" class="mc-close">✕</button>
+  <button id="fs-btn" class="mc-fs">⛶</button>
+  <div id="dpad">
+    <button class="dpad-btn" data-dir="8">▲</button>
+    <div class="dpad-row">
+      <button class="dpad-btn" data-dir="4">◀</button>
+      <button class="dpad-btn center-btn" data-dir="5">●</button>
+      <button class="dpad-btn" data-dir="6">▶</button>
+    </div>
+    <button class="dpad-btn" data-dir="2">▼</button>
+  </div>
+  <div id="act-col">
+    <div class="act-row"><button class="act-btn" data-key="h">H</button><button class="act-btn" data-key="e">E</button><button class="act-btn" data-key="g">G</button></div>
+    <div class="act-row"><button class="act-btn" data-key="1">1</button><button class="act-btn" data-key="2">2</button><button class="act-btn" data-key="3">3</button></div>
+    <div class="act-row"><button id="mob-kb-btn" class="act-btn" style="background:#444">⌨</button><button class="act-btn" data-key="i">I</button><button class="act-btn" data-key=" ">⏎</button></div>
+    <div class="act-row" style="justify-content:center"><button class="act-btn" data-key="enter" style="width:auto;padding:0 16px">↵</button></div>
+  </div>
+</div>
+<div id="mob-toggle-fixed">⌨</div>
+<style>
+/* Responsive: compact sidebars on small screens */
+@media(max-width:768px){
+  #sidebar-l{width:80px;font-size:8px}
+  #sidebar-l .panel{padding:2px 3px;font-size:8px}
+  #sidebar-r{width:80px;font-size:8px}
+  #sidebar-r .panel{padding:2px 3px;font-size:8px}
+  #game{gap:2px;padding:3px}
+  #title-bar{font-size:8px;padding:1px 3px;gap:2px}
+  #title-bar .weapon-opt{padding:0 3px;font-size:7px}
+  #msg-log{height:50px;font-size:9px;padding:2px 4px}
+  .skill-row{font-size:7px}
+  .hp-bg{height:3px}
+  .en-bg{height:3px}}
+/* Mobile controls */
+#mobile-controls{position:fixed;top:0;left:0;width:100%;height:100%;z-index:800;pointer-events:none}
+#mobile-controls *{pointer-events:auto}
+.mc-close{position:absolute;top:2px;left:2px;width:28px;height:28px;font-size:14px;border-radius:4px;z-index:810;background:rgba(255,50,50,0.3);color:#f88;border:1px solid rgba(255,100,100,0.3);display:flex;align-items:center;justify-content:center}
+.mc-fs{position:absolute;top:2px;right:2px;width:28px;height:28px;font-size:14px;border-radius:4px;z-index:810;background:rgba(0,0,0,0.4);color:#0ff;border:1px solid rgba(0,255,255,0.2);display:flex;align-items:center;justify-content:center}
+#dpad{position:absolute;bottom:80px;left:8px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.dpad-btn{width:48px;height:48px;font-size:16px;border-radius:6px;background:rgba(0,0,0,0.5);color:#0ff;border:1px solid rgba(0,255,255,0.2);touch-action:none;-webkit-user-select:none;user-select:none}
+.dpad-btn:active{background:rgba(0,255,255,0.15)}
+.dpad-row{display:flex;gap:2px}
+.center-btn{background:rgba(0,255,255,0.08)!important}
+#act-col{position:absolute;bottom:80px;right:8px;display:flex;flex-direction:column;gap:3px}
+.act-row{display:flex;gap:3px;justify-content:flex-end}
+.act-btn{width:42px;height:38px;font-size:12px;border-radius:5px;background:rgba(0,0,0,0.5);color:#0ff;border:1px solid rgba(0,255,255,0.18);touch-action:none;-webkit-user-select:none;user-select:none;font-weight:bold;letter-spacing:0}
+.act-btn:active{background:rgba(0,255,255,0.15);color:#fff}
+#mob-toggle-fixed{position:fixed;bottom:55px;right:6px;width:34px;height:34px;font-size:15px;border-radius:17px;background:rgba(0,0,0,0.6);color:#0ff;border:1px solid rgba(0,255,255,0.25);z-index:900;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none}
+</style>
 <script>
 // === CONFIG ===
 let CW=16,CH=20,VW=40,VH=22;
@@ -1153,6 +1209,109 @@ document.addEventListener('keydown',e=>{
   
   if(key==='0'){player.hp=player.mhp;player.en=player.men;addMsg('DEBUG: healed','');updateStats();render();e.preventDefault();}
 });
+
+// === FULLSCREEN (canvas-only view) ===
+function toggleFS(){
+  const game=document.getElementById('game');
+  if(!document.fullscreenElement){
+    game.classList.add('fs-mode');
+    const el=document.documentElement;
+    if(el.requestFullscreen)el.requestFullscreen();
+    else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
+    setTimeout(()=>{recalcLayout();render();},200);
+  }else{
+    game.classList.remove('fs-mode');
+    if(document.exitFullscreen)document.exitFullscreen();
+    else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+    setTimeout(()=>{recalcLayout();render();},200);}}
+// Listen for browser-initiated fullscreen exit (Escape key)
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement)document.getElementById('game').classList.remove('fs-mode');});
+document.addEventListener('webkitfullscreenchange',()=>{
+  if(!document.webkitFullscreenElement)document.getElementById('game').classList.remove('fs-mode');});
+
+let mobileVisible=false;
+function toggleMobile(){
+  mobileVisible=!mobileVisible;
+  const mc=document.getElementById('mobile-controls');
+  const tf=document.getElementById('mob-toggle-fixed');
+  if(!mc||!tf)return;
+  mc.style.display=mobileVisible?'block':'none';
+  tf.textContent=mobileVisible?'✕':'⌨';
+  tf.style.background=mobileVisible?'rgba(255,50,50,0.4)':'rgba(0,0,0,0.7)';}
+
+// Wire mobile buttons to dispatch keyboard events
+// Wire mobile controls (DOM already parsed — script is at end of body)
+function fireKey(k){
+  if(k==='enter')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));
+  else document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));}
+document.querySelectorAll('.dpad-btn').forEach(btn=>{
+  const handler=e=>{e.preventDefault();const map={'8':'w','2':'s','4':'a','6':'d','5':'.'};const k=map[btn.dataset.dir];if(k)fireKey(k);};
+  btn.addEventListener('touchstart',handler,{passive:false});
+  btn.addEventListener('mousedown',handler);});
+document.querySelectorAll('.act-btn').forEach(btn=>{
+  const handler=e=>{e.preventDefault();fireKey(btn.dataset.key);};
+  btn.addEventListener('touchstart',handler,{passive:false});
+  btn.addEventListener('mousedown',handler);});
+
+['mob-close-btn','mob-toggle-fixed'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('click',e=>{e.preventDefault();toggleMobile();});
+  el.addEventListener('touchstart',e=>{e.preventDefault();toggleMobile();},{passive:false});});
+
+const fsBtn=document.getElementById('fs-btn');
+if(fsBtn){
+  fsBtn.addEventListener('click',e=>{e.preventDefault();toggleFS();});
+  fsBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleFS();},{passive:false});}
+
+// Keyboard: visible bar appears, focuses (triggers keyboard), then hides to save space
+let kbDismissTimer=null;
+const kbBtn=document.getElementById('mob-kb-btn');
+const mkInput=()=>document.getElementById('mob-kb-float')||null;
+
+function ensureKB(){
+  let el=mkInput();
+  if(!el){
+    el=document.createElement('input');
+    el.id='mob-kb-float';
+    el.type='text';
+    el.autocomplete='off';el.autocorrect='off';el.autocapitalize='off';el.spellcheck=false;
+    el.style.cssText='position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;height:44px;z-index:9999;font-size:16px;background:#111;color:#0ff;border:2px solid #0ff;padding:8px 12px;outline:none;font-family:monospace;max-width:500px';
+    el.placeholder='type keys...';
+    document.body.appendChild(el);
+    el.addEventListener('input',()=>{
+      const s=el.value;
+      for(let i=0;i<s.length;i++)
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
+      el.value='';});
+    el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key==='Escape'||ev.key==='Done')dismissKB();});
+    el.addEventListener('blur',()=>dismissKB());
+  }
+  el.value='';
+  el.style.display='block';
+  el.style.opacity='1';
+  el.style.height='44px';
+  el.focus();
+  // After keyboard is triggered, fade to invisible (but keep focus)
+  clearTimeout(kbDismissTimer);
+  setTimeout(()=>{
+    if(el===document.activeElement&&el.style.display!=='none'){
+      el.style.opacity='0';
+      el.style.height='1px';
+      el.style.border='none';
+      el.style.padding='0';
+    }},500);
+}
+
+function dismissKB(){
+  clearTimeout(kbDismissTimer);
+  const el=mkInput();
+  if(el&&el.parentNode)el.remove();}
+
+if(kbBtn){
+  kbBtn.addEventListener('touchstart',e=>{e.preventDefault();ensureKB();},{passive:false});
+  kbBtn.addEventListener('mousedown',e=>{e.preventDefault();ensureKB();});}
 
 // === INIT ===
 window.addEventListener('resize',()=>{setTimeout(()=>{recalcLayout();updateStats();render();},100);});
