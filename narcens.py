@@ -326,7 +326,19 @@ def main():
 
     player = args.player or detect_player()
     if not player:
-        log.error("No audio player found. Install ffmpeg+paplay, mpv, or ffplay.")
+        missing = []
+        if not shutil.which("ffmpeg"):
+            missing.append("ffmpeg")
+        if not shutil.which("paplay") and not shutil.which("aplay"):
+            missing.append("pulseaudio-utils" if shutil.which("pactl") else "alsa-utils")
+        if not shutil.which("mpv"):
+            missing.append("mpv")
+        if missing:
+            log.error("Missing dependencies: %s", ", ".join(missing))
+            log.error("Install with: sudo apt install %s", " ".join(missing))
+            log.error("Or use --player to specify a different player")
+        else:
+            log.error("No supported audio output found (need PulseAudio or ALSA)")
         sys.exit(1)
 
     with ThreadPoolExecutor(max_workers=len(args.feeds)) as executor:
