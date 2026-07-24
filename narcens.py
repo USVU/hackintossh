@@ -143,14 +143,31 @@ def is_termux():
     return "com.termux" in os.environ.get("PREFIX", "") or shutil.which("termux-setup-package") is not None
 
 
+def detect_termux_audio():
+    try:
+        r = subprocess.run(
+            ["ffmpeg", "-f", "opensles", "-h", "null"],
+            capture_output=True, text=True, timeout=5
+        )
+        return "opensles"
+    except Exception:
+        pass
+    return None
+
 def detect_player():
+    if is_termux():
+        if shutil.which("ffmpeg") and detect_termux_audio():
+            return "ffmpeg-termux"
+        if shutil.which("mpv"):
+            return "mpv"
+        return None
     if shutil.which("ffmpeg") and shutil.which("paplay"):
         return "ffmpeg-paplay"
     if shutil.which("ffmpeg") and shutil.which("aplay"):
         return "ffmpeg-aplay"
     if shutil.which("mpv"):
         return "mpv"
-    if not is_termux() and shutil.which("ffplay"):
+    if shutil.which("ffplay"):
         return "ffplay"
     if shutil.which("mpg123"):
         return "mpg123"
@@ -194,7 +211,19 @@ def play_feed(feed_id, name, no_audio=False, output_dir=None, reconnect_delay=2,
                     log.warning("[%s] Stream ended, reconnecting...", name)
                 continue
 
-            if player == "ffmpeg-paplay":
+            if player == "ffmpeg-termux":
+                audio_out = detect_termux_audio()
+                cmd = [
+                    "ffmpeg", "-hide_banner", "-loglevel", "error",
+                    "-headers", headers,
+                    "-i", stream_url,
+                    "-map", "0:0",
+                    "-f", audio_out, "default",
+                ]
+                log.info("[%s] Started: ffmpeg (%s)", name, audio_out)
+                subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
+
+            elif player == "ffmpeg-paplay":
                 ffmpeg = subprocess.Popen([
                     "ffmpeg", "-hide_banner", "-loglevel", "error",
                     "-headers", headers,
